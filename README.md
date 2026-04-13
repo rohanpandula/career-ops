@@ -1,6 +1,6 @@
 # Career-Ops
 
-[English](README.md) | [Español](README.es.md)
+[English](README.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko-KR.md) | [日本語](README.ja.md) | [Русский](README.ru.md)
 
 <p align="center">
   <a href="https://x.com/santifer"><img src="docs/hero-banner.jpg" alt="Career-Ops — Multi-Agent Job Search System" width="800"></a>
@@ -27,6 +27,8 @@
   <img src="https://img.shields.io/badge/DE-grey?style=flat" alt="DE">
   <img src="https://img.shields.io/badge/FR-blue?style=flat" alt="FR">
   <img src="https://img.shields.io/badge/PT--BR-green?style=flat" alt="PT-BR">
+  <img src="https://img.shields.io/badge/KO-white?style=flat" alt="KO">
+  <img src="https://img.shields.io/badge/JA-red?style=flat" alt="JA">
 </p>
 
 ---
@@ -71,6 +73,12 @@ Built by someone who used it to evaluate 740+ job offers, generate 100+ tailored
 | **Dashboard TUI** | Terminal UI to browse, filter, and sort your pipeline |
 | **Human-in-the-Loop** | AI evaluates and recommends, you decide and act. The system never submits an application -- you always have the final call |
 | **Pipeline Integrity** | Automated merge, dedup, status normalization, health checks |
+| **Web Dashboard** | Local web UI at `localhost:3000` — pipeline, tracker, reports, scanner, settings |
+| **Role Clustering (local LLM)** | Groups high-fit pending URLs into 6–10 semantic clusters (e.g. "Google YouTube partnerships", "Amazon Alexa AI PM") — click a cluster to filter the pipeline |
+| **JD Gap Analysis (local LLM)** | Per-URL: CV matches, skill gaps the JD asks for, and cover-letter "no formal X, but did Y" analogues |
+| **Near-duplicate Collapse (local LLM)** | Detects the same role posted at multiple URLs (Lever anchor ↔ canonical UUID, ATS mirrors) — conservative, zero false positives in sampled runs |
+| **Weekly Digest (local LLM)** | Monday-keyed markdown digest with deterministic counts + Qwen narrative + one concrete recommended action |
+| **Taste Inference (local LLM)** | Evidence-backed profile-edit proposals (Accept / Reject in Settings; auto-backup before apply) |
 
 ## Quick Start
 
@@ -177,6 +185,40 @@ go build -o career-dashboard .
 
 Features: 6 filter tabs, 4 sort modes, grouped/flat view, lazy-loaded previews, inline status changes.
 
+## Web Dashboard
+
+A local web UI at `http://localhost:3000` gives you the same data the TUI shows plus the local-LLM extensions below.
+
+```bash
+node web/server.mjs      # starts the server on :3000 (LAN-accessible)
+```
+
+First-run prints a generated password; LAN connections skip auth. Views: Dashboard, Pipeline, Tracker, Reports, Digest, Scanner, Settings.
+
+## Local LLM Extensions
+
+Five features built on a local Qwen3-Coder-25B endpoint (configurable — see each script's header). They run offline against your pipeline and pipe-fed data, no external API cost.
+
+| Feature | Script | Cache | UI |
+|---------|--------|-------|----|
+| Role clustering | `cluster-roles.mjs` | `data/clusters.json` | Dashboard chips → click to filter Pipeline |
+| JD gap analysis | `gap-analysis.mjs` | `data/gap-analysis.json` | Pipeline rows expand on click |
+| Near-duplicate collapse | `find-duplicates.mjs` | `data/dedupe.json` | `+N dup` chip + `↗ canonical` link on Pipeline rows |
+| Weekly digest | `weekly-digest.mjs` | `data/digest/YYYY-MM-DD.md` | "Digest" nav link |
+| Taste inference | `infer-taste.mjs` | `data/taste-proposal.md` | Settings page — Accept appends to `modes/_profile.md` (with backup) |
+
+Usage:
+
+```bash
+node cluster-roles.mjs          # 24h cache; --redo to recluster
+node gap-analysis.mjs           # per-URL cache; --redo to re-ask Qwen
+node find-duplicates.mjs        # per-pair cache; --redo to re-ask
+node weekly-digest.mjs          # keyed by Monday of current week; --week 2026-04-06 for a past week
+node infer-taste.mjs            # reads applications.md + pipeline; --redo to regenerate
+```
+
+All five are idempotent (re-running is safe) and parse Qwen JSON defensively (never throws on malformed output). Per-feature critique files live at `data/critique-task{N}.md`. Full rollout notes in `data/handoff-summary.md`.
+
 ## Project Structure
 
 ```
@@ -201,6 +243,12 @@ career-ops/
 │   ├── batch-prompt.md          # Self-contained worker prompt
 │   └── batch-runner.sh          # Orchestrator script
 ├── dashboard/                   # Go TUI pipeline viewer
+├── web/                         # Node web dashboard (server.mjs + public/)
+├── cluster-roles.mjs            # Local-LLM feature: role clustering
+├── gap-analysis.mjs             # Local-LLM feature: JD gap analysis
+├── find-duplicates.mjs          # Local-LLM feature: near-duplicate collapse
+├── weekly-digest.mjs            # Local-LLM feature: weekly digest
+├── infer-taste.mjs              # Local-LLM feature: taste inference
 ├── data/                        # Your tracking data (gitignored)
 ├── reports/                     # Evaluation reports (gitignored)
 ├── output/                      # Generated PDFs (gitignored)
