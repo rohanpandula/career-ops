@@ -353,6 +353,55 @@ route('GET', '/api/clusters', async () => {
   catch { return { clusters: [], generatedAt: null }; }
 });
 
+// Taste proposal — read the pending taste-inference proposal.
+route('GET', '/api/taste', async () => {
+  const p = join(ROOT, 'data/taste-proposal.md');
+  if (!existsSync(p)) return { exists: false };
+  const content = await readFile(p, 'utf-8');
+  const s = await stat(p);
+  return { exists: true, content, generatedAt: s.mtime?.toISOString?.() || null };
+});
+
+// Apply the proposal: append the proposed sections to modes/_profile.md.
+// We do NOT auto-merge — we APPEND a clearly-marked block at the end of
+// the profile so the user can prune/edit afterwards. Previous _profile.md
+// is archived to data/_profile.{ts}.bak before the write.
+route('POST', '/api/taste/accept', async () => {
+  const proposalPath = join(ROOT, 'data/taste-proposal.md');
+  const profilePath = join(ROOT, 'modes/_profile.md');
+  if (!existsSync(proposalPath)) throw { status: 404, message: 'no proposal to accept' };
+  return withLock('_profile.md', async () => {
+    const proposal = await readFile(proposalPath, 'utf-8');
+    const profile = await readFile(profilePath, 'utf-8');
+    // Strip header comment and trailing summary
+    const body = proposal
+      .replace(/^<!--[\s\S]*?-->\s*/, '')
+      .replace(/^# Taste inference proposal\s*/m, '')
+      .split(/^---$/m)[0]
+      .trim();
+    const ts = new Date().toISOString();
+    const block = `\n\n<!-- ===== inferred-taste appended ${ts} via /api/taste/accept ===== -->\n\n## Inferred taste (auto-added ${ts.slice(0, 10)})\n\n${body}\n\n<!-- ===== end inferred-taste ===== -->\n`;
+    // Backup
+    const bakPath = join(ROOT, `data/_profile.${ts.replace(/[:.]/g, '-')}.bak`);
+    await atomicWrite(bakPath, profile);
+    await atomicWrite(profilePath, profile + block);
+    // Move proposal aside
+    await atomicWrite(join(ROOT, `data/taste-proposal.${ts.replace(/[:.]/g, '-')}.applied.md`), proposal);
+    // Remove the live proposal file
+    const { unlink } = await import('fs/promises');
+    await unlink(proposalPath);
+    return { ok: true, backup: bakPath, appended_chars: block.length };
+  });
+});
+
+route('POST', '/api/taste/reject', async () => {
+  const proposalPath = join(ROOT, 'data/taste-proposal.md');
+  if (!existsSync(proposalPath)) return { ok: true, removed: false };
+  const { unlink } = await import('fs/promises');
+  await unlink(proposalPath);
+  return { ok: true, removed: true };
+});
+
 // Weekly digest — returns latest digest as { date, content }.
 route('GET', '/api/digest/latest', async () => {
   const dir = join(ROOT, 'data/digest');

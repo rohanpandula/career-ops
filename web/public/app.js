@@ -247,6 +247,45 @@ function bindEvents() {
     });
   }
 
+  // Settings: taste-proposal accept/reject
+  const tasteAccept = document.getElementById('taste-accept');
+  const tasteReject = document.getElementById('taste-reject');
+  const tasteStatus = document.getElementById('taste-status');
+  const setTasteStatus = (msg, cls = '') => {
+    if (!tasteStatus) return;
+    tasteStatus.textContent = msg;
+    tasteStatus.className = `taste-status ${cls}`;
+  };
+  if (tasteAccept) {
+    tasteAccept.addEventListener('click', async () => {
+      if (!confirm('Append the proposed taste edits to modes/_profile.md? A backup is created.')) return;
+      tasteAccept.disabled = true; tasteReject.disabled = true;
+      setTasteStatus('Applying...');
+      try {
+        const r = await api('/api/taste/accept', { method: 'POST' });
+        setTasteStatus(`✓ appended ${r.appended_chars} chars (backup: ${r.backup.split('/').pop()})`, 'saved');
+        setTimeout(() => render(), 1500);
+      } catch (e) {
+        setTasteStatus(`✕ ${e.message}`, 'error');
+        tasteAccept.disabled = false; tasteReject.disabled = false;
+      }
+    });
+  }
+  if (tasteReject) {
+    tasteReject.addEventListener('click', async () => {
+      if (!confirm('Delete the pending proposal? Run infer-taste.mjs again to regenerate.')) return;
+      tasteAccept.disabled = true; tasteReject.disabled = true;
+      try {
+        await api('/api/taste/reject', { method: 'POST' });
+        setTasteStatus('✓ rejected', 'saved');
+        setTimeout(() => render(), 800);
+      } catch (e) {
+        setTasteStatus(`✕ ${e.message}`, 'error');
+        tasteAccept.disabled = false; tasteReject.disabled = false;
+      }
+    });
+  }
+
   // Pipeline gap-analysis expand-on-click for rows that have data.
   document.querySelectorAll('#pipeline-table tbody tr.has-gap').forEach(tr => {
     tr.addEventListener('click', async (e) => {
@@ -1032,6 +1071,7 @@ async function renderReport(filename) {
 
 async function renderSettings() {
   const s = await api('/api/settings');
+  const taste = await api('/api/taste').catch(() => ({ exists: false }));
   const comp = s.profile?.compensation || {};
   const loc = s.profile?.location || {};
 
@@ -1071,6 +1111,19 @@ async function renderSettings() {
       </div>
       <span class="settings-status" id="settings-status"></span>
     </div>
+
+    ${taste.exists ? `
+    <div class="settings-section taste-proposal">
+      <div class="section-label">Pending taste-inference proposal</div>
+      <p class="settings-help">Inferred from your application history. Review carefully — accepting will append the proposed sections to <code>modes/_profile.md</code> (a backup is created automatically).</p>
+      <div class="taste-proposal-content report-content">${markdownToHtml(taste.content)}</div>
+      <div class="taste-actions">
+        <button class="btn btn-accent" id="taste-accept" type="button">Accept and append to _profile.md</button>
+        <button class="btn" id="taste-reject" type="button">Reject (delete proposal)</button>
+        <span class="taste-status" id="taste-status"></span>
+      </div>
+    </div>
+    ` : ''}
 
     <div class="settings-section">
       <div class="section-label">Target keywords</div>

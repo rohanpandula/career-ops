@@ -2213,3 +2213,25 @@ body, .card, .panel, #nav, button, input, select, textarea {
   background: transparent;
 }
 .dup-secondary:hover { color: var(--accent); border-color: var(--accent); }
+
+/* --- Taste proposal panel --- */
+.taste-proposal {
+  border: 1px solid var(--accent);
+  background: var(--accent-muted, rgba(0,0,0,0.03));
+  border-radius: 8px;
+  padding: var(--space-md);
+}
+.taste-proposal-content {
+  margin: var(--space-sm) 0;
+  max-height: 480px;
+  overflow-y: auto;
+  padding: var(--space-md);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.84rem;
+}
+.taste-actions { display: flex; gap: var(--space-sm); align-items: center; flex-wrap: wrap; }
+.taste-status { font-size: 0.78rem; color: var(--text-muted); }
+.taste-status.saved { color: var(--green); }
+.taste-status.error { color: var(--red); }
