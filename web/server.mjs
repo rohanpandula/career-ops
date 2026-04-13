@@ -353,6 +353,13 @@ route('GET', '/api/clusters', async () => {
   catch { return { clusters: [], generatedAt: null }; }
 });
 
+// Duplicates — confident same-role groups (canonical + duplicates).
+route('GET', '/api/duplicates', async () => {
+  const p = join(ROOT, 'data/dedupe.json');
+  try { return JSON.parse(await readFile(p, 'utf-8')); }
+  catch { return []; }
+});
+
 // Gap analysis — full cache and per-hash lookup.
 route('GET', '/api/gap-analysis', async () => {
   const p = join(ROOT, 'data/gap-analysis.json');

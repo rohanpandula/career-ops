@@ -592,13 +592,23 @@ function renderTimeSeriesCharts(ts) {
 // --- Pipeline ---
 
 async function renderPipeline() {
-  const [items, scanHistory, liveness, fitScores, gapMap] = await Promise.all([
+  const [items, scanHistory, liveness, fitScores, gapMap, dupGroups] = await Promise.all([
     api('/api/pipeline'),
     api('/api/scan-history').catch(() => []),
     api('/api/liveness').catch(() => ({})),
     api('/api/fit-scores').catch(() => ({})),
     api('/api/gap-analysis').catch(() => ({})),
+    api('/api/duplicates').catch(() => []),
   ]);
+
+  // Build url → { canonical, dupCount } so each row knows its dup state.
+  const dupInfo = new Map();
+  for (const g of dupGroups || []) {
+    dupInfo.set(g.canonical, { isCanonical: true, canonical: g.canonical, dupCount: g.duplicates.length });
+    for (const d of g.duplicates) {
+      dupInfo.set(d, { isCanonical: false, canonical: g.canonical, dupCount: g.duplicates.length });
+    }
+  }
   const pending = items.filter(i => !i.checked);
 
   // url → {first_seen, portal} from scan-history.tsv (fallback for never-verified URLs)
@@ -828,11 +838,17 @@ async function renderPipeline() {
             const gap = gapMap[item.url];
             const hasGap = !!(gap && (gap.matches?.length || gap.gaps?.length));
             const gapBadge = hasGap ? `<span class="gap-toggle" data-tooltip="Click to view CV gap analysis">▾</span>` : '';
+            const dup = dupInfo.get(item.url);
+            const dupBadge = dup
+              ? (dup.isCanonical
+                  ? `<span class="dup-chip dup-canonical" data-tooltip="${dup.dupCount} other URL${dup.dupCount > 1 ? 's' : ''} point to this same role">+${dup.dupCount} dup</span>`
+                  : `<a href="${escapeAttr(dup.canonical)}" target="_blank" rel="noopener" class="dup-chip dup-secondary" data-tooltip="Duplicate — canonical URL: ${escapeAttr(dup.canonical)}">↗ canonical</a>`)
+              : '';
             return `<tr class="${deadCls}${hasGap ? ' has-gap' : ''}" data-company="${item.company}" data-role="${item.role}" data-url="${escapeAttr(item.url)}" data-url-hash="${gap?.hash || ''}" data-live="${liveState}" data-live-rank="${liveSortRank}" data-last-seen-ts="${sortTs}" data-location="${escapeAttr(location)}" data-cities="${escapeAttr(cachedCities)}" data-salary="${escapeAttr(salary)}" data-fit="${fitNum ?? ''}">
               <td data-sort-value="${liveSortRank}"><button class="live-dot-btn" data-verify-url="${escapeAttr(item.url)}" data-tooltip="${escapeAttr(dotTip)}"><span class="${dotClass}"></span></button></td>
               <td class="first-seen" data-sort-value="${sortTs}" data-tooltip="${escapeAttr(cellTip)}">${cellText}</td>
               <td>${item.company}${gapBadge}</td>
-              <td>${item.role}</td>
+              <td>${item.role}${dupBadge}</td>
               <td class="cell-fit" data-sort-value="${fitNum ?? -1}" data-tooltip="${escapeAttr(fitTip)}">${fitCell}</td>
               <td class="cell-location" data-sort-value="${escapeAttr(location.toLowerCase())}" data-tooltip="${escapeAttr(locTip)}">${location || '—'}</td>
               <td class="cell-salary" data-sort-value="${escapeAttr(salary.toLowerCase())}" data-tooltip="${escapeAttr(salTip)}">${salary || '—'}</td>

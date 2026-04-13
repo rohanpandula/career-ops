@@ -2189,3 +2189,27 @@ body, .card, .panel, #nav, button, input, select, textarea {
 .gap-explain li { margin-bottom: 4px; }
 .gap-meta { display: inline-block; margin-top: 6px; font-size: 0.7rem; color: var(--text-muted); }
 .gap-error { color: var(--red); }
+
+/* --- Duplicate chip --- */
+.dup-chip {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  font-size: 0.66rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid;
+  text-decoration: none;
+  vertical-align: middle;
+}
+.dup-canonical {
+  color: #1f6feb;
+  border-color: rgba(31, 111, 235, 0.4);
+  background: rgba(31, 111, 235, 0.08);
+}
+.dup-secondary {
+  color: var(--text-muted);
+  border-color: var(--border);
+  background: transparent;
+}
+.dup-secondary:hover { color: var(--accent); border-color: var(--accent); }
