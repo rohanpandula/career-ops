@@ -1,0 +1,227 @@
+{
+  "generatedAt": "2026-04-13T06:42:08.221Z",
+  "generatedFor": 112,
+  "minScore": 3.5,
+  "clusters": [
+    {
+      "id": "c1-google-ai-cloud-infrastructure-pm",
+      "name": "Google AI + Cloud Infrastructure PM",
+      "count": 23,
+      "urls": [
+        "https://www.google.com/about/careers/applications/jobs/results/82261531122639558-group-product-manager-agentic-search/",
+        "https://www.google.com/about/careers/applications/jobs/results/118613502955791046-product-manager-google-workspace-ai-foundations-ai-surfaces/",
+        "https://www.google.com/about/careers/applications/jobs/results/126877440940090054-product-manager-ii-workspace-context-gen-ai-foundations/",
+        "https://www.google.com/about/careers/applications/jobs/results/100701764902101702-senior-product-manager-cloud-run-and-service-orchestration/",
+        "https://www.google.com/about/careers/applications/jobs/results/77814124699886278-senior-product-manager-service-networking/",
+        "https://www.google.com/about/careers/applications/jobs/results/128541049277555398-senior-product-manager-silicon-audio-and-speech/",
+        "https://www.google.com/about/careers/applications/jobs/results/137360506921853638-senior-product-manager-agent-and-ml-infrastructure/",
+        "https://www.google.com/about/careers/applications/jobs/results/137779489571513030-product-manager-ai-foundations-data/",
+        "https://www.google.com/about/careers/applications/jobs/results/125969643767505606-group-product-manager-personalized-ai/",
+        "https://www.google.com/about/careers/applications/jobs/results/136358894778622662-group-product-manager-search-ai-security/",
+        "https://www.google.com/about/careers/applications/jobs/results/122903374809965254-senior-product-manager-aci-infrastructure/",
+        "https://www.google.com/about/careers/applications/jobs/results/96854696123081414-senior-product-manager-google-distributed-cloud-hardware/",
+        "https://www.google.com/about/careers/applications/jobs/results/91744939171291846-senior-product-manager-google-compute/",
+        "https://www.google.com/about/careers/applications/jobs/results/98346273840472774-product-manager-ondevice-ai-for-pixel-watch/",
+        "https://www.google.com/about/careers/applications/jobs/results/143225344894083782-senior-product-manager-aiml-google-global-network/",
+        "https://www.google.com/about/careers/applications/jobs/results/135713898064945862-senior-product-manager-ondevice-ai/",
+        "https://www.google.com/about/careers/applications/jobs/results/79373228429976262-product-manager-applied-ml-and-agent-systems/",
+        "https://www.google.com/about/careers/applications/jobs/results/104685601009083078-product-manager-ii-ai-agent-api-platform/",
+        "https://www.google.com/about/careers/applications/jobs/results/94231076695614150-product-manager-i-translate-and-transcribe-xr-apps/",
+        "https://www.google.com/about/careers/applications/jobs/results/81917723285562054-product-manager-ii-camera-and-photos-xr-apps/",
+        "https://www.google.com/about/careers/applications/jobs/results/95843957174346438-product-manager-i-android-auto/",
+        "https://www.google.com/about/careers/applications/jobs/results/117910353995539142-product-manager-ii-platforms-and-devices/",
+        "https://www.google.com/about/careers/applications/jobs/results/96788715224867526-product-marketing-manager-platforms-and-devices-marketing/"
+      ],
+      "sampleTitles": [
+        "Google — Group Product Manager, Agentic Search",
+        "Google — Product Manager, Google Workspace AI Foundations, AI Surfaces",
+        "Google — Product Manager II, Workspace Context, Gen AI Foundations"
+      ]
+    },
+    {
+      "id": "c2-google-generative-ai-cloud-pm",
+      "name": "Google Generative AI + Cloud PM",
+      "count": 16,
+      "urls": [
+        "https://www.google.com/about/careers/applications/jobs/results/127191257020539590-senior-outbound-product-manager/",
+        "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud",
+        "https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/",
+        "https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/",
+        "https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/",
+        "https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/",
+        "https://www.google.com/about/careers/applications/jobs/results/129567769531163334-lead-group-product-manager-databases-amp-analytics-google-cloud/",
+        "https://www.google.com/about/careers/applications/jobs/results/135959087547327174-product-manager-google-distributed-cloud-ai-compute-infrastructure/",
+        "https://www.google.com/about/careers/applications/jobs/results/105839338209583814-product-marketing-manager-google-cloud-developer-marketing",
+        "https://www.google.com/about/careers/applications/jobs/results/142029093422932678-product-manager-i-platforms-and-devices/",
+        "https://www.google.com/about/careers/applications/jobs/results/124488525100786374-senior-outbound-product-manager-generative-ai/",
+        "https://www.google.com/about/careers/applications/jobs/results/102551721133122246-product-manager-enterprise-trusted-identity/",
+        "https://www.google.com/about/careers/applications/jobs/results/94518929698759366-product-manager-pixel-wearables/",
+        "https://www.google.com/about/careers/applications/jobs/results/128932750294950598-product-manager-lead-google-distributed-cloud-hardware/",
+        "https://www.google.com/about/careers/applications/jobs/results/81685829411316422-senior-product-manager-ai-infra-gpu/",
+        "https://www.google.com/about/careers/applications/jobs/results/107993315848135366-product-manager-google-distributed-cloud-solutions/"
+      ],
+      "sampleTitles": [
+        "Google — Senior Outbound Product Manager, Generative AI",
+        "Google — Product Manager II, Generative AI, Google Cloud",
+        "Google — Group Product Manager, Generative AI, Google Cloud"
+      ]
+    },
+    {
+      "id": "c3-google-youtube-ai-product-growth",
+      "name": "Google YouTube + AI product growth",
+      "count": 15,
+      "urls": [
+        "https://www.google.com/about/careers/applications/jobs/results/141442181846966982-strategic-partnerships-development-manager-gaming-publishers-youtube/",
+        "https://www.google.com/about/careers/applications/jobs/results/72687430544564934-strategic-partner-manager-creator-and-talent-representation-youtube/",
+        "https://www.google.com/about/careers/applications/jobs/results/96642700832318150-strategic-partner-manager-youtube-music-and-premium/",
+        "https://www.google.com/about/careers/applications/jobs/results/130730846943355590-product-manager-i-youtube-growth-platform/",
+        "https://www.google.com/about/careers/applications/jobs/results/126346621637010118-senior-product-manager-youtube-main-app/",
+        "https://www.google.com/about/careers/applications/jobs/results/90667181552870086-product-manager-ii-youtube-shorts-on-tv/",
+        "https://www.google.com/about/careers/applications/jobs/results/121095889363051206-senior-product-manager-youtube-growth-platform/",
+        "https://www.google.com/about/careers/applications/jobs/results/84903803593073350-principal-product-manager-foundational-algorithms-aligned-ai/",
+        "https://www.google.com/about/careers/applications/jobs/results/122962078422966982-senior-product-manager-google-image-search-quality/",
+        "https://www.google.com/about/careers/applications/jobs/results/79042466019189446-business-development-lead-genai/",
+        "https://www.google.com/about/careers/applications/jobs/results/141437090163237574-principal-product-manager-innovation-and-ai-transformation-ai2/",
+        "https://www.google.com/about/careers/applications/jobs/results/94470248391942854-product-manager-ai-support-tools-google-fi/",
+        "https://www.google.com/about/careers/applications/jobs/results/138689101367780038-product-manager-i-xr-apps/",
+        "https://www.google.com/about/careers/applications/jobs/results/129756756950557382-senior-product-manager-google-home-platform-solutions/",
+        "https://www.google.com/about/careers/applications/jobs/results/89215169074209478-senior-product-manager-xr-accessibility/"
+      ],
+      "sampleTitles": [
+        "Google — Strategic Partnerships Development Manager, Gaming Publishers, YouTube",
+        "Google — Strategic Partner Manager, Creator and Talent Representation, YouTube",
+        "Google — Strategic Partner Manager, YouTube Music and Premium"
+      ]
+    },
+    {
+      "id": "c4-amazon-aws-ai-ml-product-management",
+      "name": "Amazon AWS AI/ML Product Management",
+      "count": 13,
+      "urls": [
+        "https://www.amazon.jobs/en/jobs/3180280/sr-technical-product-marketing-manager-ai-ml-product-marketing",
+        "https://www.amazon.jobs/en/jobs/3161093/principal-product-manager-kernels-ai-ml-annapurna-labs",
+        "https://www.amazon.jobs/en/jobs/10383388/principal-product-manager-tech-ai-productivity-amazon-games-genai-strategic-initiatives",
+        "https://www.amazon.jobs/en/jobs/10373811/senior-product-manager-technical-aws-boost",
+        "https://www.amazon.jobs/en/jobs/10379752/senior-product-manager-tech-aws-tech-and-finance",
+        "https://www.amazon.jobs/en/jobs/3205967/principal-technical-program-manager-aws-boost",
+        "https://www.amazon.jobs/en/jobs/10376220/sr-product-manager-technical-aws-startups",
+        "https://www.amazon.jobs/en/jobs/3170061/sr-product-manager-technical-aws-analytics",
+        "https://www.amazon.jobs/en/jobs/3204810/principal-product-manager-technical-aws-insights-and-optimizations",
+        "https://www.amazon.jobs/en/jobs/10381895/principal-product-manager-technical-aws-healthcare-ai",
+        "https://www.amazon.jobs/en/search?base_query=AI+product+manager&country[]=USA&country[]=US#product-marketing-manager-tech-aws-ai-marketing",
+        "https://www.amazon.jobs/en/search?base_query=AI+product+manager&country[]=USA&country[]=US#sr-product-manager-aws-gdsp-a-i",
+        "https://www.amazon.jobs/en/jobs/3195019/ww-partner-selling-gtm-leader-aws-partner-network"
+      ],
+      "sampleTitles": [
+        "Amazon — Sr Technical Product Marketing Manager, AI/ML Product Marketing",
+        "Amazon — Principal Product Manager - Kernels, AI/ML, Annapurna Labs",
+        "Amazon — Principal Product Manager-Tech, AI Productivity, Amazon Games GenAI & Strategic Initiatives"
+      ]
+    },
+    {
+      "id": "c5-ai-partnerships-and-solutions-architects",
+      "name": "AI partnerships and solutions architects",
+      "count": 13,
+      "urls": [
+        "https://databricks.com/company/careers/open-positions/job?gh_jid=8341837002",
+        "https://databricks.com/company/careers/open-positions/job?gh_jid=8486738002",
+        "https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/Senior-Solutions-Architect--Global-Partner-Team_JR1998420",
+        "https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/Senior-Solutions-Architect--Generative-AI-Specialist_JR2015644",
+        "https://jobs.ashbyhq.com/langchain/27af5f96-b287-4bcc-8679-f96686dc7c8d",
+        "https://jobs.ashbyhq.com/langchain/c0706500-4575-4150-88a7-e189ecb96d60",
+        "https://openai.com/careers/product-marketing-manager-platform-remote-us/",
+        "https://job-boards.greenhouse.io/nex/jobs/5157094008",
+        "https://jobs.lever.co/CordTechnologies/714b6985-69a0-414b-b766-ef6da0a3564e",
+        "https://jobs.ashbyhq.com/pinecone/4433b308-1ff4-4b5f-9184-810e5d9844f6",
+        "https://job-boards.greenhouse.io/scaleai/jobs/4670064005",
+        "https://jobs.ashbyhq.com/yotta/343ebde8-b8bc-4e98-a065-8fe8d1d5c30a",
+        "https://jobs.ashbyhq.com/gridcare/28285770-273f-463b-85e3-ecb110f7f95f"
+      ],
+      "sampleTitles": [
+        "Databricks — AI GTM Leader",
+        "Databricks — Data Platform Solutions Architect (Professional Services)",
+        "NVIDIA — Senior Solutions Architect, Global Partner Team"
+      ]
+    },
+    {
+      "id": "c6-amazon-alexa-ai-creator-products-pm",
+      "name": "Amazon Alexa AI + Creator products PM",
+      "count": 12,
+      "urls": [
+        "https://www.amazon.jobs/en/jobs/3189771/ai-principal-product-manager-technical-alexa-responsible-ai",
+        "https://www.amazon.jobs/en/jobs/3169027/principal-product-manager-technical-ai-kids",
+        "https://www.amazon.jobs/en/jobs/10379669/senior-product-manager-technical-alexa-connections",
+        "https://www.amazon.jobs/en/jobs/10381963/principal-product-manager-technical-alexa-connections",
+        "https://www.amazon.jobs/en/jobs/10370992/mktg-tech-ai-product-manager-prime-video-mktg-ai-automation-tooling",
+        "https://www.amazon.jobs/en/jobs/3153366/senior-product-manager-creator-products",
+        "https://www.amazon.jobs/en/jobs/10389175/sr-product-manager-technical-amazon-music-growth-and-partnerships",
+        "https://www.amazon.jobs/en/jobs/10371387/solutions-architect-iii-amz9674190",
+        "https://www.amazon.jobs/en/jobs/10371504/solutions-architect-iii-amz10038547",
+        "https://www.amazon.jobs/en/jobs/3201490/sr-ai-specialist-solutions-architect",
+        "https://www.amazon.jobs/en/jobs/10386653/principal-product-manager-creator-products",
+        "https://www.amazon.jobs/en/search?base_query=AI+product+manager&country[]=USA&country[]=US#-5-years-of-product-or-program-management-product-marketing-"
+      ],
+      "sampleTitles": [
+        "Amazon — AI Principal Product Manager-Technical, Alexa Responsible AI",
+        "Amazon — Principal Product Manager, Technical AI, Kids+ ",
+        "Amazon — Senior Product Manager - Technical, Alexa Connections"
+      ]
+    },
+    {
+      "id": "c7-mistral-ai-studio-forge-product-management",
+      "name": "Mistral AI Studio & Forge product management",
+      "count": 8,
+      "urls": [
+        "https://jobs.lever.co/mistral#business-development-manager-tech-partners",
+        "https://jobs.lever.co/mistral#ai-developer-advocate",
+        "https://jobs.lever.co/mistral#product-marketing-manager-solutions",
+        "https://jobs.lever.co/mistral#senior-product-marketing-manager-studio",
+        "https://jobs.lever.co/mistral#product-manager-ai-studio",
+        "https://jobs.lever.co/mistral#product-manager-context-search",
+        "https://jobs.lever.co/mistral#product-manager-forge",
+        "https://jobs.lever.co/mistral#product-manager-mistral-vibe"
+      ],
+      "sampleTitles": [
+        "Mistral AI — Business Development Manager - Tech Partners",
+        "Mistral AI — AI Developer Advocate",
+        "Mistral AI — Product Marketing Manager, Solutions"
+      ]
+    },
+    {
+      "id": "c8-snowflake-ai-applied-ml-pm",
+      "name": "Snowflake AI applied ML PM",
+      "count": 7,
+      "urls": [
+        "https://careers.snowflake.com/us/en/job/SNCOUS66B865D1F43D4F38B332581D5E9388BEEXTERNALENUS1DD156E8B8B24A9EA7B37A0D2C164156/Senior-Product-Manager-Applied-AI",
+        "https://careers.snowflake.com/us/en/job/SNCOUS039719E811154DDF880F59905436022FEXTERNALENUSF6F6CAEE8D9C46699DC8DB670B383F15/Senior-Product-Manager-Applied-AI",
+        "https://careers.snowflake.com/us/en/job/SNCOUS37C4B83D1F5349E8806093F7E17C1A74EXTERNALENUSAD54C9D711FF4BB3A6AFD4133FAD0AE4/AI-ML-Business-Development-Lead-Product-GTM",
+        "https://careers.snowflake.com/us/en/job/7262994002/Technology-Partner-Manager-AI-ML",
+        "https://careers.snowflake.com/us/en/job/SNCOUS81D32A04C5CD47DBBB9CB09669741DC2EXTERNALENUS3398B642221642998BF28B1E04D39EAA/Solutions-Architect-AI-ML",
+        "https://careers.snowflake.com/us/en/job/7276553002?gh_jid=7276553002",
+        "https://careers.snowflake.com/us/en/job/7074907002/Senior-Product-Marketing-Manager-AI-ML"
+      ],
+      "sampleTitles": [
+        "Snowflake — Staff Product Manager, Applied AI",
+        "Snowflake — Senior Product Manager, Applied AI",
+        "Snowflake — AI/ML Business Development Lead - Product & GTM"
+      ]
+    },
+    {
+      "id": "c9-anthropic-claude-product-management",
+      "name": "Anthropic Claude product management",
+      "count": 5,
+      "urls": [
+        "https://job-boards.greenhouse.io/anthropic/jobs/5181852008",
+        "https://job-boards.greenhouse.io/anthropic/jobs/5183006008",
+        "https://job-boards.greenhouse.io/anthropic/jobs/5123082008",
+        "https://job-boards.greenhouse.io/anthropic/jobs/5127559008",
+        "https://job-boards.greenhouse.io/anthropic/jobs/4985920008"
+      ],
+      "sampleTitles": [
+        "Anthropic — Product Manager, API Growth",
+        "Anthropic — Senior Product Manager, Education Labs",
+        "Anthropic — Product Management, Research"
+      ]
+    }
+  ]
+}
