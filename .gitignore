@@ -37,3 +37,8 @@ bun.lock
 .claude/memory/
 career-dashboard
 package-lock.json
+
+# career-ops web auth secrets
+web/.password
+web/.session-secret
+web/.liveness.json

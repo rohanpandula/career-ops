@@ -372,5 +372,2743 @@
     "title": "Product Manager, Data Engine",
     "company": "Scale AI",
     "analyzedAt": "2026-04-13T06:54:00.112Z"
+  },
+  "https://job-boards.greenhouse.io/anthropic/jobs/5181852008": {
+    "matches": [
+      "Claude Platform",
+      "API growth metrics",
+      "developer platform",
+      "API product",
+      "onboarding",
+      "console",
+      "docs",
+      "billing",
+      "self-serve upgrade paths",
+      "A/B testing",
+      "funnel optimization",
+      "AI safety"
+    ],
+    "gaps": [
+      "developer SDKs",
+      "Stripe payments",
+      "BigQuery",
+      "Kubernetes",
+      "RAG pipelines",
+      "AR/VR hardware"
+    ],
+    "must_explain": [
+      "no formal developer SDKs, but built and scaled a commerce platform ecosystem from 0-to-1",
+      "no formal Stripe payments, but built and scaled a commerce platform ecosystem with payments integration",
+      "no formal BigQuery, but built a multi-service AI platform with biomarker analytics over 5.6M entries",
+      "no formal Kubernetes, but engineered large-scale cloud infrastructure with 400+ VMs on AWS"
+    ],
+    "error": null,
+    "hash": "a2ddc6d757e7",
+    "title": "Product Manager, API Growth",
+    "company": "Anthropic",
+    "analyzedAt": "2026-04-13T06:54:08.157Z"
+  },
+  "https://job-boards.greenhouse.io/anthropic/jobs/5183006008": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "product discovery",
+      "generative AI",
+      "AI platform infrastructure",
+      "RAG pipeline",
+      "multi-service AI platform",
+      "cloud infrastructure",
+      "API-first architectures",
+      "AI research partnerships",
+      "technical roadmaps"
+    ],
+    "gaps": [
+      "Claude",
+      "education labs",
+      "AI-native learning products",
+      "frontier AI",
+      "adaptive systems",
+      "in-product experiences",
+      "capability previews",
+      "user research",
+      "learning metrics",
+      "product research"
+    ],
+    "must_explain": [
+      "no formal education labs experience, but led AI product development for XR platforms",
+      "no formal AI-native learning product experience, but built agentic AI experiences for commerce and content discovery",
+      "no formal frontier AI education experience, but worked with research teams on generative AI capabilities",
+      "no formal user research experience, but conducted real-world testing of AI systems for product discovery"
+    ],
+    "error": null,
+    "hash": "1104e2fa7021",
+    "title": "Senior Product Manager, Education Labs",
+    "company": "Anthropic",
+    "analyzedAt": "2026-04-13T06:54:16.943Z"
+  },
+  "https://jobs.lever.co/mistral#business-development-manager-tech-partners": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "AI-powered commerce",
+      "product discovery",
+      "generative AI",
+      "XR platforms",
+      "responsible AI",
+      "third-party engagements"
+    ],
+    "gaps": [
+      "tech partner management",
+      "enterprise sales",
+      "account management",
+      "commercial partnerships"
+    ],
+    "must_explain": [
+      "no formal business development manager role, but led agentic integrations with commercial partners like Amazon and Mercedes-Benz",
+      "no formal enterprise sales leadership, but managed ~$20M annual budget for agentic AI products",
+      "no formal account management, but delivered keynote at Unity Unite 2025 on generative AI integration",
+      "no formal tech partner manager role, but worked closely with Engineering and Product to define technical requirements for agentic infrastructure"
+    ],
+    "error": null,
+    "hash": "f0daa44fff10",
+    "title": "Business Development Manager - Tech Partners",
+    "company": "Mistral AI",
+    "analyzedAt": "2026-04-13T06:54:24.636Z"
+  },
+  "https://jobs.lever.co/mistral#ai-developer-advocate": {
+    "matches": [
+      "AI platform",
+      "LLMOps",
+      "agentic AI",
+      "generative AI",
+      "RAG pipelines",
+      "GCP",
+      "AWS",
+      "API-first",
+      "cloud infrastructure",
+      "developer SDKs"
+    ],
+    "gaps": [
+      "developer advocate",
+      "AI developer relations",
+      "technical marketing",
+      "content creation",
+      "community management"
+    ],
+    "must_explain": [
+      "no formal developer advocate role, but led AI platform adoption at Meta",
+      "no formal AI developer relations, but architected multi-service AI pipelines at Meta",
+      "no formal technical marketing, but delivered keynote at Unity Unite 2025",
+      "no formal content creation, but built CollectiveX Health AI platform"
+    ],
+    "error": null,
+    "hash": "d8c8aec607f8",
+    "title": "AI Developer Advocate",
+    "company": "Mistral AI",
+    "analyzedAt": "2026-04-13T06:54:30.595Z"
+  },
+  "https://jobs.lever.co/mistral#product-marketing-manager-solutions": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "API-first architectures",
+      "GCP"
+    ],
+    "gaps": [
+      "product marketing",
+      "solutions",
+      "enterprise sales",
+      "partner management"
+    ],
+    "must_explain": [
+      "no formal product marketing role, but led agentic AI product development at Meta",
+      "no formal solutions marketing, but architected multi-service pipelines at Meta",
+      "no formal enterprise sales, but managed agentic integrations with commercial partners at Meta",
+      "no formal partner management, but collaborated with Engineering, Operations, and Commercial teams at Meta"
+    ],
+    "error": null,
+    "hash": "e6560c84f42f",
+    "title": "Product Marketing Manager, Solutions",
+    "company": "Mistral AI",
+    "analyzedAt": "2026-04-13T06:54:36.931Z"
+  },
+  "https://jobs.lever.co/mistral#senior-product-marketing-manager-studio": {
+    "matches": [],
+    "gaps": [],
+    "must_explain": [],
+    "error": "Insufficient job description details to assess role fit",
+    "hash": "6a423dbd9a8f",
+    "title": "Senior Product Marketing Manager - Studio",
+    "company": "Mistral AI",
+    "analyzedAt": "2026-04-13T06:54:39.596Z"
+  },
+  "https://jobs.lever.co/mistral#product-manager-ai-studio": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "AI-powered commerce",
+      "product discovery",
+      "multi-service pipelines",
+      "API architectures",
+      "data pipelines",
+      "GDPR-compliant infrastructure",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "AI Studio",
+      "Mistral AI",
+      "enterprise sales",
+      "partner integrations"
+    ],
+    "must_explain": [
+      "no formal AI Studio experience, but led agentic AI product development at Meta",
+      "no formal Mistral AI role, but worked with LLMs and AI platforms at Meta",
+      "no formal enterprise sales experience, but managed commercial partnerships at Meta",
+      "no formal partner integrations experience, but worked with Amazon, Mercedes-Benz, and consumer brands at Meta"
+    ],
+    "error": null,
+    "hash": "60bda8a7dc13",
+    "title": "Product Manager, AI Studio",
+    "company": "Mistral AI",
+    "analyzedAt": "2026-04-13T06:54:47.220Z"
+  },
+  "https://jobs.lever.co/mistral#product-manager-context-search": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "API architectures",
+      "data pipelines",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "context & search",
+      "product discovery",
+      "AI-powered commerce",
+      "XR platforms"
+    ],
+    "must_explain": [
+      "no formal product manager role, but led exploration and development of agentic AI experiences at Meta",
+      "no formal context & search focus, but worked on RAG pipelines and AI-powered discovery systems",
+      "no formal AI commerce experience, but built commerce platform ecosystem from 0-to-1",
+      "no formal XR platform experience, but delivered keynote on generative AI integration for XR platforms"
+    ],
+    "error": null,
+    "hash": "bf55494ad43b",
+    "title": "Product Manager, Context & Search",
+    "company": "Mistral AI",
+    "analyzedAt": "2026-04-13T06:54:54.603Z"
+  },
+  "https://jobs.lever.co/mistral#product-manager-mistral-vibe": {
+    "matches": [],
+    "gaps": [
+      "Mistral Vibe",
+      "AI product",
+      "commerce platform"
+    ],
+    "must_explain": [
+      "no formal Product Manager role, but did lead exploration and development of agentic AI experiences at Meta",
+      "no formal Mistral Vibe role, but worked on generative AI integration for XR platforms at Meta",
+      "no formal AI product role, but architected multi-service pipelines with sub-second inference latency at Meta",
+      "no formal commerce platform role, but built and scaled a commerce platform ecosystem from 0-to-1 at Meta"
+    ],
+    "error": null,
+    "hash": "7d5e51f1e87b",
+    "title": "Product Manager, Mistral Vibe",
+    "company": "Mistral AI",
+    "analyzedAt": "2026-04-13T06:54:59.920Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/127191257020539590-senior-outbound-product-manager/": {
+    "matches": [
+      "Generative AI",
+      "Cloud AI portfolio",
+      "Vertex AI",
+      "Gemini Enterprise",
+      "Google Search",
+      "ML/GenAI Operations",
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "AI platform infrastructure"
+    ],
+    "gaps": [
+      "Google Cloud",
+      "Vertex AI platform",
+      "Gemini Enterprise",
+      "Google Search for enterprises",
+      "Cloud AI Go-to-Market",
+      "programmatic campaigns",
+      "feedback loops",
+      "GTM activation",
+      "ecosystem partnerships"
+    ],
+    "must_explain": [
+      "no formal Google Cloud experience, but worked at Meta on AI platform infrastructure",
+      "no formal Vertex AI experience, but built CollectiveX Health AI platform on GCP",
+      "no formal Gemini Enterprise experience, but led agentic AI product development at Meta",
+      "no formal Cloud AI Go-to-Market experience, but managed cross-functional teams at Meta"
+    ],
+    "error": null,
+    "hash": "d2e26d16bd72",
+    "title": "Senior Outbound Product Manager, Generative AI",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:55:07.979Z"
+  },
+  "https://jobs.lever.co/mistral#product-manager-forge": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "product discovery",
+      "multi-service pipelines",
+      "GCP",
+      "AWS",
+      "API-first architectures",
+      "generative AI",
+      "XR platforms"
+    ],
+    "gaps": [
+      "Forge",
+      "Mistral AI",
+      "enterprise sales",
+      "AI for citizens"
+    ],
+    "must_explain": [
+      "no formal product manager role, but led exploration and development of agentic AI experiences at Meta",
+      "no formal enterprise account executive role, but worked with commercial partners like Amazon and Mercedes-Benz",
+      "no formal AI for citizens role, but built CollectiveX Health for women's health research",
+      "no formal AI platform engineering role, but architected multi-service pipelines with sub-second inference latency"
+    ],
+    "error": null,
+    "hash": "79685f7ddbe7",
+    "title": "Product Manager, Forge",
+    "company": "Mistral AI",
+    "analyzedAt": "2026-04-13T06:55:15.256Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud": {
+    "matches": [
+      "Generative AI",
+      "Large Language Models",
+      "agentic AI experiences",
+      "AI-powered commerce",
+      "product discovery",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "cloud infrastructure",
+      "API-first architectures",
+      "multi-service pipelines",
+      "GCP"
+    ],
+    "gaps": [
+      "Google Cloud Platform",
+      "technical presentations",
+      "software development",
+      "cross-functional teams"
+    ],
+    "must_explain": [
+      "no formal Google Cloud Platform experience, but worked with GCP for CollectiveX Health platform",
+      "no formal technical presentation experience, but delivered keynote at Unity Unite 2025",
+      "no formal software engineering experience, but independently architected and built large-scale cloud systems",
+      "no formal cross-functional team experience, but worked with Engineering, Product, Operations, and Commercial teams"
+    ],
+    "error": null,
+    "hash": "25fc5703d73e",
+    "title": "Product Manager II, Generative AI, Google Cloud",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:55:22.914Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/105839338209583814-product-marketing-manager-google-cloud-developer-marketing": {
+    "matches": [
+      "developer marketing",
+      "technical product",
+      "developer ecosystem",
+      "AI/ML",
+      "generative AI",
+      "agentic systems",
+      "LLM-powered applications",
+      "API-first architectures",
+      "cloud infrastructure",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "Google Cloud",
+      "developer relations",
+      "technical advocacy",
+      "software engineering",
+      "product narratives",
+      "marketing strategy",
+      "content creation",
+      "campaign execution",
+      "event management",
+      "DevRel tools"
+    ],
+    "must_explain": [
+      "no formal Google Cloud experience, but worked with GCP and AWS at scale",
+      "no formal developer relations or technical advocacy role, but led cross-functional AI product development with engineering teams",
+      "no formal software engineering experience, but independently architected and built large-scale AI platforms",
+      "no formal product marketing or technical marketing experience, but led AI product development and prototyping for commercial partners"
+    ],
+    "error": null,
+    "hash": "272d0d0c8dcb",
+    "title": "Product Marketing Manager, Google Cloud, Developer Marketing",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:55:31.588Z"
+  },
+  "https://job-boards.greenhouse.io/anthropic/jobs/5123082008": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "product discovery",
+      "RAG pipeline",
+      "multi-service pipelines",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "Anthropic",
+      "steerable AI",
+      "interpretable AI",
+      "safe AI systems",
+      "frontier AI technology",
+      "model capabilities",
+      "research team",
+      "productization of research"
+    ],
+    "must_explain": [
+      "no formal product management at Anthropic, but led product development at Meta",
+      "no formal research team collaboration, but worked with Engineering and Product teams at Meta",
+      "no formal AI safety focus, but established responsible AI partnerships at Meta",
+      "no formal model capability definition, but designed and shipped agentic AI products at Meta"
+    ],
+    "error": null,
+    "hash": "fde656af7055",
+    "title": "Product Management, Research",
+    "company": "Anthropic",
+    "analyzedAt": "2026-04-13T06:55:38.866Z"
+  },
+  "https://job-boards.greenhouse.io/anthropic/jobs/5127559008": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "API-first architectures",
+      "multi-service pipelines",
+      "RAG pipeline",
+      "GDPR-compliant infrastructure",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "Claude Code",
+      "consumer product launch",
+      "frontier technologies",
+      "AI safety research"
+    ],
+    "must_explain": [
+      "no formal consumer product launch experience, but led 2 agentic AI products to production at Meta",
+      "no formal AI safety research experience, but established cross-functional framework for responsible AI partnerships at Meta",
+      "no formal Claude Code usage, but built agentic systems and LLM-powered applications",
+      "no formal 0-to-1 product development, but built commerce platform ecosystem from 0-to-1 at Meta"
+    ],
+    "error": null,
+    "hash": "9dc3dcd24229",
+    "title": "Product Manager, Consumer",
+    "company": "Anthropic",
+    "analyzedAt": "2026-04-13T06:55:54.893Z"
+  },
+  "https://job-boards.greenhouse.io/anthropic/jobs/4985920008": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "developer SDKs",
+      "CLI",
+      "AI-powered commerce",
+      "product discovery"
+    ],
+    "gaps": [
+      "Claude Code",
+      "AI coding tools",
+      "model capabilities",
+      "XFN teams"
+    ],
+    "must_explain": [
+      "no formal Claude Code experience, but led agentic AI product development at Meta",
+      "no formal AI coding tool experience, but architected multi-service pipelines with sub-second inference latency",
+      "no formal model capability experience, but worked with LLMs and voice AI agents at scale",
+      "no formal XFN team experience, but managed cross-functional teams across Engineering, Product, Operations, and Commercial"
+    ],
+    "error": null,
+    "hash": "59cb6ac1f473",
+    "title": "Product Manager, Claude Code",
+    "company": "Anthropic",
+    "analyzedAt": "2026-04-13T06:56:01.310Z"
+  },
+  "https://careers.snowflake.com/us/en/job/7074907002/Senior-Product-Marketing-Manager-AI-ML": {
+    "matches": [],
+    "gaps": [],
+    "must_explain": [],
+    "error": "Job description is unavailable or inaccessible",
+    "hash": "43dcdf596662",
+    "title": "Senior Product Marketing Manager, AI/ML",
+    "company": "Snowflake",
+    "analyzedAt": "2026-04-13T06:56:04.467Z"
+  },
+  "https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/Senior-Solutions-Architect--Generative-AI-Specialist_JR2015644": {
+    "matches": [
+      "agentic AI systems",
+      "RAG pipelines",
+      "LLM-powered workflows",
+      "GPU-optimized infrastructure",
+      "Kubernetes",
+      "MLOps pipelines",
+      "AI observability",
+      "responsible AI",
+      "multimodal AI systems",
+      "NVIDIA AI Enterprise",
+      "NVIDIA Blueprints",
+      "TensorRT"
+    ],
+    "gaps": [
+      "LangGraph",
+      "LangChain",
+      "MCP",
+      "NVIDIA Agent Intelligence toolkit",
+      "Nemo Curator",
+      "Nemotron model family",
+      "NVIDIA Omniverse",
+      "Isaac Sim",
+      "Jetson edge computing",
+      "NVIDIA NIM inference microservices",
+      "NeMo",
+      "OpenShell"
+    ],
+    "must_explain": [
+      "no formal NVIDIA AI software suite experience, but did build and scale AI platforms with GCP and AWS",
+      "no formal NVAIE or NVIDIA Blueprints experience, but independently architected and built AI platforms",
+      "no formal TensorRT or Triton Inference Server experience, but built multi-service pipelines with sub-second inference latency",
+      "no formal CUDA libraries experience, but worked with large-scale cloud infrastructure including 400+ VMs"
+    ],
+    "error": null,
+    "hash": "9518f71cc7f8",
+    "title": "Senior Solutions Architect, Generative AI Specialist",
+    "company": "NVIDIA",
+    "analyzedAt": "2026-04-13T06:56:19.730Z"
+  },
+  "https://jobs.ashbyhq.com/gridcare/28285770-273f-463b-85e3-ecb110f7f95f": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "multi-service pipelines",
+      "cloud infrastructure",
+      "API-first architectures",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "power systems",
+      "energy infrastructure",
+      "data center ecosystems",
+      "hyperscalers",
+      "GPU/compute platforms",
+      "colocation providers",
+      "systems integrators",
+      "networking",
+      "storage"
+    ],
+    "must_explain": [],
+    "error": null,
+    "hash": "fbd4334e512b",
+    "title": "Strategic Partnership Manager — AI Ecosystem",
+    "company": "GridCARE",
+    "analyzedAt": "2026-04-13T06:56:31.892Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/141442181846966982-strategic-partnerships-development-manager-gaming-publishers-youtube/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "API architectures",
+      "data pipelines",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "YouTube creation",
+      "content marketing",
+      "game publisher",
+      "end-to-end partnerships"
+    ],
+    "must_explain": [
+      "no formal game publisher experience, but led agentic AI development at Meta with commercial partners like Amazon and Mercedes-Benz",
+      "no formal YouTube content strategy experience, but designed and shipped 2 agentic AI products integrating LLMs and voice AI agents for XR platforms",
+      "no formal gaming space experience, but built commerce platform ecosystem from 0-to-1 serving 50+ partners at eight-figure transaction volume"
+    ],
+    "error": null,
+    "hash": "d4e0879c1148",
+    "title": "Strategic Partnerships Development Manager, Gaming Publishers, YouTube",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:56:39.790Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/72687430544564934-strategic-partner-manager-creator-and-talent-representation-youtube/": {
+    "matches": [
+      "agentic AI experiences",
+      "creator economy",
+      "talent agencies",
+      "YouTube platform"
+    ],
+    "gaps": [
+      "talent management firms",
+      "creator businesses",
+      "digital platforms",
+      "data analysis tools"
+    ],
+    "must_explain": [
+      "no formal talent management firms experience, but worked with Amazon, Mercedes-Benz, and consumer brands",
+      "no formal creator business experience, but led development of agentic AI products for XR platforms",
+      "no formal digital platform experience, but built commerce platform ecosystem from 0-to-1",
+      "no formal data analysis tools experience, but analyzed technical learnings for platform roadmap"
+    ],
+    "error": null,
+    "hash": "326c6807fc65",
+    "title": "Strategic Partner Manager, Creator and Talent Representation, YouTube",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:56:49.977Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/96642700832318150-strategic-partner-manager-youtube-music-and-premium/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "subscription infrastructure",
+      "payments integration",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "YouTube Music",
+      "YouTube Premium",
+      "SVOD partnerships",
+      "legal document redlining"
+    ],
+    "must_explain": [
+      "no formal YouTube Music or Premium product experience, but led agentic AI experiences at Meta with similar commercial scope",
+      "no formal legal team collaboration for agreements, but managed key integrations with commercial partners including Amazon and Mercedes-Benz",
+      "no formal subscription-based product partnership experience, but built and scaled a commerce platform ecosystem from 0-to-1 serving 50+ partners"
+    ],
+    "error": null,
+    "hash": "86e5ad7678b8",
+    "title": "Strategic Partner Manager, YouTube Music and Premium",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:57:02.310Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/82261531122639558-group-product-manager-agentic-search/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "generative AI",
+      "multi-service pipelines",
+      "voice AI agents",
+      "computer vision",
+      "API architectures",
+      "AI platform ecosystem",
+      "RAG pipeline"
+    ],
+    "gaps": [
+      "Agentic Search",
+      "Google Search",
+      "AI Mode",
+      "AI/ML",
+      "Search Ads",
+      "Search Discover Personalization",
+      "AI Cloud Consultant",
+      "AI Application and Agentic Development"
+    ],
+    "must_explain": [
+      "no formal Google Search product PM role, but led agentic AI product development at Meta",
+      "no formal Google Cloud AI consultant role, but architected AI platform for health research at Meta",
+      "no formal AI/ML engineering role at Google, but built LLM-powered applications at Meta",
+      "no formal Agentic Search team experience, but designed agentic AI products at Meta"
+    ],
+    "error": null,
+    "hash": "a711b333d734",
+    "title": "Group Product Manager, Agentic Search",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:57:12.539Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/142029093422932678-product-manager-i-platforms-and-devices/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "API architectures",
+      "multi-service pipelines",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "AI/ML software development",
+      "end-to-end product launch",
+      "cross-functional engineering",
+      "technical presentation"
+    ],
+    "must_explain": [
+      "no formal software engineering experience, but independently architected and built CollectiveX Health platform",
+      "no formal product launch experience, but led 2 agentic AI products to production",
+      "no formal cross-functional engineering experience, but program managed integrations with commercial partners",
+      "no formal technical presentation experience, but delivered keynote at Unity Unite 2025"
+    ],
+    "error": null,
+    "hash": "e9967eb82810",
+    "title": "Product Manager I, Platforms and Devices",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:57:23.200Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/": {
+    "matches": [
+      "Generative AI",
+      "Large Language Models",
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "AI platform infrastructure"
+    ],
+    "gaps": [
+      "Google Cloud Platform",
+      "GCP products",
+      "Generative AI driven experiences",
+      "AI application development"
+    ],
+    "must_explain": [
+      "no formal Google Cloud Platform experience, but worked with AWS and GCP infrastructure at Meta",
+      "no formal GCP product management, but led 0-to-1 commerce platform at Meta",
+      "no formal Generative AI driven experiences, but built agentic AI products at Meta",
+      "no formal AI application development, but architected multi-service pipelines at Meta"
+    ],
+    "error": null,
+    "hash": "6c29182cf383",
+    "title": "Group Product Manager, Generative AI, Google Cloud",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:57:33.755Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/124488525100786374-senior-outbound-product-manager-generative-ai/": {
+    "matches": [
+      "Generative AI",
+      "Large Language Models",
+      "Cloud products",
+      "AI/ML",
+      "Vertex AI",
+      "Gemini Enterprise"
+    ],
+    "gaps": [
+      "Google Cloud",
+      "Cloud AI portfolio",
+      "Cross-functional teams"
+    ],
+    "must_explain": [
+      "no formal Google Cloud experience, but worked at Meta on AI platform development",
+      "no formal cross-functional team management, but led integrations with partners like Amazon and Mercedes-Benz",
+      "no formal Go-to-market experience, but shipped agentic AI products to production",
+      "no formal Cloud AI portfolio experience, but built commerce platform ecosystem from 0-to-1"
+    ],
+    "error": null,
+    "hash": "060b48f58872",
+    "title": "Senior Outbound Product Manager, Generative AI",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:57:43.449Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/118613502955791046-product-manager-google-workspace-ai-foundations-ai-surfaces/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "Gemini for Workspace",
+      "AI surfaces",
+      "model serving",
+      "AI platform infrastructure"
+    ],
+    "gaps": [
+      "Google Workspace",
+      "Gemini",
+      "AI Foundations Platform",
+      "AI/ML product launch"
+    ],
+    "must_explain": [
+      "no formal Google Workspace experience, but led exploration of agentic AI experiences at Meta",
+      "no formal Gemini experience, but architected multi-service pipelines with LLMs at Meta",
+      "no formal AI Foundations Platform experience, but developed AI platform ecosystem from 0-to-1 at Meta",
+      "no formal AI/ML product launch experience, but delivered 2 agentic AI products to production at Meta"
+    ],
+    "error": null,
+    "hash": "713b8898b2b3",
+    "title": "Product Manager, Google Workspace AI Foundations, AI Surfaces",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:57:53.612Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/126877440940090054-product-manager-ii-workspace-context-gen-ai-foundations/": {
+    "matches": [
+      "Generative AI",
+      "Large Language Models",
+      "agentic AI experiences",
+      "LLMs",
+      "multi-service pipelines",
+      "API architectures"
+    ],
+    "gaps": [
+      "Workspace Context",
+      "Gemini",
+      "Context Engineering",
+      "Google Cloud"
+    ],
+    "must_explain": [
+      "no formal Workspace Context experience, but led exploration of agentic AI experiences at Meta",
+      "no formal Google Cloud experience, but architected multi-service AI platform on GCP",
+      "no formal Context Engineering experience, but designed and shipped agentic AI products with real-time computer vision",
+      "no formal Gemini experience, but worked with LLMs in prototype agentic systems"
+    ],
+    "error": null,
+    "hash": "a0d60d030bdb",
+    "title": "Product Manager II, Workspace Context, Gen AI Foundations",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:58:03.721Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/130730846943355590-product-manager-i-youtube-growth-platform/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "multi-service pipelines",
+      "API architectures",
+      "data pipelines",
+      "campaign management tools"
+    ],
+    "gaps": [
+      "YouTube Growth Platform",
+      "in-app messages",
+      "paid subscriptions",
+      "UI features",
+      "ML-driven decisions",
+      "self-service campaign management system"
+    ],
+    "must_explain": [
+      "no formal YouTube Growth Platform experience, but led agentic AI product development at Meta",
+      "no formal in-app messaging experience, but designed and shipped 2 agentic AI products with real-time computer vision",
+      "no formal paid subscription experience, but worked on commerce platform ecosystem with subscription infrastructure",
+      "no formal UI feature experience, but architected multi-service pipelines with sub-second inference latency"
+    ],
+    "error": null,
+    "hash": "3ba164824d49",
+    "title": "Product Manager I, YouTube Growth Platform",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:58:14.874Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/126346621637010118-senior-product-manager-youtube-main-app/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "AI-powered commerce",
+      "product discovery",
+      "AI platform ecosystem",
+      "multi-service pipelines",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "YouTube main app",
+      "A/B testing",
+      "experimentation methodologies",
+      "consumer product"
+    ],
+    "must_explain": [
+      "no formal YouTube main app experience, but led exploration and development of agentic AI experiences at Meta",
+      "no formal A/B testing or experimentation methodologies, but designed and shipped agentic AI products with sub-second latency",
+      "no formal consumer product experience, but built commerce platform ecosystem serving 50+ partners",
+      "no formal YouTube experience, but worked with partners including Amazon, Mercedes-Benz, consumer brands"
+    ],
+    "error": null,
+    "hash": "198612173410",
+    "title": "Senior Product Manager, YouTube Main App",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:58:25.669Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/90667181552870086-product-manager-ii-youtube-shorts-on-tv/": {
+    "matches": [
+      "video playback technologies",
+      "machine learning",
+      "content recommendation engines",
+      "short-form video ecosystem"
+    ],
+    "gaps": [
+      "connected TV platforms",
+      "YouTube Shorts",
+      "TV streaming platforms",
+      "OEM teams"
+    ],
+    "must_explain": [
+      "no formal connected TV platform experience, but worked on XR platform experiences at Meta",
+      "no formal YouTube Shorts experience, but led development of agentic AI products for commerce and content discovery at Meta",
+      "no formal OEM team experience, but managed integrations with commercial partners like Amazon and Mercedes-Benz at Meta",
+      "no formal TV streaming platform experience, but architected multi-service pipelines with sub-second inference latency for consumer-grade reliability at Meta"
+    ],
+    "error": null,
+    "hash": "d189fdfe0eac",
+    "title": "Product Manager II, YouTube Shorts on TV",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:58:35.879Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/121095889363051206-senior-product-manager-youtube-growth-platform/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "product discovery",
+      "platform infrastructure",
+      "consumer applications",
+      "A/B testing",
+      "campaign management tools"
+    ],
+    "gaps": [
+      "digital advertising products",
+      "growth marketing technology",
+      "ML discovery systems",
+      "content recommendations",
+      "YouTube ecosystem",
+      "promotional campaigns",
+      "in-app messages",
+      "subscription growth"
+    ],
+    "must_explain": [
+      "no formal digital advertising product experience, but led agentic integrations with commercial partners like Amazon and Mercedes-Benz",
+      "no formal growth marketing technology experience, but built commerce platform ecosystem serving 50+ partners",
+      "no formal ML discovery or content recommendations experience, but architected RAG pipeline and AI expert agent for health research papers",
+      "no formal YouTube platform experience, but worked on generative AI for XR platforms and delivered keynote at Unity Unite 2025"
+    ],
+    "error": null,
+    "hash": "7db93b81ab75",
+    "title": "Senior Product Manager, YouTube Growth Platform",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:58:47.992Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/141437090163237574-principal-product-manager-innovation-and-ai-transformation-ai2/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "multi-service pipelines",
+      "API architectures",
+      "AI-powered commerce",
+      "AI platform infrastructure",
+      "RAG pipeline",
+      "GDPR-compliant infrastructure",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "TPU",
+      "JAX",
+      "RL",
+      "inference serving",
+      "open-source model optimization",
+      "Vertex AI",
+      "Google Cloud",
+      "Google Play App",
+      "Search Ads Relevance",
+      "AI Personalized Experiences",
+      "AI Transformation"
+    ],
+    "must_explain": [
+      "no formal Google Cloud experience, but worked on GCP infrastructure for CollectiveX Health",
+      "no formal Vertex AI experience, but architected multi-service pipelines with sub-second inference latency",
+      "no formal TPU or JAX experience, but worked with large-scale cloud infrastructure",
+      "no formal AI transformation role, but led exploration and development of agentic AI experiences at Meta"
+    ],
+    "error": null,
+    "hash": "8fad831b5c78",
+    "title": "Principal Product Manager, Innovation and AI Transformation, AI2",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:59:00.225Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "cloud infrastructure",
+      "AI-powered commerce",
+      "product discovery"
+    ],
+    "gaps": [
+      "Google Cloud",
+      "SaaS",
+      "enterprise",
+      "big data",
+      "security and privacy",
+      "development and operations"
+    ],
+    "must_explain": [
+      "no formal Google Cloud experience, but led exploration of agentic AI experiences at Meta with cloud compute tradeoffs",
+      "no formal SaaS experience, but built and scaled a commerce platform ecosystem from 0-to-1",
+      "no formal enterprise experience, but worked with partners including Amazon, Mercedes-Benz, and consumer brands",
+      "no formal big data experience, but architected biomarker analytics over 5.6M entries"
+    ],
+    "error": null,
+    "hash": "4a1c73dae639",
+    "title": "Product Manager II, Google Cloud",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:59:10.641Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/102551721133122246-product-manager-enterprise-trusted-identity/": {
+    "matches": [
+      "identity verification",
+      "enterprise infrastructure",
+      "user research",
+      "platform capabilities"
+    ],
+    "gaps": [
+      "identity provider",
+      "authentication systems",
+      "NIST standards",
+      "biometric verification"
+    ],
+    "must_explain": [
+      "no formal identity provider experience, but led identity verification for internal workforce at Meta",
+      "no explicit authentication system work, but built commerce platform with payments integration and subscription infrastructure",
+      "no formal NIST standards experience, but architected GDPR-compliant AI platform on GCP",
+      "no biometric verification experience, but worked with computer vision-powered shopping experiences"
+    ],
+    "error": null,
+    "hash": "6427a0e94ea4",
+    "title": "Product Manager, Enterprise Trusted Identity",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:59:20.082Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/94470248391942854-product-manager-ai-support-tools-google-fi/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "AI platform ecosystem",
+      "AI infrastructure",
+      "AI tooling",
+      "AI product discovery",
+      "AI support tooling",
+      "AI billing summaries",
+      "AI cohort analysis",
+      "AI-enhanced call audio"
+    ],
+    "gaps": [
+      "Google Fi",
+      "consumer software products",
+      "support tooling",
+      "AI-driven experiments"
+    ],
+    "must_explain": [
+      "no formal Google Fi experience, but worked on AI-powered commerce at Meta",
+      "no formal consumer software product lifecycle, but led 0-to-1 platform at Meta",
+      "no formal AI support tooling, but built AI platform for health research at Meta",
+      "no formal AI-driven experiments, but led AI product development with metrics at Meta"
+    ],
+    "error": null,
+    "hash": "dc1e4d657671",
+    "title": "Product Manager, AI Support Tools, Google Fi",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:59:30.857Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/100701764902101702-senior-product-manager-cloud-run-and-service-orchestration/": {
+    "matches": [
+      "Cloud Run",
+      "serverless",
+      "event-driven",
+      "orchestration"
+    ],
+    "gaps": [
+      "Google Cloud",
+      "Cloud Run functions",
+      "Eventarc",
+      "Workflows",
+      "Cloud Tasks",
+      "Cloud Scheduler"
+    ],
+    "must_explain": [
+      "no formal Google Cloud PM experience, but led platform development at Meta",
+      "no formal Cloud Run orchestration experience, but architected agentic AI products"
+    ],
+    "error": null,
+    "hash": "747d99c1161a",
+    "title": "Senior Product Manager, Cloud Run and Service Orchestration",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:59:41.312Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/77814124699886278-senior-product-manager-service-networking/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "GCP",
+      "Kubernetes",
+      "AI/ML containerized applications",
+      "Gateway API",
+      "service networking",
+      "observability",
+      "security",
+      "traffic management"
+    ],
+    "gaps": [
+      "Cloud Run",
+      "SRE practices",
+      "pricing analysis",
+      "business models",
+      "Open Source",
+      "Kubernetes networking"
+    ],
+    "must_explain": [
+      "no formal Cloud Run experience, but built and scaled commerce platform ecosystem serving 50+ partners",
+      "no formal SRE practices, but engineered large-scale cloud infrastructure (400+ VMs, AWS)",
+      "no formal pricing analysis, but led development of agentic AI experiences with ~$20M annual budget",
+      "no formal business models, but translated business needs into technical roadmaps from ideation to execution"
+    ],
+    "error": null,
+    "hash": "c78f87aca9f0",
+    "title": "Senior Product Manager, Service Networking",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T06:59:52.271Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/128541049277555398-senior-product-manager-silicon-audio-and-speech/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "voice AI agents",
+      "real-time computer vision",
+      "multi-service pipelines",
+      "API architectures",
+      "data pipelines",
+      "software frameworks",
+      "operating systems",
+      "software applications",
+      "development life cycles"
+    ],
+    "gaps": [
+      "silicon products",
+      "audio subsystems",
+      "speech and language",
+      "machine learning",
+      "smart microphones",
+      "semiconductors",
+      "electronics",
+      "SoC design",
+      "architecture",
+      "consumer electronics",
+      "TPU Chassis",
+      "RTL Design"
+    ],
+    "must_explain": [
+      "no formal silicon product management experience, but led exploration and development of agentic AI experiences at Meta",
+      "no formal experience with semiconductors or SoC design, but worked with engineering teams to define technical requirements for agentic infrastructure"
+    ],
+    "error": null,
+    "hash": "b092424e2923",
+    "title": "Senior Product Manager, Silicon, Audio and Speech",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:00:07.305Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/94518929698759366-product-manager-pixel-wearables/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "product discovery",
+      "AI platform infrastructure",
+      "GCP",
+      "AWS",
+      "API-first architectures",
+      "multi-service pipelines",
+      "consumer-grade reliability"
+    ],
+    "gaps": [
+      "consumer hardware products",
+      "thermal management",
+      "power management",
+      "day of use models",
+      "system architecture requirements",
+      "low-power sensing",
+      "media processing"
+    ],
+    "must_explain": [
+      "no formal experience with consumer hardware products, but led development of agentic AI experiences for XR platforms at Meta",
+      "no explicit thermal or power management experience, but architected AI systems with latency and compute tradeoffs for reliability",
+      "no formal DOU models, but designed and shipped production AI products with real-time inference and user experience focus",
+      "no direct system architecture requirements for silicon, but defined technical requirements for agentic infrastructure with API and data pipelines"
+    ],
+    "error": null,
+    "hash": "6f06297d61f6",
+    "title": "Product Manager, Pixel Wearables",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:00:19.457Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/137360506921853638-senior-product-manager-agent-and-ml-infrastructure/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "multi-service pipelines",
+      "API architectures",
+      "data pipelines",
+      "AI platform products"
+    ],
+    "gaps": [
+      "Google Ads",
+      "AI infrastructure",
+      "ML-driven experiences",
+      "developer SDKs"
+    ],
+    "must_explain": [
+      "no formal Google Ads experience, but led agentic integrations with commercial partners including Amazon and Mercedes-Benz",
+      "no formal AI infrastructure product launch experience, but architected and shipped 2 agentic AI products to production",
+      "no formal ML-driven experience in consumer ecosystem, but delivered keynote on generative AI integration for XR platforms",
+      "no formal developer SDK experience, but worked with Engineering and Product to define technical requirements for agentic infrastructure"
+    ],
+    "error": null,
+    "hash": "993fa99aa847",
+    "title": "Senior Product Manager, Agent and ML Infrastructure",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:00:32.421Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/84903803593073350-principal-product-manager-foundational-algorithms-aligned-ai/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "AI platform infrastructure",
+      "RAG pipeline",
+      "multi-service pipelines",
+      "GCP",
+      "AWS",
+      "API-first architectures"
+    ],
+    "gaps": [
+      "foundational algorithms",
+      "graph learning",
+      "memory management",
+      "safety frameworks",
+      "privacy frameworks",
+      "anti-abuse research",
+      "research publications",
+      "PhD in Engineering"
+    ],
+    "must_explain": [
+      "no formal PhD, but has 10+ years in AI, commerce, and platform infrastructure",
+      "no formal scientific publications, but independently architected and built CollectiveX Health",
+      "no formal research role, but led 5+ unreleased agentic prototypes and delivered keynote at Unity Unite 2025",
+      "no formal safety/privacy framework, but established responsible AI partnerships with Legal and Policy teams"
+    ],
+    "error": null,
+    "hash": "f7c17fd10db9",
+    "title": "Principal Product Manager, Foundational Algorithms, Aligned AI",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:00:47.218Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/138689101367780038-product-manager-i-xr-apps/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "XR platforms",
+      "AI-powered commerce",
+      "product discovery",
+      "AI platform infrastructure",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "XR consumer apps",
+      "zero-to-one products",
+      "AI/ML features",
+      "consumer electronics hardware"
+    ],
+    "must_explain": [
+      "no formal XR consumer app product PM role, but led exploration and development of agentic AI experiences in XR at Meta",
+      "no formal zero-to-one product delivery, but independently architected and built CollectiveX Health platform from 0-to-1",
+      "no formal consumer electronics hardware experience, but worked on XR hardware at Meta",
+      "no formal AI/ML feature building, but designed and shipped 2 agentic AI products integrating LLMs, voice AI, and computer vision"
+    ],
+    "error": null,
+    "hash": "cafd146efb6e",
+    "title": "Product Manager I, XR Apps",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:00:57.980Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/137779489571513030-product-manager-ai-foundations-data/": {
+    "matches": [
+      "AI Foundations Data",
+      "agentic AI experiences",
+      "LLMs",
+      "data acquisition platform"
+    ],
+    "gaps": [
+      "AI Frameworks",
+      "Ethical AI Development",
+      "BigQuery",
+      "Stripe payments"
+    ],
+    "must_explain": [
+      "no formal AI Frameworks experience, but built and scaled a commerce platform ecosystem with subscription infrastructure and payments integration",
+      "no formal Ethical AI Development experience, but established cross-functional framework for responsible AI partnerships with Legal and Policy teams",
+      "no formal BigQuery experience, but architected multi-service pipelines with sub-second inference latency on GCP",
+      "no formal Stripe payments experience, but built and scaled a commerce platform ecosystem with payments integration"
+    ],
+    "error": null,
+    "hash": "779ecde5664d",
+    "title": "Product Manager, AI Foundations Data",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:01:08.395Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/128932750294950598-product-manager-lead-google-distributed-cloud-hardware/": {
+    "matches": [
+      "distributed cloud",
+      "hardware",
+      "infrastructure",
+      "gcp"
+    ],
+    "gaps": [
+      "ai/ml",
+      "cloud infrastructure",
+      "enterprise-grade",
+      "scale"
+    ],
+    "must_explain": [
+      "no formal hardware engineering experience, but led 2 agentic AI products with LLMs and real-time computer vision at Meta",
+      "no formal cloud platform engineering experience, but architected and built CollectiveX Health on GCP with 5.6M biomarker entries",
+      "no formal enterprise software delivery experience, but delivered keynote at Unity Unite 2025 on generative AI integration",
+      "no formal software development experience, but independently built and scaled a commerce platform ecosystem from 0-to-1"
+    ],
+    "error": null,
+    "hash": "98b6a615772c",
+    "title": "Product Manager Lead, Google Distributed Cloud, Hardware",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:01:20.450Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/129756756950557382-senior-product-manager-google-home-platform-solutions/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "developer SDKs",
+      "platform infrastructure"
+    ],
+    "gaps": [
+      "consumer smart home",
+      "subscription-based services",
+      "APIs",
+      "SDKs"
+    ],
+    "must_explain": [
+      "no formal smart home platform experience, but led agentic AI experiences at Meta for XR platforms",
+      "no formal subscription services experience, but built and scaled commerce platform ecosystem serving 50+ partners"
+    ],
+    "error": null,
+    "hash": "1cef142344fb",
+    "title": "Senior Product Manager, Google Home, Platform Solutions",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:01:28.256Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/125969643767505606-group-product-manager-personalized-ai/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "RAG pipelines",
+      "multi-service pipelines",
+      "API architectures",
+      "AI platform infrastructure",
+      "generative AI",
+      "AI product discovery",
+      "consumer-grade reliability"
+    ],
+    "gaps": [
+      "evaluation frameworks",
+      "multi-dimensional metrics",
+      "automated rating systems",
+      "human-in-the-loop pipelines",
+      "real-time AI systems",
+      "frontier AI architectures",
+      "advanced retrieval methods",
+      "AI research translation",
+      "AI systems scaling"
+    ],
+    "must_explain": [
+      "no formal evaluation framework experience, but independently architected and built CollectiveX Health with clinical-grade RAG pipeline and AI expert agent",
+      "no formal multi-dimensional metrics experience, but built automated paper discovery and AI classification across 70K+ research papers",
+      "no formal human-in-the-loop pipelines, but designed and shipped 2 agentic AI products integrating LLMs, voice AI agents, and real-time computer vision"
+    ],
+    "error": null,
+    "hash": "a65c54caeec9",
+    "title": "Group Product Manager, Personalized AI",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:01:41.691Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "cloud infrastructure",
+      "SaaS",
+      "enterprise",
+      "AI/ML",
+      "Google Cloud"
+    ],
+    "gaps": [
+      "big data",
+      "security and privacy",
+      "development and operations",
+      "mergers and acquisitions"
+    ],
+    "must_explain": [
+      "no formal M&A experience, but led product development and go-to-market for AI platforms at Meta",
+      "no formal security/privacy role, but architected GDPR-compliant AI infrastructure on GCP",
+      "no formal DevOps role, but engineered large-scale cloud infrastructure (400+ VMs, AWS)",
+      "no formal big data role, but built biomarker analytics over 5.6M entries"
+    ],
+    "error": null,
+    "hash": "40756cad144f",
+    "title": "Senior Product Manager, Google Cloud",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:01:52.306Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/81685829411316422-senior-product-manager-ai-infra-gpu/": {
+    "matches": [
+      "AI platform",
+      "GPU",
+      "infrastructure products",
+      "compute hardware"
+    ],
+    "gaps": [
+      "networking",
+      "storage",
+      "databases",
+      "file systems",
+      "data analytics",
+      "cluster management"
+    ],
+    "must_explain": [
+      "no formal experience with networking, but led 5+ unreleased agentic prototypes exploring autonomous AI systems for commerce and content discovery",
+      "no formal experience with storage, but built and scaled a commerce platform ecosystem serving 50+ partners at eight-figure transaction volume",
+      "no formal experience with databases, but architected multi-service pipelines with sub-second inference latency balancing on-device and cloud compute tradeoffs",
+      "no formal experience with file systems, but independently architected and built CollectiveX Health with GDPR-compliant infrastructure on GCP"
+    ],
+    "error": null,
+    "hash": "03ee946c1336",
+    "title": "Senior Product Manager, AI Infra GPU",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:02:03.122Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/136358894778622662-group-product-manager-search-ai-security/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "generative AI",
+      "security technologies",
+      "AI/ML",
+      "Search",
+      "AI platform",
+      "AI infrastructure",
+      "multi-service pipelines"
+    ],
+    "gaps": [
+      "AI Security",
+      "Search AI Security",
+      "threat intelligence",
+      "anti-abuse prevention",
+      "risk management",
+      "AI risk landscape",
+      "security posture",
+      "AI safety",
+      "AI governance",
+      "AI compliance"
+    ],
+    "must_explain": [
+      "no formal AI Security role, but led responsible AI partnerships at Meta",
+      "no formal threat intelligence experience, but designed and shipped agentic AI products at Meta",
+      "no formal anti-abuse prevention experience, but worked on agentic workflows at Meta",
+      "no formal risk management experience, but established cross-functional framework for responsible AI at Meta"
+    ],
+    "error": null,
+    "hash": "8b68e2b637bc",
+    "title": "Group Product Manager, Search AI Security",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:02:14.156Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/122903374809965254-senior-product-manager-aci-infrastructure/": {
+    "matches": [
+      "Kubernetes",
+      "container orchestration",
+      "managed services",
+      "compute primitives",
+      "network primitives",
+      "storage primitives",
+      "software-defined resiliency"
+    ],
+    "gaps": [
+      "ACI Infrastructure",
+      "GCE",
+      "GKE",
+      "networking",
+      "storage",
+      "compute hardware",
+      "databases",
+      "file systems",
+      "data analytics",
+      "cluster management"
+    ],
+    "must_explain": [
+      "no formal ACI Infrastructure experience, but worked with GCE and GKE at Meta",
+      "no formal networking infrastructure experience, but built commerce platform ecosystem from 0-to-1",
+      "no formal storage or compute hardware experience, but engineered large-scale cloud infrastructure with 400+ VMs",
+      "no formal cluster management experience, but architected multi-service pipelines with sub-second inference latency"
+    ],
+    "error": null,
+    "hash": "b74b14dd108d",
+    "title": "Senior Product Manager, ACI Infrastructure",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:02:25.376Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/107993315848135366-product-manager-google-distributed-cloud-solutions/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "cloud infrastructure",
+      "API-first architectures",
+      "AI-powered commerce",
+      "enterprise workloads",
+      "data sovereignty",
+      "security",
+      "low latency"
+    ],
+    "gaps": [
+      "network architecture",
+      "network security",
+      "solutions architecture",
+      "Distributed Cloud",
+      "GDC Solutions",
+      "on-premises environments",
+      "edge computing",
+      "private cloud"
+    ],
+    "must_explain": [
+      "no formal GDC Solutions team experience, but designed and shipped 2 agentic AI products to production at Meta integrating LLMs and real-time computer vision",
+      "no formal private cloud experience, but built and scaled a commerce platform ecosystem from 0-to-1 serving 50+ partners at eight-figure transaction volume"
+    ],
+    "error": null,
+    "hash": "04bf3389eb61",
+    "title": "Product Manager, Google Distributed Cloud Solutions",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:02:37.816Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/": {
+    "matches": [
+      "Generative AI",
+      "Large Language Models",
+      "AI-powered commerce",
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "API-first architectures",
+      "cloud infrastructure",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "Google Cloud Platform",
+      "Generative AI driven experiences",
+      "technical presentations to senior leadership",
+      "software development or engineering"
+    ],
+    "must_explain": [
+      "no formal Google Cloud Platform experience, but worked with GCP for CollectiveX Health platform",
+      "no formal software development experience, but independently architected and built large-scale cloud systems",
+      "no formal technical presentations to senior leadership, but delivered keynote at Unity Unite 2025",
+      "no formal Google Cloud product management experience, but led product development for agentic AI experiences at Meta"
+    ],
+    "error": null,
+    "hash": "78cdd9c21481",
+    "title": "Senior Product Manager, Generative AI, Google Cloud",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:02:49.029Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/96854696123081414-senior-product-manager-google-distributed-cloud-hardware/": {
+    "matches": [
+      "distributed systems",
+      "hardware architecture",
+      "storage",
+      "networking"
+    ],
+    "gaps": [
+      "GPU systems",
+      "AI/ML platforms",
+      "cloud infrastructure",
+      "enterprise-grade solutions"
+    ],
+    "must_explain": [
+      "no formal cloud platform engineering, but led 0-to-1 commerce platform ecosystem at Meta",
+      "no formal GPU system experience, but architected multi-service pipelines with sub-second inference latency",
+      "no formal enterprise-grade solution delivery, but delivered keynote at Unity Unite 2025 on generative AI integration for XR platforms"
+    ],
+    "error": null,
+    "hash": "6a211ee336ba",
+    "title": "Senior Product Manager, Google Distributed Cloud, Hardware",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:02:59.154Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/91744939171291846-senior-product-manager-google-compute/": {
+    "matches": [
+      "compute engine",
+      "cloud infrastructure",
+      "virtual machine",
+      "enterprise technologies"
+    ],
+    "gaps": [
+      "x86/Arm",
+      "I/O technologies",
+      "data center infrastructure",
+      "CPU architectures"
+    ],
+    "must_explain": [
+      "no formal compute architecture experience, but led 2 agentic AI products to production integrating LLMs, voice AI agents, and real-time computer vision",
+      "no formal data center infrastructure experience, but engineered large-scale cloud infrastructure (400+ VMs, AWS)"
+    ],
+    "error": null,
+    "hash": "ed988a57124c",
+    "title": "Senior Product Manager, Google Compute",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:03:09.647Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/98346273840472774-product-manager-ondevice-ai-for-pixel-watch/": {
+    "matches": [
+      "on-device AI",
+      "wearables",
+      "consumer facing software",
+      "AI-powered user experiences"
+    ],
+    "gaps": [
+      "Pixel Watch",
+      "Google Cloud",
+      "AR/VR hardware",
+      "constrained systems"
+    ],
+    "must_explain": [
+      "no formal Pixel Watch experience, but led agentic AI experiences at Meta",
+      "no formal Google Cloud experience, but architected multi-service AI platform on GCP",
+      "no formal AR/VR hardware experience, but worked with Reality Labs on XR platforms",
+      "no formal constrained systems experience, but designed for sub-second inference latency and compute tradeoffs"
+    ],
+    "error": null,
+    "hash": "422951d63493",
+    "title": "Product Manager, On-Device AI for Pixel Watch",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:03:19.729Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/143225344894083782-senior-product-manager-aiml-google-global-network/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "multi-service pipelines",
+      "API architectures",
+      "data pipelines",
+      "cloud infrastructure",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "distributed systems",
+      "network design",
+      "network operations",
+      "software defined WAN",
+      "content distribution network",
+      "traffic engineering",
+      "bandwidth management",
+      "routing protocols",
+      "as-a-service ordering systems",
+      "release management",
+      "product launches",
+      "cross-functional programs"
+    ],
+    "must_explain": [
+      "no formal experience in distributed systems, but built and scaled commerce platform ecosystem from 0-to-1",
+      "no formal experience in network design, but independently architected and built CollectiveX Health platform",
+      "no formal experience in network operations, but led 5+ unreleased agentic prototypes exploring autonomous AI systems",
+      "no formal experience in software defined WAN, but worked with Engineering and Product to define technical requirements for agentic infrastructure"
+    ],
+    "error": null,
+    "hash": "139829b9cffb",
+    "title": "Senior product Manager, AI/ML, Google Global Network",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:03:32.185Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/129567769531163334-lead-group-product-manager-databases-amp-analytics-google-cloud/": {
+    "matches": [
+      "databases",
+      "analytics",
+      "big data"
+    ],
+    "gaps": [
+      "Google Cloud",
+      "SQL",
+      "data warehousing",
+      "ETL pipelines"
+    ],
+    "must_explain": [
+      "no formal Google Cloud experience, but worked with GCP for CollectiveX Health platform",
+      "no formal SQL or data warehousing experience, but built biomarker analytics over 5.6M entries",
+      "no formal ETL pipelines, but developed multi-service RAG pipeline and data pipelines for research papers",
+      "no formal database or analytics product experience, but led commerce platform ecosystem from 0-to-1"
+    ],
+    "error": null,
+    "hash": "758139392fdd",
+    "title": "Lead Group Product Manager, Databases &amp;amp; Analytics, Google Cloud",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:03:40.512Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/135713898064945862-senior-product-manager-ondevice-ai/": {
+    "matches": [
+      "agentic AI experiences",
+      "on-device LLM inference",
+      "mobile app AI integration",
+      "developer SDKs",
+      "AI-powered commerce",
+      "AI platform infrastructure"
+    ],
+    "gaps": [
+      "Android mobile development APIs",
+      "iOS mobile development APIs",
+      "embedded hardware acceleration",
+      "hardware acceleration"
+    ],
+    "must_explain": [
+      "no formal Android SDK experience, but did build agentic AI products for mobile platforms at Meta",
+      "no formal iOS SDK experience, but led mobile AI integrations with commercial partners",
+      "no formal embedded hardware experience, but architected multi-service pipelines for consumer-grade reliability",
+      "no formal hardware acceleration experience, but balanced on-device and cloud compute tradeoffs"
+    ],
+    "error": null,
+    "hash": "419ac117b6a8",
+    "title": "Senior Product Manager, On-Device AI",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:03:53.732Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/89215169074209478-senior-product-manager-xr-accessibility/": {
+    "matches": [
+      "agentic AI experiences",
+      "XR devices",
+      "AI-first features",
+      "AI glasses"
+    ],
+    "gaps": [
+      "XR accessibility",
+      "Android XR team",
+      "real-time visual interpretation",
+      "augmented transcription"
+    ],
+    "must_explain": [
+      "no formal XR accessibility product experience, but led exploration of agentic AI experiences for XR platforms at Meta",
+      "no formal Android XR team experience, but worked on XR-related AI products at Meta Reality Labs",
+      "no formal real-time visual interpretation feature, but built AI-powered commerce experiences with computer vision at Meta",
+      "no formal augmented transcription feature, but developed voice AI agents and LLM-powered applications at Meta"
+    ],
+    "error": null,
+    "hash": "b6908c80214a",
+    "title": "Senior Product Manager, XR Accessibility",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:04:04.417Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/79373228429976262-product-manager-applied-ml-and-agent-systems/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "RAG pipeline",
+      "AI expert agent",
+      "multi-service pipelines",
+      "sub-second inference latency",
+      "on-device LLM inference",
+      "API architectures",
+      "data pipelines",
+      "tooling"
+    ],
+    "gaps": [
+      "Google Cloud",
+      "AI coding assistants",
+      "Cursor",
+      "Replit Agent",
+      "Claude Dev",
+      "Gemini Code Assist",
+      "context windows",
+      "edge platforms",
+      "Agent AI workloads"
+    ],
+    "must_explain": [
+      "no formal Google Cloud experience, but worked with GCP for CollectiveX Health platform",
+      "no formal AI coding assistants, but used terminal and wrote code for AI systems",
+      "no formal edge platform experience, but built 0-to-1 commerce platform ecosystem",
+      "no formal Agent AI workloads experience, but led agentic AI product development"
+    ],
+    "error": null,
+    "hash": "ba153f0ee75d",
+    "title": "Product Manager, Applied ML and Agent Systems",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:04:15.990Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/104685601009083078-product-manager-ii-ai-agent-api-platform/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "API architectures",
+      "GCP",
+      "developer tools",
+      "API gateways"
+    ],
+    "gaps": [
+      "OpenAPI",
+      "gRPC",
+      "API security best practices",
+      "distributed systems",
+      "microservices"
+    ],
+    "must_explain": [
+      "no formal API lifecycle management, but led 2 agentic AI products to production integrating LLMs and real-time computer vision",
+      "no formal experience with API protocols like OpenAPI or gRPC, but architected multi-service pipelines with sub-second inference latency",
+      "no formal experience with API security best practices, but established cross-functional framework for responsible AI partnerships",
+      "no formal experience with distributed systems or microservices, but engineered large-scale cloud infrastructure (400+ VMs, AWS)"
+    ],
+    "error": null,
+    "hash": "4ca10b2bbd1d",
+    "title": "Product Manager II, AI Agent API Platform",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:04:26.792Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/94231076695614150-product-manager-i-translate-and-transcribe-xr-apps/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "XR apps",
+      "consumer-facing software"
+    ],
+    "gaps": [
+      "real-time communication",
+      "translation services",
+      "XR hardware products",
+      "zero-to-one products"
+    ],
+    "must_explain": [
+      "no formal experience in real-time communication, but built agentic AI products with voice AI agents",
+      "no formal experience in translation services, but led development of agentic AI experiences for commerce and product discovery",
+      "no formal experience in XR hardware products, but worked on XR apps at Meta",
+      "no formal experience in zero-to-one product development, but built a commerce platform ecosystem from 0-to-1"
+    ],
+    "error": null,
+    "hash": "2b3b7734448c",
+    "title": "Product Manager I, Translate and Transcribe, XR Apps",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:04:38.145Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/122962078422966982-senior-product-manager-google-image-search-quality/": {
+    "matches": [
+      "Generative AI",
+      "Large Language Models",
+      "search",
+      "machine learning"
+    ],
+    "gaps": [
+      "ranking recommendation",
+      "content retrieval systems",
+      "AI/ML infrastructure",
+      "visual discovery"
+    ],
+    "must_explain": [
+      "no formal search quality PM role, but led agentic AI experiences at Meta with LLMs and voice agents",
+      "no formal image search product experience, but architected multi-service pipelines for AI-powered commerce and product discovery",
+      "no formal visual inspiration journey experience, but built AI platforms for health research with RAG pipelines and automated paper classification",
+      "no formal Google product experience, but worked at Meta on XR and AI product development with cross-functional teams"
+    ],
+    "error": null,
+    "hash": "bbae5e928675",
+    "title": "Senior Product Manager, Google Image Search Quality",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:04:47.223Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/81917723285562054-product-manager-ii-camera-and-photos-xr-apps/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "computer vision",
+      "XR devices",
+      "AI-powered commerce",
+      "product discovery"
+    ],
+    "gaps": [
+      "camera systems",
+      "media pipelines",
+      "computer vision",
+      "AI-driven media technologies"
+    ],
+    "must_explain": [
+      "no formal camera or photos product experience, but led agentic AI product development at Meta with AI-powered shopping and product discovery",
+      "no formal XR hardware experience, but worked on XR apps at Meta with hands-free interactions and AI integration"
+    ],
+    "error": null,
+    "hash": "e5099b4945f3",
+    "title": "Product Manager II, Camera and Photos, XR Apps",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:04:56.676Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/95843957174346438-product-manager-i-android-auto/": {
+    "matches": [
+      "Android Auto",
+      "technical products"
+    ],
+    "gaps": [
+      "software development",
+      "accessibility best practices",
+      "technical presentations",
+      "executive leadership"
+    ],
+    "must_explain": [
+      "no formal software development experience, but did build commerce platform ecosystem from 0-to-1 at Meta",
+      "no formal accessibility experience, but architected GDPR-compliant infrastructure on GCP for CollectiveX Health",
+      "no formal technical presentation experience, but delivered keynote at Unity Unite 2025 on generative AI",
+      "no formal executive leadership experience, but collaborated with Engineering, Operations, and Commercial partners at Meta"
+    ],
+    "error": null,
+    "hash": "34387c2b5c65",
+    "title": "Product Manager I, Android Auto",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:05:06.724Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/117910353995539142-product-manager-ii-platforms-and-devices/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "API-first architectures",
+      "multi-service pipelines",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "XR platforms",
+      "AI personalization",
+      "search ads relevance",
+      "maps navigation"
+    ],
+    "must_explain": [
+      "no formal experience in search ads relevance, but led exploration of agentic commerce and AI-powered product discovery at Meta",
+      "no formal experience in maps navigation, but built commerce platform ecosystem from 0-to-1 at Meta",
+      "no formal experience in AI personalization, but architected multi-service pipelines with sub-second inference latency at Meta",
+      "no formal experience in XR platforms, but delivered keynote at Unity Unite 2025 on generative AI integration for XR platforms"
+    ],
+    "error": null,
+    "hash": "66be16207587",
+    "title": "Product Manager II, Platforms and Devices",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:05:18.379Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/135959087547327174-product-manager-google-distributed-cloud-ai-compute-infrastructure/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "API-first architectures",
+      "GCP",
+      "AWS",
+      "400+ VMs",
+      "RAG pipeline",
+      "AI expert agent",
+      "biomarker analytics",
+      "GDPR-compliant infrastructure"
+    ],
+    "gaps": [
+      "Distributed Cloud",
+      "AI Compute Infrastructure",
+      "air-gapped operations",
+      "international compliance frameworks"
+    ],
+    "must_explain": [
+      "no formal Distributed Cloud experience, but led 2 agentic AI products to production at Meta with multi-service pipelines",
+      "no formal AI Compute Infrastructure role, but architected and built CollectiveX Health on GCP with large-scale cloud infrastructure",
+      "no formal air-gapped operations experience, but built GDPR-compliant infrastructure on GCP",
+      "no formal international compliance frameworks experience, but collaborated with Legal and Policy teams on responsible AI partnerships"
+    ],
+    "error": null,
+    "hash": "5d919b406ec6",
+    "title": "Product Manager, Google Distributed Cloud, AI Compute Infrastructure",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:05:30.354Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/96788715224867526-product-marketing-manager-platforms-and-devices-marketing/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "multi-service pipelines",
+      "API architectures",
+      "data pipelines",
+      "product discovery",
+      "commerce platform",
+      "AI-powered shopping",
+      "AI platform ecosystem"
+    ],
+    "gaps": [
+      "product marketing",
+      "consumer hardware",
+      "gaming marketing",
+      "brand positioning"
+    ],
+    "must_explain": [
+      "no formal product marketing role, but led agentic AI product development and shipped 2 products to production",
+      "no formal consumer hardware experience, but worked on XR platforms and AI integration for hardware",
+      "no formal gaming marketing experience, but built AI-powered commerce experiences for consumer brands",
+      "no formal brand positioning experience, but defined technical requirements and product roadmaps for AI features"
+    ],
+    "error": null,
+    "hash": "38854e3f346b",
+    "title": "Product Marketing Manager, Platforms and Devices Marketing",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:05:41.224Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/79042466019189446-business-development-lead-genai/": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "data licensing agreements",
+      "third-party data partnerships"
+    ],
+    "gaps": [
+      "Gemini",
+      "Deep Mind",
+      "AR/VR hardware",
+      "developer SDKs"
+    ],
+    "must_explain": [
+      "no formal data licensing agreement management, but managed agentic integrations with Amazon, Mercedes-Benz, and consumer brands",
+      "no formal AR/VR hardware experience, but worked on XR platforms at Meta"
+    ],
+    "error": null,
+    "hash": "6abc7d1d0043",
+    "title": "Business Development Lead, GenAI",
+    "company": "Google",
+    "analyzedAt": "2026-04-13T07:05:49.975Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10370992/mktg-tech-ai-product-manager-prime-video-mktg-ai-automation-tooling": {
+    "matches": [
+      "AI automation",
+      "marketing operations",
+      "AI architectures",
+      "product delivery"
+    ],
+    "gaps": [
+      "Prime Video",
+      "GSS operations",
+      "MBA",
+      "RSUs"
+    ],
+    "must_explain": [
+      "no formal MBA, but did lead product strategy and delivery for AI automation initiatives",
+      "no formal GSS operations experience, but worked with engineering and product teams for agentic AI experiences",
+      "no formal Prime Video marketing role, but led agentic AI product development at Meta with commercial partners",
+      "no formal RSUs, but managed $20M annual budget for agentic infrastructure"
+    ],
+    "error": null,
+    "hash": "c11d19f8093c",
+    "title": "MKTG Tech & AI Product Manager, Prime Video, MKTG AI, Automation & Tooling",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:06:00.144Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3189771/ai-principal-product-manager-technical-alexa-responsible-ai": {
+    "matches": [
+      "LLMs",
+      "AI safety",
+      "trust frameworks",
+      "safety guardrails",
+      "evaluation systems",
+      "responsible AI"
+    ],
+    "gaps": [
+      "Alexa",
+      "generative AI",
+      "RLHF",
+      "reward modeling",
+      "adversarial robustness"
+    ],
+    "must_explain": [
+      "no formal Alexa experience, but led agentic AI experiences at Meta",
+      "no formal generative AI product role, but architected AI platforms for commerce and health",
+      "no formal RLHF or reward modeling experience, but worked with Applied Science teams on safety research",
+      "no formal adversarial robustness work, but developed LLM-powered applications with safety considerations"
+    ],
+    "error": null,
+    "hash": "fc34c026f83e",
+    "title": "AI Principal Product Manager-Technical, Alexa Responsible AI",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:06:10.472Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3180280/sr-technical-product-marketing-manager-ai-ml-product-marketing": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "RAG pipeline",
+      "AI expert agent",
+      "GDPR-compliant infrastructure",
+      "GCP",
+      "AWS",
+      "API-first architectures",
+      "cloud infrastructure",
+      "large-scale systems"
+    ],
+    "gaps": [
+      "Amazon Nova 2 models",
+      "Amazon Nova Forge",
+      "Amazon Nova Act",
+      "reference architectures",
+      "model development frameworks",
+      "pre-training",
+      "post-training"
+    ],
+    "must_explain": [
+      "no formal experience presenting to executive audiences, but delivered keynote at Unity Unite 2025",
+      "no formal experience with AI/ML technologies at Amazon, but worked with agentic AI at Meta",
+      "no formal experience with fast-paced product launches, but led 2 agentic AI products to production"
+    ],
+    "error": null,
+    "hash": "bc410acc8564",
+    "title": "Sr Technical Product Marketing Manager, AI/ML Product Marketing",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:06:22.338Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3169027/principal-product-manager-technical-ai-kids": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "AI-powered commerce",
+      "product discovery",
+      "AI platform ecosystem",
+      "RAG pipeline",
+      "multi-service pipelines",
+      "GDPR-compliant infrastructure",
+      "GCP",
+      "AWS"
+    ],
+    "gaps": [
+      "Fire TV",
+      "Fire Tablets",
+      "Echo devices",
+      "Kindle",
+      "age-appropriate GenAI",
+      "parent trust and safety features",
+      "consumer UI/UX design",
+      "end-to-end product delivery",
+      "technical product management"
+    ],
+    "must_explain": [
+      "no formal experience with Fire TV, Fire Tablets, Echo devices, or Kindle, but worked with XR platforms at Meta",
+      "no formal experience in consumer UI/UX design for kids, but led product strategy for agentic AI experiences",
+      "no formal experience with parent trust and safety features, but established responsible AI partnerships at Meta",
+      "no formal experience with age-appropriate GenAI, but built multi-service AI platform for women's health research"
+    ],
+    "error": null,
+    "hash": "d35ff3f1d82e",
+    "title": "Principal Product Manager, Technical AI, Kids+ ",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:06:35.219Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3161093/principal-product-manager-kernels-ai-ml-annapurna-labs": {
+    "matches": [
+      "Neuron Kernel Interface",
+      "compiler library",
+      "ML acceleration",
+      "ML frameworks",
+      "software development",
+      "developer experience"
+    ],
+    "gaps": [
+      "AWS Neuron",
+      "Trainium chips",
+      "Inferentia chips",
+      "ML compiler",
+      "kernel optimization",
+      "computer architecture"
+    ],
+    "must_explain": [
+      "no formal experience with AWS Neuron, but led development of agentic AI experiences at Meta using LLMs and AI agents",
+      "no formal exposure to Trainium or Inferentia chips, but architected multi-service pipelines with sub-second inference latency at Meta"
+    ],
+    "error": null,
+    "hash": "dda6d2e74fdc",
+    "title": "Principal Product Manager - Kernels, AI/ML, Annapurna Labs",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:06:45.060Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10383388/principal-product-manager-tech-ai-productivity-amazon-games-genai-strategic-initiatives": {
+    "matches": [
+      "agentic AI products",
+      "AI-powered solutions",
+      "AI acceleration roadmap",
+      "AI-enabled workflows"
+    ],
+    "gaps": [
+      "internal employee tools",
+      "Agentic AI products",
+      "AI productivity",
+      "AI transformation"
+    ],
+    "must_explain": [
+      "no formal AI productivity role, but led agentic AI experiences at Meta",
+      "no formal internal tools experience, but built 0-to-1 commerce platform",
+      "no formal AI transformation lead experience, but established responsible AI frameworks",
+      "no formal AI product manager role, but translated business needs into technical roadmaps"
+    ],
+    "error": null,
+    "hash": "3a953ced13ec",
+    "title": "Principal Product Manager-Tech, AI Productivity, Amazon Games GenAI & Strategic Initiatives",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:06:54.299Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3153366/senior-product-manager-creator-products": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "multi-service pipelines",
+      "API architectures",
+      "data pipelines",
+      "marketplace tooling",
+      "RAG pipeline",
+      "AI expert agent",
+      "GDPR-compliant infrastructure",
+      "GCP"
+    ],
+    "gaps": [
+      "creator products",
+      "Audiobook Creation Exchange",
+      "spoken word technology",
+      "two-sided marketplaces",
+      "consumer tech products",
+      "end-to-end Creator Product opportunities"
+    ],
+    "must_explain": [
+      "no formal creator product experience, but led agentic AI experiences for commerce and content discovery",
+      "no formal marketplace experience, but built and scaled a commerce platform ecosystem from 0-to-1",
+      "no formal consumer tech product experience, but independently architected and built CollectiveX Health",
+      "no formal spoken word technology experience, but worked with biomedical journals and research papers"
+    ],
+    "error": null,
+    "hash": "3400d6ae1c12",
+    "title": "Senior Product Manager, Creator Products",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:07:06.084Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10379669/senior-product-manager-technical-alexa-connections": {
+    "matches": [
+      "Generative AI",
+      "real time communications",
+      "voice AI agents",
+      "LLMs",
+      "API architectures",
+      "multi-service pipelines"
+    ],
+    "gaps": [
+      "Alexa",
+      "mixed reality",
+      "Tableau",
+      "Qlikview",
+      "QuickSight"
+    ],
+    "must_explain": [
+      "no formal Alexa experience, but led agentic AI product development at Meta",
+      "no formal mixed reality work, but worked on XR platform integration at Meta",
+      "no formal Tableau experience, but used data-driven decisions in AI platform design",
+      "no formal Qlikview/QuickSight experience, but built observability pipelines for AI systems"
+    ],
+    "error": null,
+    "hash": "37ac64608691",
+    "title": "Senior Product Manager - Technical, Alexa Connections",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:07:17.950Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10373811/senior-product-manager-technical-aws-boost": {
+    "matches": [
+      "data center operations",
+      "technical architectures",
+      "distributed systems",
+      "product strategy"
+    ],
+    "gaps": [
+      "AWS infrastructure",
+      "data center lifecycle operations",
+      "technical product management",
+      "operational planning"
+    ],
+    "must_explain": [
+      "no formal data center operations experience, but led 0-to-1 commerce platform ecosystem at Meta",
+      "no formal AWS infrastructure role, but worked with 400+ VMs on AWS at Meta",
+      "no formal technical product management at scale, but defined technical requirements for agentic infrastructure at Meta",
+      "no formal operational planning experience, but delivered keynote on generative AI integration at Meta"
+    ],
+    "error": null,
+    "hash": "fab3e689225c",
+    "title": "Senior Product Manager - Technical, AWS Boost",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:07:27.543Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10379752/senior-product-manager-tech-aws-tech-and-finance": {
+    "matches": [
+      "Agentic AI",
+      "AI-powered workflows",
+      "AI-native product",
+      "autonomous workflow"
+    ],
+    "gaps": [
+      "headcount management",
+      "AWS Tech",
+      "Finance",
+      "Tableau",
+      "Qlikview",
+      "QuickSight"
+    ],
+    "must_explain": [
+      "no formal headcount management product, but led 0-to-1 commerce platform with subscription infrastructure and payments integration at scale",
+      "no formal AWS tech experience, but architected and built multi-service AI platform on GCP with large-scale cloud infrastructure (400+ VMs, AWS)",
+      "no formal finance experience, but worked with Engineering, Operations, and Commercial partners to translate business needs into technical roadmaps",
+      "no formal analytical tool experience, but built and scaled AI platform with biomarker analytics over 5.6M entries and data pipelines"
+    ],
+    "error": null,
+    "hash": "328d92e492e4",
+    "title": "Senior Product Manager -Tech, AWS Tech and Finance",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:07:38.382Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10389175/sr-product-manager-technical-amazon-music-growth-and-partnerships": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "API architectures",
+      "multi-service pipelines"
+    ],
+    "gaps": [
+      "Amazon Music",
+      "ticketing systems",
+      "automotive platforms",
+      "big screen platforms"
+    ],
+    "must_explain": [
+      "no formal Amazon Music product management, but led exploration and development of agentic AI experiences at Meta",
+      "no formal ticketing system experience, but managed partner integrations with Amazon, Mercedes-Benz, and consumer brands",
+      "no formal automotive platform work, but designed and shipped 2 agentic AI products integrating LLMs and real-time computer vision",
+      "no formal big screen platform work, but worked on XR platforms and delivered keynote at Unity Unite 2025"
+    ],
+    "error": null,
+    "hash": "555d31987b29",
+    "title": "Sr Product Manager - Technical, Amazon Music  Growth and Partnerships",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:07:48.957Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3201490/sr-ai-specialist-solutions-architect": {
+    "matches": [
+      "GenerativeAI",
+      "Amazon Bedrock",
+      "Amazon SageMaker",
+      "LLMs",
+      "machine learning",
+      "AI/ML Services"
+    ],
+    "gaps": [
+      "Amazon Comprehend",
+      "Amazon Rekognition",
+      "Amazon Personalize",
+      "Amazon Quick",
+      "Amazon AgentCore"
+    ],
+    "must_explain": [
+      "no formal Amazon Bedrock AgentCore experience, but led agentic AI product development at Meta",
+      "no formal Amazon Quick experience, but architected multi-service pipelines with sub-second inference latency",
+      "no formal Amazon Personalize experience, but built commerce platform ecosystem from 0-to-1",
+      "no formal Amazon Comprehend experience, but worked with LLMs and NLP in AI platform for women's health research"
+    ],
+    "error": null,
+    "hash": "05c891698804",
+    "title": "Sr. AI Specialist Solutions Architect ",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:07:59.990Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3205967/principal-technical-program-manager-aws-boost": {
+    "matches": [
+      "data center management",
+      "AWS infrastructure",
+      "cross-functional teams",
+      "technical program management"
+    ],
+    "gaps": [
+      "data center operations",
+      "legacy system migration",
+      "native AWS platform",
+      "closed-loop mechanism"
+    ],
+    "must_explain": [
+      "no formal data center technician experience, but worked with field engineers at Meta",
+      "no formal legacy system migration, but led 0-to-1 platform development at Meta",
+      "no formal native AWS application experience, but built on AWS with 400+ VMs",
+      "no formal closed-loop mechanism, but architected multi-service pipelines with sub-second latency"
+    ],
+    "error": null,
+    "hash": "b90f42640091",
+    "title": "Principal Technical Program Manager, AWS Boost",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:08:09.858Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10386653/principal-product-manager-creator-products": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "multi-service pipelines",
+      "API architectures",
+      "data pipelines",
+      "creator products",
+      "marketplace tooling",
+      "commerce platform"
+    ],
+    "gaps": [
+      "Audiobook Creation Exchange",
+      "spoken word technology",
+      "two-sided marketplaces",
+      "creator tech products",
+      "rights holders"
+    ],
+    "must_explain": [
+      "no formal ACX experience, but led commerce platform ecosystem from 0-to-1 with marketplace tooling",
+      "no formal rights holders experience, but worked with partners including Amazon, Mercedes-Benz, and consumer brands",
+      "no formal spoken word tech experience, but built CollectiveX Health with multi-service AI platform for women's health research",
+      "no formal creator tech products experience, but managed agentic integrations with commercial partners"
+    ],
+    "error": null,
+    "hash": "d87ad58425f3",
+    "title": "Principal Product Manager, Creator Products",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:08:21.083Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10381963/principal-product-manager-technical-alexa-connections": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "multi-modal AI primitives",
+      "generative AI",
+      "large language models",
+      "AI-powered commerce",
+      "product discovery",
+      "AI platform infrastructure",
+      "AI expert agent",
+      "RAG pipeline"
+    ],
+    "gaps": [
+      "Alexa",
+      "Alexa Connections",
+      "Alexa devices",
+      "mixed reality",
+      "real-time communications",
+      "computer vision",
+      "media processing",
+      "consumer facing UX",
+      "Announcements",
+      "Drop-In's",
+      "Video Calling",
+      "Phone Number calling"
+    ],
+    "must_explain": [
+      "no formal Alexa experience, but led agentic AI experiences at Meta",
+      "no formal Alexa Connections team experience, but worked with partners including Amazon",
+      "no formal experience with Alexa devices, but built AI systems for consumer-grade reliability",
+      "no formal real-time communications experience, but designed and shipped 2 agentic AI products with sub-second latency"
+    ],
+    "error": null,
+    "hash": "df79b0604da9",
+    "title": "Principal Product Manager - Technical, Alexa Connections",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:08:35.715Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10376220/sr-product-manager-technical-aws-startups": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "data pipelines",
+      "sales workflows"
+    ],
+    "gaps": [
+      "AWS",
+      "startup customers",
+      "early signal detection",
+      "predictive models"
+    ],
+    "must_explain": [
+      "no formal AWS experience, but worked at Meta building AI products for XR platforms",
+      "no formal startup customer experience, but led commerce platform ecosystem from 0-to-1 serving 50+ partners",
+      "no formal early signal detection system, but designed and shipped 2 agentic AI products to production",
+      "no formal predictive models, but architected multi-service pipelines with sub-second inference latency"
+    ],
+    "error": null,
+    "hash": "37d20aca7d99",
+    "title": "Sr. Product Manager Technical, AWS Startups",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:08:45.380Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3170061/sr-product-manager-technical-aws-analytics": {
+    "matches": [
+      "big data technologies",
+      "cloud computing",
+      "product specifications",
+      "service architecture",
+      "technical details",
+      "data-driven decision-making"
+    ],
+    "gaps": [
+      "AWS Analytics",
+      "open-source big data applications",
+      "data science",
+      "pricing",
+      "sales enablement",
+      "marketing",
+      "public relations team",
+      "finance",
+      "legal stakeholders",
+      "executives"
+    ],
+    "must_explain": [
+      "no formal AWS Analytics team experience, but worked at Meta on generative AI experiences",
+      "no formal open-source big data applications experience, but built a commerce platform ecosystem from 0-to-1",
+      "no formal data science experience, but architected a multi-service AI platform for women's health research",
+      "no formal sales enablement or marketing experience, but led product launches with engineering teams"
+    ],
+    "error": null,
+    "hash": "bf16e35b461a",
+    "title": "Sr. Product Manager- Technical - AWS, Analytics",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:08:56.318Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3204810/principal-product-manager-technical-aws-insights-and-optimizations": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "cloud financial management",
+      "AWS",
+      "generative AI",
+      "agent architectures"
+    ],
+    "gaps": [
+      "Model Context Protocol",
+      "MCP servers",
+      "FinOps",
+      "Amazon Q"
+    ],
+    "must_explain": [
+      "no formal FinOps experience, but led commerce platform ecosystem from 0-to-1 at Meta",
+      "no formal AWS experience, but worked with AWS infrastructure at Meta",
+      "no formal Model Context Protocol experience, but built AI platform with API-first architecture at Meta",
+      "no formal Amazon Q experience, but built agentic AI products with LLMs and voice agents at Meta"
+    ],
+    "error": null,
+    "hash": "ed6eb4fbfff4",
+    "title": "Principal Product Manager - Technical, AWS Insights and Optimizations",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:09:02.716Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10381895/principal-product-manager-technical-aws-healthcare-ai": {
+    "matches": [
+      "agentic ai experiences",
+      "generative ai",
+      "llm-powered applications",
+      "ai platform infrastructure",
+      "multi-service pipelines",
+      "aws",
+      "gcp"
+    ],
+    "gaps": [
+      "healthcare ai",
+      "aws healthcare ai",
+      "medical data compliance",
+      "ai product launch"
+    ],
+    "must_explain": [
+      "no formal healthcare AI product experience, but built CollectiveX Health for women's health research with clinical-grade RAG pipeline",
+      "no formal AWS product PM experience, but led agentic AI product development at Meta with 2 shipped to production",
+      "no formal medical data compliance experience, but built GDPR-compliant infrastructure on GCP",
+      "no formal AI product launch experience, but delivered keynote at Unity Unite 2025 on generative AI integration"
+    ],
+    "error": null,
+    "hash": "487e1fe1b0f5",
+    "title": "Principal Product Manager, Technical , AWS Healthcare AI",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:09:09.979Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3195019/ww-partner-selling-gtm-leader-aws-partner-network": {
+    "matches": [
+      "AWS Partner Network",
+      "go-to-market plan",
+      "partner tooling",
+      "sales plays",
+      "field execution"
+    ],
+    "gaps": [
+      "partner selling",
+      "co-sell capabilities",
+      "partner adoption",
+      "global consistency"
+    ],
+    "must_explain": [
+      "no formal partner selling GTM leader role, but led agentic AI experiences with commercial partners at Meta",
+      "no formal co-sell capability development, but designed and shipped agentic AI products integrating LLMs and voice AI",
+      "no formal partner adoption strategy, but architected multi-service pipelines and managed $20M annual budget at Meta",
+      "no formal global consistency framework, but established cross-functional framework for responsible AI partnerships"
+    ],
+    "error": null,
+    "hash": "712d1094576f",
+    "title": "WW Partner Selling GTM Leader, AWS Partner Network",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:09:16.773Z"
+  },
+  "https://www.amazon.jobs/en/search?base_query=AI+product+manager&country[]=USA&country[]=US#product-marketing-manager-tech-aws-ai-marketing": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "real-time computer vision",
+      "API-first architectures",
+      "AWS",
+      "GCP"
+    ],
+    "gaps": [
+      "developer SDKs",
+      "cloud services",
+      "APIs",
+      "SDKs",
+      "model development",
+      "pre-training",
+      "post-training"
+    ],
+    "must_explain": [
+      "no formal SDKs, but built API-first architectures at Meta",
+      "no formal cloud services, but architected and built on AWS/GCP at Meta",
+      "no formal model development, but built RAG pipelines and LLM-powered applications at Meta",
+      "no formal pre/post-training, but worked with LLMs and AI systems at Meta"
+    ],
+    "error": null,
+    "hash": "f5db8125867c",
+    "title": "Product Marketing Manager - Tech, AWS AI Marketing",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:09:23.789Z"
+  },
+  "https://www.amazon.jobs/en/search?base_query=AI+product+manager&country[]=USA&country[]=US#sr-product-manager-aws-gdsp-a-i": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "AI-powered commerce",
+      "product discovery",
+      "generative AI",
+      "API-first architectures",
+      "cloud infrastructure",
+      "AWS",
+      "GCP",
+      "RAG pipelines",
+      "multi-service AI platform",
+      "AI expert agent"
+    ],
+    "gaps": [
+      "Amazon Web Services",
+      "AI/ML Product Marketing",
+      "technical product marketing",
+      "model development",
+      "pre-training",
+      "post-training",
+      "technical content writing",
+      "AI/ML frameworks",
+      "AI/ML libraries",
+      "customer adoption",
+      "AI/ML product management",
+      "end-to-end product delivery"
+    ],
+    "must_explain": [
+      "no formal AI/ML product marketing experience, but did lead agentic AI experiences at Meta",
+      "no formal model development experience, but independently architected RAG pipelines and AI systems",
+      "no formal technical content writing for technical audiences, but authored product specs and PRDs at Meta",
+      "no formal experience with AI/ML frameworks or libraries, but built agentic systems using LLMs and APIs"
+    ],
+    "error": null,
+    "hash": "c0f482d5c696",
+    "title": "Sr Product Manager, AWS GDSP A&I",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:09:39.812Z"
+  },
+  "https://www.amazon.jobs/en/search?base_query=AI+product+manager&country[]=USA&country[]=US#-5-years-of-product-or-program-management-product-marketing-": {
+    "matches": [
+      "agentic AI experiences",
+      "LLMs",
+      "voice AI agents",
+      "computer vision",
+      "API-first architectures",
+      "AWS",
+      "GCP",
+      "RAG pipeline"
+    ],
+    "gaps": [
+      "cloud services",
+      "developer SDKs",
+      "APIs",
+      "SDKs",
+      "model development"
+    ],
+    "must_explain": [
+      "no formal software engineering degree, but has 10+ years in technical product strategy and engineering",
+      "no formal bachelor's degree, but has 10+ years in technical product strategy and engineering",
+      "no formal experience shipping cloud services, but has built and scaled commerce platform ecosystem from 0-to-1",
+      "no formal experience with developer SDKs, but has architected multi-service pipelines and API architectures"
+    ],
+    "error": null,
+    "hash": "9a91938af52c",
+    "title": "* 5+ years of product or program management, product marketing, business development or technology experience",
+    "company": "Amazon",
+    "analyzedAt": "2026-04-13T07:09:47.339Z"
   }
 }
