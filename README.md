@@ -1,4 +1,6 @@
-# Career-Ops
+# Career-Ops (rohanpandula fork)
+
+> **This fork extends [santifer/career-ops](https://github.com/santifer/career-ops) with a local-LLM toolkit + web dashboard.** Everything upstream still works; see the [What this fork adds](#what-this-fork-adds) section for the additions.
 
 [English](README.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko-KR.md) | [日本語](README.ja.md) | [Русский](README.ru.md)
 
@@ -58,6 +60,61 @@ Career-ops is agentic: Claude Code navigates career pages with Playwright, evalu
 > **Heads up: the first evaluations won't be great.** The system doesn't know you yet. Feed it context -- your CV, your career story, your proof points, your preferences, what you're good at, what you want to avoid. The more you nurture it, the better it gets. Think of it as onboarding a new recruiter: the first week they need to learn about you, then they become invaluable.
 
 Built by someone who used it to evaluate 740+ job offers, generate 100+ tailored CVs, and land a Head of Applied AI role. [Read the full case study](https://santifer.io/career-ops-system).
+
+---
+
+## What this fork adds
+
+Everything in upstream is intact. On top of it, this fork adds a web dashboard and five features powered by a **local Qwen3-Coder LLM** — no cloud inference cost, nothing leaves your network.
+
+| Addition | What it does | Upstream equivalent |
+|---|---|---|
+| **Web dashboard** at `localhost:3000` | Visual pipeline + tracker + reports + scanner + settings + digest views | TUI (Go) only |
+| **Role clustering** | Groups your high-fit pending URLs into 6–10 semantic clusters (e.g. "Google YouTube partnerships", "Amazon Alexa AI PM"). Click a cluster to filter the pipeline | — |
+| **JD gap analysis** | For each high-fit role: CV matches (✓), skill gaps (✗), and "no formal X, but did Y" cover-letter analogues — shown by clicking any pipeline row | — |
+| **Near-duplicate detection** | Finds roles posted at multiple URLs (Lever anchor ↔ canonical UUID, ATS mirrors). Conservative — zero false positives in a 25-pair audit | — |
+| **Weekly digest** | Monday-keyed markdown digest: new roles, top-5 fits, quiet applications, one concrete action. Numeric claims are deterministic; Qwen only writes the narrative | — |
+| **Taste inference** | Reads your application history, proposes evidence-backed edits to `modes/_profile.md` — user reviews + Accept/Reject in Settings, with auto-backup | — |
+
+All five inference features:
+- Run against a local `http://10.0.0.3:11434/api/generate` endpoint (configurable in each script)
+- Idempotent — safe to re-run; use `--redo` to bypass cache
+- Parse Qwen JSON defensively (never throw on malformed output)
+- Ship with critique files at `data/critique-task{N}.md` documenting quality bar + known limitations
+
+### Screenshots
+
+**Dashboard** — Command Center with Clusters panel (click a chip to filter Pipeline):
+
+![Dashboard](docs/screenshots/dashboard.png)
+
+**Pipeline** — row click expands into a gap-analysis panel with matches, gaps, and cover-letter bullets:
+
+![Pipeline with gap analysis](docs/screenshots/pipeline-gap-expanded.png)
+
+**Digest** — weekly markdown summary with deterministic numbers + Qwen narrative:
+
+![Weekly digest](docs/screenshots/digest.png)
+
+**Settings** — taste-inference proposal panel (Accept appends to `modes/_profile.md` after backup):
+
+![Settings](docs/screenshots/settings.png)
+
+### Running the fork additions
+
+```bash
+npm run web              # start the web dashboard at http://localhost:3000
+
+npm run cluster          # regenerate data/clusters.json (24h cache; --redo to force)
+npm run gap-analysis     # analyze new fit≥4 URLs; idempotent cache
+npm run duplicates       # detect near-duplicates (conservative)
+npm run digest           # generate this week's digest at data/digest/YYYY-MM-DD.md
+npm run infer-taste      # propose profile edits at data/taste-proposal.md
+```
+
+Per-feature grades and known limitations live in `data/handoff-summary.md` + `data/critique-task{1,3,4,6,9}.md`.
+
+---
 
 ## Features
 
