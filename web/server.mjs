@@ -353,6 +353,29 @@ route('GET', '/api/clusters', async () => {
   catch { return { clusters: [], generatedAt: null }; }
 });
 
+// Weekly digest — returns latest digest as { date, content }.
+route('GET', '/api/digest/latest', async () => {
+  const dir = join(ROOT, 'data/digest');
+  try {
+    const files = (await readdir(dir)).filter(f => /^\d{4}-\d{2}-\d{2}\.md$/.test(f)).sort().reverse();
+    if (!files.length) throw { status: 404, message: 'no digests yet' };
+    const filename = files[0];
+    const content = await readFile(join(dir, filename), 'utf-8');
+    return { date: filename.replace(/\.md$/, ''), filename, content };
+  } catch (e) {
+    if (e.status) throw e;
+    throw { status: 404, message: 'digest dir missing' };
+  }
+});
+
+route('GET', '/api/digest', async () => {
+  const dir = join(ROOT, 'data/digest');
+  try {
+    const files = (await readdir(dir)).filter(f => /^\d{4}-\d{2}-\d{2}\.md$/.test(f)).sort().reverse();
+    return files.map(f => ({ date: f.replace(/\.md$/, ''), filename: f }));
+  } catch { return []; }
+});
+
 // Duplicates — confident same-role groups (canonical + duplicates).
 route('GET', '/api/duplicates', async () => {
   const p = join(ROOT, 'data/dedupe.json');

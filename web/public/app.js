@@ -85,6 +85,7 @@ async function render() {
       case 'tracker': app.innerHTML = await renderTracker(); break;
       case 'reports': app.innerHTML = reportViewFile ? await renderReport(reportViewFile) : await renderReportsList(); break;
       case 'scanner': app.innerHTML = await renderScanner(); break;
+      case 'digest': app.innerHTML = await renderDigest(); break;
       case 'settings': app.innerHTML = await renderSettings(); break;
     }
     app.querySelector(':scope > *')?.classList.add('view-enter');
@@ -446,6 +447,32 @@ async function renderDashboard() {
     </div>
 
     ${renderTimeSeriesCharts(timeseries)}
+  </div>`;
+}
+
+async function renderDigest() {
+  let latest;
+  try {
+    latest = await api('/api/digest/latest');
+  } catch (e) {
+    return `<div>
+      <div class="view-header">
+        <h1 class="view-title">Weekly digest</h1>
+        <p class="view-subtitle">Generate your first digest</p>
+      </div>
+      <div class="empty-state">
+        <div class="empty-state-title">No digest yet</div>
+        Run <code>node weekly-digest.mjs</code> from the project root to generate one.
+      </div>
+    </div>`;
+  }
+  const html = markdownToHtml(latest.content);
+  return `<div>
+    <div class="view-header">
+      <h1 class="view-title">Weekly digest</h1>
+      <p class="view-subtitle">Week of ${latest.date}</p>
+    </div>
+    <div class="digest-content report-content">${html}</div>
   </div>`;
 }
 

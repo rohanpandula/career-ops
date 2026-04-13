@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>career-ops</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..700&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('theme');
+        var prefers = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', saved || (prefers ? 'dark' : 'light'));
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <nav id="nav">
+    <div class="nav-brand">
+      <span class="nav-logo">C-OPS</span>
+      <span class="nav-version" id="nav-version"></span>
+    </div>
+    <div class="nav-links">
+      <a href="#" data-view="dashboard" class="nav-link active">Dashboard</a>
+      <a href="#" data-view="pipeline" class="nav-link">Pipeline</a>
+      <a href="#" data-view="tracker" class="nav-link">Tracker</a>
+      <a href="#" data-view="reports" class="nav-link">Reports</a>
+      <a href="#" data-view="digest" class="nav-link">Digest</a>
+      <a href="#" data-view="scanner" class="nav-link">Scanner</a>
+      <a href="#" data-view="settings" class="nav-link">Settings</a>
+    </div>
+    <div class="nav-actions">
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
+      <div class="nav-auth" id="nav-auth"></div>
+    </div>
+  </nav>
+
+  <main id="app"></main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
