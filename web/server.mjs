@@ -353,6 +353,29 @@ route('GET', '/api/clusters', async () => {
   catch { return { clusters: [], generatedAt: null }; }
 });
 
+// Gap analysis — full cache and per-hash lookup.
+route('GET', '/api/gap-analysis', async () => {
+  const p = join(ROOT, 'data/gap-analysis.json');
+  try { return JSON.parse(await readFile(p, 'utf-8')); }
+  catch { return {}; }
+});
+
+route('GET', '/api/gap-analysis/:urlHash', async (req, params) => {
+  const hash = String(params.urlHash || '').trim();
+  if (!/^[a-f0-9]{6,16}$/i.test(hash)) throw { status: 400, message: 'bad hash' };
+  const p = join(ROOT, 'data/gap-analysis.json');
+  try {
+    const cache = JSON.parse(await readFile(p, 'utf-8'));
+    for (const [url, v] of Object.entries(cache)) {
+      if (v?.hash === hash) return { url, ...v };
+    }
+    throw { status: 404, message: 'not analyzed yet' };
+  } catch (e) {
+    if (e.status) throw e;
+    throw { status: 404, message: 'no gap analysis cache' };
+  }
+});
+
 // --- Settings (portals.yml + profile.yml) ---
 // UI-editable subset. We preserve unknown YAML keys + formatting by only
 // touching the fields we care about.

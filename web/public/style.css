@@ -2125,3 +2125,67 @@ body, .card, .panel, #nav, button, input, select, textarea {
   cursor: pointer;
 }
 .cluster-banner-clear:hover { border-color: var(--accent); color: var(--accent); }
+
+/* --- Gap analysis expand row --- */
+#pipeline-table tr.has-gap { cursor: pointer; }
+#pipeline-table tr.has-gap.expanded { background: var(--bg-hover, rgba(0,0,0,0.02)); }
+.gap-toggle {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+  transition: transform 120ms ease, opacity 120ms ease;
+}
+#pipeline-table tr.expanded .gap-toggle { transform: rotate(180deg); opacity: 1; color: var(--accent); }
+.gap-analysis-row td { padding: 0; background: var(--bg-elevated, rgba(0,0,0,0.02)); }
+.gap-analysis { padding: var(--space-md) var(--space-lg); border-left: 3px solid var(--accent); }
+.gap-analysis-loading, .gap-analysis-error {
+  padding: var(--space-md) var(--space-lg);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+.gap-analysis-error { color: var(--red); }
+.gap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-sm);
+}
+.gap-section { margin-bottom: var(--space-sm); }
+.gap-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.gap-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.gap-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  border: 1px solid transparent;
+}
+.gap-tag.gap-match {
+  background: rgba(34, 139, 34, 0.08);
+  color: #228B22;
+  border-color: rgba(34, 139, 34, 0.3);
+}
+.gap-tag.gap-gap {
+  background: rgba(220, 100, 50, 0.08);
+  color: #c45a32;
+  border-color: rgba(220, 100, 50, 0.3);
+}
+.gap-empty { font-size: 0.74rem; color: var(--text-muted); font-style: italic; }
+.gap-explain {
+  margin: 0;
+  padding-left: var(--space-md);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.gap-explain li { margin-bottom: 4px; }
+.gap-meta { display: inline-block; margin-top: 6px; font-size: 0.7rem; color: var(--text-muted); }
+.gap-error { color: var(--red); }

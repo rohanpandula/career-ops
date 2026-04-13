@@ -246,6 +246,34 @@ function bindEvents() {
     });
   }
 
+  // Pipeline gap-analysis expand-on-click for rows that have data.
+  document.querySelectorAll('#pipeline-table tbody tr.has-gap').forEach(tr => {
+    tr.addEventListener('click', async (e) => {
+      // Don't trigger when user clicked an actual control inside the row.
+      if (e.target.closest('a, button, .icon-btn, .live-dot-btn, .url-link')) return;
+      const next = tr.nextElementSibling;
+      if (next?.classList.contains('gap-analysis-row')) {
+        next.remove();
+        tr.classList.remove('expanded');
+        return;
+      }
+      const hash = tr.dataset.urlHash;
+      if (!hash) return;
+      const colSpan = tr.children.length;
+      const placeholder = document.createElement('tr');
+      placeholder.className = 'gap-analysis-row';
+      placeholder.innerHTML = `<td colspan="${colSpan}"><div class="gap-analysis-loading">Loading gap analysis...</div></td>`;
+      tr.parentNode.insertBefore(placeholder, tr.nextSibling);
+      tr.classList.add('expanded');
+      try {
+        const data = await api(`/api/gap-analysis/${hash}`);
+        placeholder.querySelector('td').innerHTML = renderGapAnalysis(data);
+      } catch (err) {
+        placeholder.querySelector('td').innerHTML = `<div class="gap-analysis-error">${escapeHtml(err.message || 'Failed to load')}</div>`;
+      }
+    });
+  });
+
   // Report sections start expanded; h2 click collapses them. Uses
   // grid-template-rows 0fr → 1fr for smooth height animation without
   // animating the `height` property (would prevent browser optimizations).
@@ -421,6 +449,34 @@ async function renderDashboard() {
   </div>`;
 }
 
+function renderGapAnalysis(data) {
+  if (data?.error) {
+    return `<div class="gap-analysis"><div class="gap-section gap-error">⚠ ${escapeHtml(data.error)}</div></div>`;
+  }
+  const tag = (s, cls) => `<span class="gap-tag ${cls}">${escapeHtml(s)}</span>`;
+  const matches = (data.matches || []).map(s => tag(s, 'gap-match')).join('');
+  const gaps = (data.gaps || []).map(s => tag(s, 'gap-gap')).join('');
+  const explain = (data.must_explain || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
+  const date = data.analyzedAt ? `<span class="gap-meta">analyzed ${relativeDate(data.analyzedAt)}</span>` : '';
+  return `<div class="gap-analysis">
+    <div class="gap-grid">
+      <div class="gap-section">
+        <div class="gap-label">✓ Matches in your CV (${(data.matches || []).length})</div>
+        <div class="gap-tags">${matches || '<span class="gap-empty">none</span>'}</div>
+      </div>
+      <div class="gap-section">
+        <div class="gap-label">✗ Gaps the JD asks for (${(data.gaps || []).length})</div>
+        <div class="gap-tags">${gaps || '<span class="gap-empty">none</span>'}</div>
+      </div>
+    </div>
+    ${explain ? `<div class="gap-section">
+      <div class="gap-label">▸ Address in cover letter (${(data.must_explain || []).length})</div>
+      <ul class="gap-explain">${explain}</ul>
+    </div>` : ''}
+    ${date}
+  </div>`;
+}
+
 function renderClusters(data) {
   const clusters = data?.clusters || [];
   if (!clusters.length) return '';
@@ -536,11 +592,12 @@ function renderTimeSeriesCharts(ts) {
 // --- Pipeline ---
 
 async function renderPipeline() {
-  const [items, scanHistory, liveness, fitScores] = await Promise.all([
+  const [items, scanHistory, liveness, fitScores, gapMap] = await Promise.all([
     api('/api/pipeline'),
     api('/api/scan-history').catch(() => []),
     api('/api/liveness').catch(() => ({})),
     api('/api/fit-scores').catch(() => ({})),
+    api('/api/gap-analysis').catch(() => ({})),
   ]);
   const pending = items.filter(i => !i.checked);
 
@@ -768,10 +825,13 @@ async function renderPipeline() {
               : `<span class="fit-chip ${fitTier}">${fitNum.toFixed(1)}</span>`;
 
             const cachedCities = Array.isArray(live?.cityBuckets) ? live.cityBuckets.join(',') : '';
-            return `<tr class="${deadCls}" data-company="${item.company}" data-role="${item.role}" data-url="${escapeAttr(item.url)}" data-live="${liveState}" data-live-rank="${liveSortRank}" data-last-seen-ts="${sortTs}" data-location="${escapeAttr(location)}" data-cities="${escapeAttr(cachedCities)}" data-salary="${escapeAttr(salary)}" data-fit="${fitNum ?? ''}">
+            const gap = gapMap[item.url];
+            const hasGap = !!(gap && (gap.matches?.length || gap.gaps?.length));
+            const gapBadge = hasGap ? `<span class="gap-toggle" data-tooltip="Click to view CV gap analysis">▾</span>` : '';
+            return `<tr class="${deadCls}${hasGap ? ' has-gap' : ''}" data-company="${item.company}" data-role="${item.role}" data-url="${escapeAttr(item.url)}" data-url-hash="${gap?.hash || ''}" data-live="${liveState}" data-live-rank="${liveSortRank}" data-last-seen-ts="${sortTs}" data-location="${escapeAttr(location)}" data-cities="${escapeAttr(cachedCities)}" data-salary="${escapeAttr(salary)}" data-fit="${fitNum ?? ''}">
               <td data-sort-value="${liveSortRank}"><button class="live-dot-btn" data-verify-url="${escapeAttr(item.url)}" data-tooltip="${escapeAttr(dotTip)}"><span class="${dotClass}"></span></button></td>
               <td class="first-seen" data-sort-value="${sortTs}" data-tooltip="${escapeAttr(cellTip)}">${cellText}</td>
-              <td>${item.company}</td>
+              <td>${item.company}${gapBadge}</td>
               <td>${item.role}</td>
               <td class="cell-fit" data-sort-value="${fitNum ?? -1}" data-tooltip="${escapeAttr(fitTip)}">${fitCell}</td>
               <td class="cell-location" data-sort-value="${escapeAttr(location.toLowerCase())}" data-tooltip="${escapeAttr(locTip)}">${location || '—'}</td>
