@@ -1,0 +1,1082 @@
+{
+  "https://careers.snowflake.com/us/en/job/SNCOUS039719E811154DDF880F59905436022FEXTERNALENUSF6F6CAEE8D9C46699DC8DB670B383F15/Senior-Product-Manager-Applied-AI||https://careers.snowflake.com/us/en/job/SNCOUS66B865D1F43D4F38B332581D5E9388BEEXTERNALENUS1DD156E8B8B24A9EA7B37A0D2C164156/Senior-Product-Manager-Applied-AI": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different seniority levels (Staff vs Senior) for the same product team, indicating distinct roles rather than duplicates.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://careers.snowflake.com/us/en/job/SNCOUS66B865D1F43D4F38B332581D5E9388BEEXTERNALENUS1DD156E8B8B24A9EA7B37A0D2C164156/Senior-Product-Manager-Applied-AI",
+      "title": "Staff Product Manager, Applied AI"
+    },
+    "b": {
+      "url": "https://careers.snowflake.com/us/en/job/SNCOUS039719E811154DDF880F59905436022FEXTERNALENUSF6F6CAEE8D9C46699DC8DB670B383F15/Senior-Product-Manager-Applied-AI",
+      "title": "Senior Product Manager, Applied AI"
+    },
+    "classifiedAt": "2026-04-13T07:09:53.873Z"
+  },
+  "https://careers.snowflake.com/us/en/job/7276553002?gh_jid=7276553002||https://careers.snowflake.com/us/en/job/SNCOUS39883C25A16F4F09ACD72CB3573E294CEXTERNALENUS3438E5AECDBE4B988F9D4E96C1C15CA6/Senior-Product-Marketing-Manager-Data-AI-Governance": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job functions (Product Manager vs Product Marketing Manager) and different product scopes (Data Quality and AI/ML Governance vs Data & AI Governance).",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://careers.snowflake.com/us/en/job/7276553002?gh_jid=7276553002",
+      "title": "Senior Product Manager - Data Quality and AI/ML Governance"
+    },
+    "b": {
+      "url": "https://careers.snowflake.com/us/en/job/SNCOUS39883C25A16F4F09ACD72CB3573E294CEXTERNALENUS3438E5AECDBE4B988F9D4E96C1C15CA6/Senior-Product-Marketing-Manager-Data-AI-Governance",
+      "title": "Senior Product Marketing Manager, Data & AI Governance"
+    },
+    "classifiedAt": "2026-04-13T07:09:55.398Z"
+  },
+  "https://unity.com/careers/positions/7775694||https://unity.com/careers/positions/7808481": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different locations (Remote vs San Francisco) suggest different headcount needs, not a single role mirrored across ATS systems.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://unity.com/careers/positions/7775694",
+      "title": "Director of Product Management, Platforms"
+    },
+    "b": {
+      "url": "https://unity.com/careers/positions/7808481",
+      "title": "Director of Product Management, Platforms"
+    },
+    "classifiedAt": "2026-04-13T07:09:56.717Z"
+  },
+  "https://jobs.ashbyhq.com/openai/2d12be43-5d42-4319-a777-52fcab653b55||https://openai.com/careers/partner-director-head-of-technology-partnerships-san-francisco/": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different locations (Tokyo vs New York) and different title variations (Partner Director vs Partner Director, AWS Alliances) suggest distinct roles rather than ",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://openai.com/careers/partner-director-head-of-technology-partnerships-san-francisco/",
+      "title": "Partner Director"
+    },
+    "b": {
+      "url": "https://jobs.ashbyhq.com/openai/2d12be43-5d42-4319-a777-52fcab653b55",
+      "title": "Partner Director, AWS Alliances"
+    },
+    "classifiedAt": "2026-04-13T07:09:58.274Z"
+  },
+  "https://openai.com/careers/gtm-onboarding-lead-san-francisco/||https://openai.com/careers/gtm-onboarding-program-manager-san-francisco/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job functions (Onboarding Lead vs Program Manager) with different seniority levels despite same location and product scope.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://openai.com/careers/gtm-onboarding-lead-san-francisco/",
+      "title": "GTM Onboarding Lead"
+    },
+    "b": {
+      "url": "https://openai.com/careers/gtm-onboarding-program-manager-san-francisco/",
+      "title": "GTM Onboarding Program Manager"
+    },
+    "classifiedAt": "2026-04-13T07:09:59.614Z"
+  },
+  "https://unity.com/careers/positions/7728052?gh_jid=7728052||https://unity.com/careers/positions/7728427?gh_jid=7728427": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different locations (San Francisco vs New York) suggest separate headcount needs rather than identical role mirrored across ATS systems.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://unity.com/careers/positions/7728427?gh_jid=7728427",
+      "title": "Director, Product Marketing AI"
+    },
+    "b": {
+      "url": "https://unity.com/careers/positions/7728052?gh_jid=7728052",
+      "title": "Director, Product Marketing AI"
+    },
+    "classifiedAt": "2026-04-13T07:10:00.954Z"
+  },
+  "https://unity.com/careers/positions/7775694||https://unity.com/careers/positions/7799057": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different geographic regions (USA vs UK) with different headcounts, indicating separate openings rather than the same role mirrored across locations.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://unity.com/careers/positions/7775694",
+      "title": "Director of Product Management, Platforms"
+    },
+    "b": {
+      "url": "https://unity.com/careers/positions/7799057",
+      "title": "Director of Product Management, Platforms"
+    },
+    "classifiedAt": "2026-04-13T07:10:02.384Z"
+  },
+  "https://unity.com/careers/positions/7799057||https://unity.com/careers/positions/7808481": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Same title and role but different locations (San Francisco vs Remote UK) suggest different openings.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://unity.com/careers/positions/7808481",
+      "title": "Director of Product Management, Platforms"
+    },
+    "b": {
+      "url": "https://unity.com/careers/positions/7799057",
+      "title": "Director of Product Management, Platforms"
+    },
+    "classifiedAt": "2026-04-13T07:10:03.664Z"
+  },
+  "https://unity.com/careers/positions/7801985||https://unity.com/careers/positions/7801990": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Although both postings are for Senior Technical Product Manager roles in Montreal, they focus on different product areas (Pipeline API vs Pipeline Applications ",
+    "jaccard": 0.63,
+    "a": {
+      "url": "https://unity.com/careers/positions/7801985",
+      "title": "Gestionnaire de produit technique Sénior, API du Pipeline  / Senior Technical Product Manager, Pipeline API"
+    },
+    "b": {
+      "url": "https://unity.com/careers/positions/7801990",
+      "title": "Gestionnaire de produit technique Sénior, Applications du Pipeline et Collaboration  / Senior Technical Product Manager, Pipeline Applications and Collaboration"
+    },
+    "classifiedAt": "2026-04-13T07:10:06.154Z"
+  },
+  "https://epicgames.com/careers/jobs/5674511004?gh_jid=5674511004||https://epicgames.com/careers/jobs/5737765004?gh_jid=5737765004": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different product focus (Economy vs Platform) indicates distinct roles despite similar titles and job functions.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://epicgames.com/careers/jobs/5737765004?gh_jid=5737765004",
+      "title": "Product Management Director (Economy)"
+    },
+    "b": {
+      "url": "https://epicgames.com/careers/jobs/5674511004?gh_jid=5674511004",
+      "title": "Product Management Director (Platform)"
+    },
+    "classifiedAt": "2026-04-13T07:10:07.964Z"
+  },
+  "https://databricks.com/company/careers/open-positions/job?gh_jid=8482697002||https://databricks.com/company/careers/open-positions/job?gh_jid=8486738002": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different job functions (Big Data Solutions Architect vs Data Platform Solutions Architect) and different locations (Paris vs London) suggest distinct roles rat",
+    "jaccard": 0.71,
+    "a": {
+      "url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8482697002",
+      "title": "Big Data Solutions Architect (Professional Services)"
+    },
+    "b": {
+      "url": "https://databricks.com/company/careers/open-positions/job?gh_jid=8486738002",
+      "title": "Data Platform Solutions Architect (Professional Services)"
+    },
+    "classifiedAt": "2026-04-13T07:10:10.235Z"
+  },
+  "https://jobs.lever.co/mistral#product-marketing-manager-solutions||https://jobs.lever.co/mistral/281f4a57-dbe2-40b5-a35f-e180e15a4f12": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different job functions (Product Marketing Manager vs Product Marketing Manager, Solutions) and different seniority levels (Senior vs unspecified) with no clear",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://jobs.lever.co/mistral/281f4a57-dbe2-40b5-a35f-e180e15a4f12",
+      "title": "Senior Product Marketing Manager"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/mistral#product-marketing-manager-solutions",
+      "title": "Product Marketing Manager, Solutions"
+    },
+    "classifiedAt": "2026-04-13T07:10:12.342Z"
+  },
+  "https://jobs.lever.co/mistral#senior-product-marketing-manager-studio||https://jobs.lever.co/mistral/281f4a57-dbe2-40b5-a35f-e180e15a4f12": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different ATS hosts with different URL structures and location details suggest separate postings rather than identical job openings.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://jobs.lever.co/mistral/281f4a57-dbe2-40b5-a35f-e180e15a4f12",
+      "title": "Senior Product Marketing Manager"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/mistral#senior-product-marketing-manager-studio",
+      "title": "Senior Product Marketing Manager - Studio"
+    },
+    "classifiedAt": "2026-04-13T07:10:13.547Z"
+  },
+  "https://jobs.lever.co/mistral#ai-developer-advocate||https://jobs.lever.co/mistral#ai-developer-advocate-singapore": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Titles differ by location suffix and one appears to be a fragment URL, not a canonical job posting.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://jobs.lever.co/mistral#ai-developer-advocate",
+      "title": "AI Developer Advocate"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/mistral#ai-developer-advocate-singapore",
+      "title": "AI Developer Advocate - Singapore"
+    },
+    "classifiedAt": "2026-04-13T07:10:14.842Z"
+  },
+  "https://jobs.lever.co/mistral#product-manager-ai-studio||https://jobs.lever.co/mistral#senior-product-marketing-manager-studio": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different job functions (Product Marketing Manager vs Product Manager) and different scopes (Studio vs AI Studio) suggest distinct roles rather than the same po",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://jobs.lever.co/mistral#senior-product-marketing-manager-studio",
+      "title": "Senior Product Marketing Manager - Studio"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/mistral#product-manager-ai-studio",
+      "title": "Product Manager, AI Studio"
+    },
+    "classifiedAt": "2026-04-13T07:10:16.355Z"
+  },
+  "https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/Senior-Solutions-Architect--Global-Partner-Team_JR1998420||https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/Senior-Solutions-Architect--Global-Partner-Team_JR2007353": {
+    "same": false,
+    "confidence": 0.95,
+    "reason": "Different job IDs and locations suggest these are separate openings, not duplicates.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/Senior-Solutions-Architect--Global-Partner-Team_JR1998420",
+      "title": "Senior Solutions Architect, Global Partner Team"
+    },
+    "b": {
+      "url": "https://nvidia.wd5.myworkdayjobs.com/en-US/NVIDIAExternalCareerSite/job/Senior-Solutions-Architect--Global-Partner-Team_JR2007353",
+      "title": "Senior Solutions Architect, Global Partner Team"
+    },
+    "classifiedAt": "2026-04-13T07:10:17.504Z"
+  },
+  "https://jobs.ashbyhq.com/modal/5113f35e-988d-41bc-a899-3261a9454e40||https://jobs.ashbyhq.com/modal/546c9eb1-aaf7-47ba-8e9d-0bcd443b3e94": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Titles differ by cosmetic suffix and location, but the addition of 'Sandboxes' suggests a different scope or team focus, not just a cross-posted role.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://jobs.ashbyhq.com/modal/546c9eb1-aaf7-47ba-8e9d-0bcd443b3e94",
+      "title": "Developer Relations Engineer"
+    },
+    "b": {
+      "url": "https://jobs.ashbyhq.com/modal/5113f35e-988d-41bc-a899-3261a9454e40",
+      "title": "Developer Relations Engineer, Sandboxes"
+    },
+    "classifiedAt": "2026-04-13T07:10:19.066Z"
+  },
+  "https://job-boards.greenhouse.io/anthropic/jobs/5121561008||https://job-boards.greenhouse.io/anthropic/jobs/5121563008": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different geographic locations (Paris vs Munich) suggest separate headcount needs rather than identical job postings.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://job-boards.greenhouse.io/anthropic/jobs/5121563008",
+      "title": "Forward Deployed Engineer, Applied AI"
+    },
+    "b": {
+      "url": "https://job-boards.greenhouse.io/anthropic/jobs/5121561008",
+      "title": "Forward Deployed Engineer, Applied AI"
+    },
+    "classifiedAt": "2026-04-13T07:10:20.405Z"
+  },
+  "https://jobs.lever.co/palantir#-business-development||https://jobs.lever.co/palantir#business-development": {
+    "same": false,
+    "confidence": 0.9,
+    "reason": "Title differences are cosmetic but URL fragments suggest different anchor points, and the job function is not clearly defined in either posting.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://jobs.lever.co/palantir#-business-development",
+      "title": "* Business Development"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/palantir#business-development",
+      "title": "Business Development"
+    },
+    "classifiedAt": "2026-04-13T07:10:21.739Z"
+  },
+  "https://jobs.lever.co/palantir#technical-program-manager-tpm-||https://jobs.lever.co/palantir#technical-program-manager-tpm-defense": {
+    "same": false,
+    "confidence": 0.65,
+    "reason": "Different locations and titles suggest distinct roles rather than the same job posting across ATS systems.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://jobs.lever.co/palantir#technical-program-manager-tpm-",
+      "title": "Technical Program Manager (TPM)"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/palantir#technical-program-manager-tpm-defense",
+      "title": "Technical Program Manager (TPM) - Defense"
+    },
+    "classifiedAt": "2026-04-13T07:10:23.031Z"
+  },
+  "https://jobs.lever.co/palantir#technical-program-manager-tpm-||https://jobs.lever.co/palantir/7eb0dedb-37ee-4175-b29f-10a9e4340076": {
+    "same": true,
+    "confidence": 0.9,
+    "reason": "Both postings share identical title, location, and URL pattern suggesting one is a canonical listing and the other a Lever ATS fragment, with no functional diff",
+    "jaccard": 1,
+    "a": {
+      "url": "https://jobs.lever.co/palantir#technical-program-manager-tpm-",
+      "title": "Technical Program Manager (TPM)"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/palantir/7eb0dedb-37ee-4175-b29f-10a9e4340076",
+      "title": "Technical Program Manager (TPM)"
+    },
+    "classifiedAt": "2026-04-13T07:10:24.705Z"
+  },
+  "https://jobs.lever.co/palantir#technical-program-manager-tpm-||https://jobs.lever.co/palantir/bd16f7ad-3bee-48fd-9902-b3ee9698b608": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different locations and titles with different suffixes suggest distinct roles rather than the same job posting.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://jobs.lever.co/palantir#technical-program-manager-tpm-",
+      "title": "Technical Program Manager (TPM)"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/palantir/bd16f7ad-3bee-48fd-9902-b3ee9698b608",
+      "title": "Technical Program Manager (TPM) - Defense"
+    },
+    "classifiedAt": "2026-04-13T07:10:25.977Z"
+  },
+  "https://jobs.lever.co/palantir#technical-program-manager-tpm-defense||https://jobs.lever.co/palantir/7eb0dedb-37ee-4175-b29f-10a9e4340076": {
+    "same": false,
+    "confidence": 0.65,
+    "reason": "Different locations and job titles omitting the 'Defense' scope indicate different roles, not the same opening.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://jobs.lever.co/palantir#technical-program-manager-tpm-defense",
+      "title": "Technical Program Manager (TPM) - Defense"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/palantir/7eb0dedb-37ee-4175-b29f-10a9e4340076",
+      "title": "Technical Program Manager (TPM)"
+    },
+    "classifiedAt": "2026-04-13T07:10:27.345Z"
+  },
+  "https://jobs.lever.co/palantir#technical-program-manager-tpm-defense||https://jobs.lever.co/palantir/bd16f7ad-3bee-48fd-9902-b3ee9698b608": {
+    "same": true,
+    "confidence": 0.95,
+    "reason": "Both postings share identical title, location, and job function, with only URL structure differing (anchor link vs. UUID-based) suggesting the same job opening ",
+    "jaccard": 1,
+    "a": {
+      "url": "https://jobs.lever.co/palantir#technical-program-manager-tpm-defense",
+      "title": "Technical Program Manager (TPM) - Defense"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/palantir/bd16f7ad-3bee-48fd-9902-b3ee9698b608",
+      "title": "Technical Program Manager (TPM) - Defense"
+    },
+    "classifiedAt": "2026-04-13T07:10:29.067Z"
+  },
+  "https://jobs.lever.co/palantir/7eb0dedb-37ee-4175-b29f-10a9e4340076||https://jobs.lever.co/palantir/bd16f7ad-3bee-48fd-9902-b3ee9698b608": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different locations and titles with appended suffix suggest distinct roles rather than identical job postings.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://jobs.lever.co/palantir/7eb0dedb-37ee-4175-b29f-10a9e4340076",
+      "title": "Technical Program Manager (TPM)"
+    },
+    "b": {
+      "url": "https://jobs.lever.co/palantir/bd16f7ad-3bee-48fd-9902-b3ee9698b608",
+      "title": "Technical Program Manager (TPM) - Defense"
+    },
+    "classifiedAt": "2026-04-13T07:10:30.311Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/124488525100786374-senior-outbound-product-manager-generative-ai/||https://www.google.com/about/careers/applications/jobs/results/127191257020539590-senior-outbound-product-manager/": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different job IDs and locations suggest separate openings despite identical titles and roles.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/127191257020539590-senior-outbound-product-manager/",
+      "title": "Senior Outbound Product Manager, Generative AI"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/124488525100786374-senior-outbound-product-manager-generative-ai/",
+      "title": "Senior Outbound Product Manager, Generative AI"
+    },
+    "classifiedAt": "2026-04-13T07:10:31.521Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud||https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job functions ('Product Manager II' vs 'Group Product Manager') and different location footprints suggest distinct roles rather than a canonical dupli",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud",
+      "title": "Product Manager II, Generative AI, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/",
+      "title": "Group Product Manager, Generative AI, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:33.018Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud||https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Title differences are not purely cosmetic; the first posting specifies 'Generative AI' while the second does not, indicating different product focus.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud",
+      "title": "Product Manager II, Generative AI, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/",
+      "title": "Product Manager II, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:34.470Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud||https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels (Senior vs Product Manager II) and different job function titles despite similar product scope.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud",
+      "title": "Product Manager II, Generative AI, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/",
+      "title": "Senior Product Manager, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:35.870Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud||https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different seniority levels (Senior vs Product Manager II) and different locations suggest distinct roles rather than duplicates.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/119339026548171462-product-manager-ii-generative-ai-google-cloud",
+      "title": "Product Manager II, Generative AI, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/",
+      "title": "Senior Product Manager, Generative AI, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:37.159Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/117910353995539142-product-manager-ii-platforms-and-devices/||https://www.google.com/about/careers/applications/jobs/results/142029093422932678-product-manager-i-platforms-and-devices/": {
+    "same": false,
+    "confidence": 0.95,
+    "reason": "Different level titles (I vs II) indicate different seniority levels, violating the strict same-role requirement.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/142029093422932678-product-manager-i-platforms-and-devices/",
+      "title": "Product Manager I, Platforms and Devices"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/117910353995539142-product-manager-ii-platforms-and-devices/",
+      "title": "Product Manager II, Platforms and Devices"
+    },
+    "classifiedAt": "2026-04-13T07:10:38.495Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/142029093422932678-product-manager-i-platforms-and-devices/||https://www.google.com/about/careers/applications/jobs/results/96788715224867526-product-marketing-manager-platforms-and-devices-marketing/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job functions (Product Manager vs Product Marketing Manager) and different geographic scopes, indicating distinct roles rather than duplicates.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/142029093422932678-product-manager-i-platforms-and-devices/",
+      "title": "Product Manager I, Platforms and Devices"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/96788715224867526-product-marketing-manager-platforms-and-devices-marketing/",
+      "title": "Product Marketing Manager, Platforms and Devices Marketing"
+    },
+    "classifiedAt": "2026-04-13T07:10:39.851Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/113198240416834246-senior-product-manager-databases-amp-analytics-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/115912268369011398-group-product-manager-databases-amp-analytics-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job functions ('Senior Product Manager' vs 'Group Product Manager') and different seniority levels, despite similar product scope.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/113198240416834246-senior-product-manager-databases-amp-analytics-google-cloud/",
+      "title": "Senior Product Manager, Databases &amp;amp; Analytics, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/115912268369011398-group-product-manager-databases-amp-analytics-google-cloud/",
+      "title": "Group Product Manager, Databases &amp;amp; Analytics, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:41.274Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/113198240416834246-senior-product-manager-databases-amp-analytics-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/129567769531163334-lead-group-product-manager-databases-amp-analytics-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels ('Senior' vs 'Lead Group') indicate distinct roles rather than the same job posting across ATS systems.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/113198240416834246-senior-product-manager-databases-amp-analytics-google-cloud/",
+      "title": "Senior Product Manager, Databases &amp;amp; Analytics, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/129567769531163334-lead-group-product-manager-databases-amp-analytics-google-cloud/",
+      "title": "Lead Group Product Manager, Databases &amp;amp; Analytics, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:42.700Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/113198240416834246-senior-product-manager-databases-amp-analytics-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/88598970921558726-product-manager-ii-databases-and-analytics-google-cloud/": {
+    "same": false,
+    "confidence": 0.65,
+    "reason": "Different seniority levels (Senior vs Product Manager II) and different geographic focus suggest separate openings.",
+    "jaccard": 0.75,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/113198240416834246-senior-product-manager-databases-amp-analytics-google-cloud/",
+      "title": "Senior Product Manager, Databases &amp;amp; Analytics, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/88598970921558726-product-manager-ii-databases-and-analytics-google-cloud/",
+      "title": "Product Manager II, Databases and Analytics, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:44.054Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job functions (Group Product Manager vs Product Manager II) and different seniority levels, despite both being in Google Cloud.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/",
+      "title": "Group Product Manager, Generative AI, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/",
+      "title": "Product Manager II, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:45.475Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels (Group Product Manager vs Senior Product Manager) and different title semantics despite shared product scope.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/",
+      "title": "Group Product Manager, Generative AI, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/",
+      "title": "Senior Product Manager, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:46.798Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels ('Group Product Manager' vs 'Senior Product Manager') indicate distinct roles rather than the same job posting across ATS systems.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/82711424651928262-group-product-manager-generative-ai-google-cloud/",
+      "title": "Group Product Manager, Generative AI, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/",
+      "title": "Senior Product Manager, Generative AI, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:48.272Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/114024669702431430-product-manager-youtube-trust-and-safety/||https://www.google.com/about/careers/applications/jobs/results/125299626721845958-product-manager-i-youtube-youth-trust-and-safety/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Title differences are not purely cosmetic; 'Product Manager I' vs 'Product Manager' indicates different seniority levels, and 'YouTube Youth, Trust and Safety' ",
+    "jaccard": 0.75,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/125299626721845958-product-manager-i-youtube-youth-trust-and-safety/",
+      "title": "Product Manager I, YouTube Youth, Trust and Safety"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/114024669702431430-product-manager-youtube-trust-and-safety/",
+      "title": "Product Manager, YouTube Trust and Safety"
+    },
+    "classifiedAt": "2026-04-13T07:10:50.236Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/121095889363051206-senior-product-manager-youtube-growth-platform/||https://www.google.com/about/careers/applications/jobs/results/130730846943355590-product-manager-i-youtube-growth-platform/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels (Product Manager I vs Senior Product Manager) indicate different roles rather than the same position.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/130730846943355590-product-manager-i-youtube-growth-platform/",
+      "title": "Product Manager I, YouTube Growth Platform"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/121095889363051206-senior-product-manager-youtube-growth-platform/",
+      "title": "Senior Product Manager, YouTube Growth Platform"
+    },
+    "classifiedAt": "2026-04-13T07:10:51.586Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/128707513620013766-group-product-manager-youtube-search-and-discovery/||https://www.google.com/about/careers/applications/jobs/results/92488913406304966-product-manager-gmail-search-and-discovery/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different product teams (YouTube vs Gmail) and different job titles despite similar function and location.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/128707513620013766-group-product-manager-youtube-search-and-discovery/",
+      "title": "Group Product Manager, YouTube Search and Discovery"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/92488913406304966-product-manager-gmail-search-and-discovery/",
+      "title": "Product Manager, Gmail Search and Discovery"
+    },
+    "classifiedAt": "2026-04-13T07:10:52.850Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/100383600167264966-product-manager-ii-compute-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different locations and job titles omitting 'Compute' suggest distinct roles rather than identical postings.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/100383600167264966-product-manager-ii-compute-google-cloud/",
+      "title": "Product Manager II, Compute, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/",
+      "title": "Product Manager II, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:54.095Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/100383600167264966-product-manager-ii-compute-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different seniority levels (Senior vs Product Manager II) and different product focus (Compute vs general Google Cloud).",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/100383600167264966-product-manager-ii-compute-google-cloud/",
+      "title": "Product Manager II, Compute, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/",
+      "title": "Senior Product Manager, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:10:55.397Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/100383600167264966-product-manager-ii-compute-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/91744939171291846-senior-product-manager-google-compute/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels (Senior vs Product Manager II) and different product focus (Google Compute vs Compute, Google Cloud) indicate distinct roles.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/100383600167264966-product-manager-ii-compute-google-cloud/",
+      "title": "Product Manager II, Compute, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/91744939171291846-senior-product-manager-google-compute/",
+      "title": "Senior Product Manager, Google Compute"
+    },
+    "classifiedAt": "2026-04-13T07:10:56.857Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/100383600167264966-product-manager-ii-compute-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/135959087547327174-product-manager-google-distributed-cloud-ai-compute-infrastructure/": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different product scopes (Compute vs Google Distributed Cloud, AI Compute Infrastructure) and different location footprints suggest distinct roles.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/100383600167264966-product-manager-ii-compute-google-cloud/",
+      "title": "Product Manager II, Compute, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/135959087547327174-product-manager-google-distributed-cloud-ai-compute-infrastructure/",
+      "title": "Product Manager, Google Distributed Cloud, AI Compute Infrastructure"
+    },
+    "classifiedAt": "2026-04-13T07:10:58.162Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/130411359358591686-group-product-manager-cloud-foundations/||https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different job functions (Product Manager II vs Group Product Manager) and different product scopes (Google Cloud vs Cloud Foundations) indicate distinct roles.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/",
+      "title": "Product Manager II, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/130411359358591686-group-product-manager-cloud-foundations/",
+      "title": "Group Product Manager, Cloud Foundations"
+    },
+    "classifiedAt": "2026-04-13T07:10:59.613Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different seniority levels (Senior vs Product Manager II) indicate different roles rather than the same job posting.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/",
+      "title": "Product Manager II, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/",
+      "title": "Senior Product Manager, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:11:00.933Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels (Senior vs Product Manager II) and different product focus (Generative AI vs general Google Cloud).",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/88132755442803398-product-manager-ii-google-cloud/",
+      "title": "Product Manager II, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/",
+      "title": "Senior Product Manager, Generative AI, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:11:02.406Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/130411359358591686-group-product-manager-cloud-foundations/||https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different product scopes (Cloud Foundations vs Google Cloud) and different seniority levels (Group PM vs Senior PM).",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/130411359358591686-group-product-manager-cloud-foundations/",
+      "title": "Group Product Manager, Cloud Foundations"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/",
+      "title": "Senior Product Manager, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:11:03.836Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/115912268369011398-group-product-manager-databases-amp-analytics-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/129567769531163334-lead-group-product-manager-databases-amp-analytics-google-cloud/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job titles with 'Group Product Manager' vs 'Lead Group Product Manager' indicate different seniority levels, and locations differ significantly.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/115912268369011398-group-product-manager-databases-amp-analytics-google-cloud/",
+      "title": "Group Product Manager, Databases &amp;amp; Analytics, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/129567769531163334-lead-group-product-manager-databases-amp-analytics-google-cloud/",
+      "title": "Lead Group Product Manager, Databases &amp;amp; Analytics, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:11:05.429Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/115912268369011398-group-product-manager-databases-amp-analytics-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/88598970921558726-product-manager-ii-databases-and-analytics-google-cloud/": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different title conventions and locations suggest separate postings rather than identical role mirrored across ATS systems.",
+    "jaccard": 0.75,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/115912268369011398-group-product-manager-databases-amp-analytics-google-cloud/",
+      "title": "Group Product Manager, Databases &amp;amp; Analytics, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/88598970921558726-product-manager-ii-databases-and-analytics-google-cloud/",
+      "title": "Product Manager II, Databases and Analytics, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:11:06.746Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/107993315848135366-product-manager-google-distributed-cloud-solutions/||https://www.google.com/about/careers/applications/jobs/results/128932750294950598-product-manager-lead-google-distributed-cloud-hardware/": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different job functions with distinct titles ('Product Manager Lead' vs 'Product Manager') and different product scopes ('Hardware' vs 'Solutions') suggest sepa",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/128932750294950598-product-manager-lead-google-distributed-cloud-hardware/",
+      "title": "Product Manager Lead, Google Distributed Cloud, Hardware"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/107993315848135366-product-manager-google-distributed-cloud-solutions/",
+      "title": "Product Manager, Google Distributed Cloud Solutions"
+    },
+    "classifiedAt": "2026-04-13T07:11:08.435Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/128932750294950598-product-manager-lead-google-distributed-cloud-hardware/||https://www.google.com/about/careers/applications/jobs/results/96854696123081414-senior-product-manager-google-distributed-cloud-hardware/": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels (Product Manager Lead vs Senior Product Manager) indicate distinct roles rather than the same opening.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/128932750294950598-product-manager-lead-google-distributed-cloud-hardware/",
+      "title": "Product Manager Lead, Google Distributed Cloud, Hardware"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/96854696123081414-senior-product-manager-google-distributed-cloud-hardware/",
+      "title": "Senior Product Manager, Google Distributed Cloud, Hardware"
+    },
+    "classifiedAt": "2026-04-13T07:11:09.845Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different product scopes ('Google Cloud' vs 'Generative AI, Google Cloud') indicate distinct roles despite similar titles and locations.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/89081699207389894-senior-product-manager-google-cloud/",
+      "title": "Senior Product Manager, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/78486318488658630-senior-product-manager-generative-ai-google-cloud/",
+      "title": "Senior Product Manager, Generative AI, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:11:11.236Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/107993315848135366-product-manager-google-distributed-cloud-solutions/||https://www.google.com/about/careers/applications/jobs/results/96854696123081414-senior-product-manager-google-distributed-cloud-hardware/": {
+    "same": false,
+    "confidence": 0.7,
+    "reason": "Different job functions (Product Manager vs Senior Product Manager) and different product scopes (Cloud Solutions vs Cloud Hardware) indicate distinct roles.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/107993315848135366-product-manager-google-distributed-cloud-solutions/",
+      "title": "Product Manager, Google Distributed Cloud Solutions"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/96854696123081414-senior-product-manager-google-distributed-cloud-hardware/",
+      "title": "Senior Product Manager, Google Distributed Cloud, Hardware"
+    },
+    "classifiedAt": "2026-04-13T07:11:12.652Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/129567769531163334-lead-group-product-manager-databases-amp-analytics-google-cloud/||https://www.google.com/about/careers/applications/jobs/results/88598970921558726-product-manager-ii-databases-and-analytics-google-cloud/": {
+    "same": false,
+    "confidence": 0.65,
+    "reason": "Different seniority levels (Lead Group Product Manager vs Product Manager II) and different geographic scopes suggest distinct roles rather than the same openin",
+    "jaccard": 0.75,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/129567769531163334-lead-group-product-manager-databases-amp-analytics-google-cloud/",
+      "title": "Lead Group Product Manager, Databases &amp;amp; Analytics, Google Cloud"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/88598970921558726-product-manager-ii-databases-and-analytics-google-cloud/",
+      "title": "Product Manager II, Databases and Analytics, Google Cloud"
+    },
+    "classifiedAt": "2026-04-13T07:11:14.296Z"
+  },
+  "https://www.google.com/about/careers/applications/jobs/results/117910353995539142-product-manager-ii-platforms-and-devices/||https://www.google.com/about/careers/applications/jobs/results/96788715224867526-product-marketing-manager-platforms-and-devices-marketing/": {
+    "same": false,
+    "confidence": 0.3,
+    "reason": "Different job functions (Product Manager vs Product Marketing Manager) and different titles with distinct suffixes indicate separate roles.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/117910353995539142-product-manager-ii-platforms-and-devices/",
+      "title": "Product Manager II, Platforms and Devices"
+    },
+    "b": {
+      "url": "https://www.google.com/about/careers/applications/jobs/results/96788715224867526-product-marketing-manager-platforms-and-devices-marketing/",
+      "title": "Product Marketing Manager, Platforms and Devices Marketing"
+    },
+    "classifiedAt": "2026-04-13T07:11:15.718Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10377641/product-marketing-manager-tech-aws-ai-marketing||https://www.amazon.jobs/en/jobs/3180280/sr-technical-product-marketing-manager-ai-ml-product-marketing": {
+    "same": false,
+    "confidence": 0.6,
+    "reason": "Different job functions (Sr Technical Product Marketing Manager vs Product Marketing Manager) and different product scopes (AI/ML Product Marketing vs AWS AI Ma",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/3180280/sr-technical-product-marketing-manager-ai-ml-product-marketing",
+      "title": "Sr Technical Product Marketing Manager, AI/ML Product Marketing"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/10377641/product-marketing-manager-tech-aws-ai-marketing",
+      "title": "Product Marketing Manager - Tech, AWS AI Marketing"
+    },
+    "classifiedAt": "2026-04-13T07:11:17.280Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3180280/sr-technical-product-marketing-manager-ai-ml-product-marketing||https://www.amazon.jobs/en/jobs/3207021/sr-product-marketing-manager-amazon-music": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different product teams (AI/ML Product Marketing vs Amazon Music) and different locations indicate distinct roles.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/3180280/sr-technical-product-marketing-manager-ai-ml-product-marketing",
+      "title": "Sr Technical Product Marketing Manager, AI/ML Product Marketing"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/3207021/sr-product-marketing-manager-amazon-music",
+      "title": "Sr. Product Marketing Manager, Amazon Music"
+    },
+    "classifiedAt": "2026-04-13T07:11:18.541Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3149066/sr-product-marketing-manager-amazon-music||https://www.amazon.jobs/en/jobs/3180280/sr-technical-product-marketing-manager-ai-ml-product-marketing": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different product teams (AI/ML vs Amazon Music) and different locations indicate distinct roles.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/3180280/sr-technical-product-marketing-manager-ai-ml-product-marketing",
+      "title": "Sr Technical Product Marketing Manager, AI/ML Product Marketing"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/3149066/sr-product-marketing-manager-amazon-music",
+      "title": "Sr. Product Marketing Manager, Amazon Music"
+    },
+    "classifiedAt": "2026-04-13T07:11:19.750Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10377641/product-marketing-manager-tech-aws-ai-marketing||https://www.amazon.jobs/en/jobs/3188622/product-marketing-manager-tech-aws-marketing-amazon-connect": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different product scopes (AWS AI Marketing vs AWS Marketing, Amazon Connect) indicate distinct roles rather than the same job opening.",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/10377641/product-marketing-manager-tech-aws-ai-marketing",
+      "title": "Product Marketing Manager - Tech, AWS AI Marketing"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/3188622/product-marketing-manager-tech-aws-marketing-amazon-connect",
+      "title": "Product Marketing Manager, Tech, AWS Marketing, Amazon Connect"
+    },
+    "classifiedAt": "2026-04-13T07:11:21.145Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10386653/principal-product-manager-creator-products||https://www.amazon.jobs/en/jobs/3153366/senior-product-manager-creator-products": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different seniority levels (Senior vs Principal) indicate different roles rather than the same position.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/3153366/senior-product-manager-creator-products",
+      "title": "Senior Product Manager, Creator Products"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/10386653/principal-product-manager-creator-products",
+      "title": "Principal Product Manager, Creator Products"
+    },
+    "classifiedAt": "2026-04-13T07:11:23.066Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10379669/senior-product-manager-technical-alexa-connections||https://www.amazon.jobs/en/jobs/10381963/principal-product-manager-technical-alexa-connections": {
+    "same": false,
+    "confidence": 0.95,
+    "reason": "Different seniority levels (Senior vs Principal) indicate distinct roles rather than the same job posting.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/10379669/senior-product-manager-technical-alexa-connections",
+      "title": "Senior Product Manager - Technical, Alexa Connections"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/10381963/principal-product-manager-technical-alexa-connections",
+      "title": "Principal Product Manager - Technical, Alexa Connections"
+    },
+    "classifiedAt": "2026-04-13T07:11:25.685Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10373811/senior-product-manager-technical-aws-boost||https://www.amazon.jobs/en/jobs/3205967/principal-technical-program-manager-aws-boost": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels (Senior vs Principal) and different job functions (Product Manager vs Technical Program Manager) indicate distinct roles rather than ",
+    "jaccard": 0.67,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/10373811/senior-product-manager-technical-aws-boost",
+      "title": "Senior Product Manager - Technical, AWS Boost"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/3205967/principal-technical-program-manager-aws-boost",
+      "title": "Principal Technical Program Manager, AWS Boost"
+    },
+    "classifiedAt": "2026-04-13T07:11:27.437Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10371387/solutions-architect-iii-amz9674190||https://www.amazon.jobs/en/jobs/10371504/solutions-architect-iii-amz10038547": {
+    "same": false,
+    "confidence": 0.92,
+    "reason": "Different job IDs and locations (Santa Monica vs Irvine) suggest separate openings despite identical titles and roles.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/10371387/solutions-architect-iii-amz9674190",
+      "title": "Solutions Architect III - AMZ9674190"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/10371504/solutions-architect-iii-amz10038547",
+      "title": "Solutions Architect III - AMZ10038547"
+    },
+    "classifiedAt": "2026-04-13T07:11:28.980Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10371387/solutions-architect-iii-amz9674190||https://www.amazon.jobs/en/jobs/10371545/sr-solutions-architect-startups": {
+    "same": false,
+    "confidence": 0.65,
+    "reason": "Different seniority levels (III vs Sr.) and different team focus (AMZ9674190 vs Startups) suggest distinct roles rather than the same job posting.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/10371387/solutions-architect-iii-amz9674190",
+      "title": "Solutions Architect III - AMZ9674190"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/10371545/sr-solutions-architect-startups",
+      "title": "Sr. Solutions Architect, Startups"
+    },
+    "classifiedAt": "2026-04-13T07:11:31.176Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10371387/solutions-architect-iii-amz9674190||https://www.amazon.jobs/en/jobs/3201490/sr-ai-specialist-solutions-architect": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job functions (Solutions Architect vs Sr. AI Specialist) and different seniority levels (III vs Sr.), with distinct titles and locations.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/10371387/solutions-architect-iii-amz9674190",
+      "title": "Solutions Architect III - AMZ9674190"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/3201490/sr-ai-specialist-solutions-architect",
+      "title": "Sr. AI Specialist Solutions Architect"
+    },
+    "classifiedAt": "2026-04-13T07:11:32.659Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10371504/solutions-architect-iii-amz10038547||https://www.amazon.jobs/en/jobs/10371545/sr-solutions-architect-startups": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different seniority levels (Solutions Architect III vs Sr. Solutions Architect) and different team scopes (AMZ10038547 vs Startups).",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/10371504/solutions-architect-iii-amz10038547",
+      "title": "Solutions Architect III - AMZ10038547"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/10371545/sr-solutions-architect-startups",
+      "title": "Sr. Solutions Architect, Startups"
+    },
+    "classifiedAt": "2026-04-13T07:11:34.250Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10371504/solutions-architect-iii-amz10038547||https://www.amazon.jobs/en/jobs/3201490/sr-ai-specialist-solutions-architect": {
+    "same": false,
+    "confidence": 0.3,
+    "reason": "Different job functions (Solutions Architect vs Sr. AI Specialist) and different seniority levels (III vs Sr.), with distinct titles and locations.",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/10371504/solutions-architect-iii-amz10038547",
+      "title": "Solutions Architect III - AMZ10038547"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/3201490/sr-ai-specialist-solutions-architect",
+      "title": "Sr. AI Specialist Solutions Architect"
+    },
+    "classifiedAt": "2026-04-13T07:11:35.691Z"
+  },
+  "https://www.amazon.jobs/en/jobs/10371545/sr-solutions-architect-startups||https://www.amazon.jobs/en/jobs/3201490/sr-ai-specialist-solutions-architect": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job functions (Solutions Architect vs AI Specialist) and different product scopes (Startups vs general AI) indicate distinct roles rather than duplica",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/10371545/sr-solutions-architect-startups",
+      "title": "Sr. Solutions Architect, Startups"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/3201490/sr-ai-specialist-solutions-architect",
+      "title": "Sr. AI Specialist Solutions Architect"
+    },
+    "classifiedAt": "2026-04-13T07:11:37.147Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3179244/technical-program-manager-iii-aws-workspaces||https://www.amazon.jobs/en/jobs/3205967/principal-technical-program-manager-aws-boost": {
+    "same": false,
+    "confidence": 0.75,
+    "reason": "Different job functions (Principal TPM vs TPM III) and different products (AWS Boost vs AWS WorkSpaces), indicating distinct roles rather than the same position",
+    "jaccard": 0.5,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/3205967/principal-technical-program-manager-aws-boost",
+      "title": "Principal Technical Program Manager, AWS Boost"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/3179244/technical-program-manager-iii-aws-workspaces",
+      "title": "Technical Program Manager III, AWS WorkSpaces"
+    },
+    "classifiedAt": "2026-04-13T07:11:38.623Z"
+  },
+  "https://www.amazon.jobs/en/jobs/3149066/sr-product-marketing-manager-amazon-music||https://www.amazon.jobs/en/jobs/3207021/sr-product-marketing-manager-amazon-music": {
+    "same": false,
+    "confidence": 0.95,
+    "reason": "Different job IDs and URLs indicate distinct job postings even though titles and locations are identical.",
+    "jaccard": 1,
+    "a": {
+      "url": "https://www.amazon.jobs/en/jobs/3207021/sr-product-marketing-manager-amazon-music",
+      "title": "Sr. Product Marketing Manager, Amazon Music"
+    },
+    "b": {
+      "url": "https://www.amazon.jobs/en/jobs/3149066/sr-product-marketing-manager-amazon-music",
+      "title": "Sr. Product Marketing Manager, Amazon Music"
+    },
+    "classifiedAt": "2026-04-13T07:11:39.821Z"
+  }
+}

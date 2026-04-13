@@ -1,0 +1,18 @@
+[
+  {
+    "canonical": "https://jobs.lever.co/palantir#technical-program-manager-tpm-",
+    "duplicates": [
+      "https://jobs.lever.co/palantir/7eb0dedb-37ee-4175-b29f-10a9e4340076"
+    ],
+    "count": 2,
+    "reason": "Both postings share identical title, location, and URL pattern suggesting one is a canonical listing and the other a Lever ATS fragment, with no functional diff"
+  },
+  {
+    "canonical": "https://jobs.lever.co/palantir/bd16f7ad-3bee-48fd-9902-b3ee9698b608",
+    "duplicates": [
+      "https://jobs.lever.co/palantir#technical-program-manager-tpm-defense"
+    ],
+    "count": 2,
+    "reason": "Both postings share identical title, location, and job function, with only URL structure differing (anchor link vs. UUID-based) suggesting the same job opening "
+  }
+]
