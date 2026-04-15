@@ -18,6 +18,9 @@
   --text-muted: oklch(0.62 0.015 280);
   --text-on-dark: oklch(0.95 0.015 55);
   --text-on-dark-muted: oklch(0.72 0.02 285);
+  --inverse-bg: var(--text-primary);
+  --inverse-text: var(--text-on-dark);
+  --inverse-hover-bg: oklch(0.3 0.03 280);
 
   --accent: oklch(0.68 0.18 15);              /* warm coral */
   --accent-soft: oklch(0.9 0.06 15);
@@ -852,8 +855,8 @@ tr.clickable { cursor: pointer; }
   position: fixed;
   top: 0;
   left: 0;
-  background: var(--text-primary);
-  color: var(--text-on-dark);
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
   font-family: var(--font-body);
   font-size: 0.78rem;
   font-weight: 500;
@@ -897,12 +900,13 @@ tr.clickable { cursor: pointer; }
   border-bottom-color: var(--text-primary);
 }
 
-/* "First seen" column — monospaced date */
-.first-seen {
+/* Seen-date columns — monospaced dates */
+.first-seen,
+.last-seen {
   font-variant-numeric: tabular-nums;
   color: var(--text-muted);
   font-size: 0.82rem;
-  letter-spacing: -0.005em;
+  letter-spacing: 0;
 }
 
 /* Location + salary cells — muted, truncate long strings so tall rows don't
@@ -1607,14 +1611,15 @@ tr.clickable { cursor: pointer; }
 }
 
 .btn-accent {
-  background: var(--text-primary);
-  color: var(--text-on-dark);
-  border-color: var(--text-primary);
+  background: var(--inverse-bg);
+  color: var(--inverse-text);
+  border-color: var(--inverse-bg);
 }
 
 .btn-accent:hover {
-  background: oklch(0.3 0.03 280);
-  color: var(--text-on-dark);
+  background: var(--inverse-hover-bg);
+  border-color: var(--inverse-hover-bg);
+  color: var(--inverse-text);
 }
 
 .btn:disabled {
@@ -1852,12 +1857,16 @@ select.filter-input {
 /* --- URL link in pipeline --- */
 
 .url-link {
+  display: inline-block;
+  max-width: 42ch;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.78rem;
   font-variant-numeric: tabular-nums;
   transition: color 0.2s var(--ease-out-quint);
   letter-spacing: -0.005em;
+  overflow-wrap: anywhere;
+  vertical-align: top;
 }
 
 .url-link:hover {
@@ -1995,6 +2004,9 @@ tbody tr:nth-child(n+9) { animation-delay: 370ms; }
   --text-muted: oklch(0.58 0.01 280);
   --text-on-dark: oklch(0.96 0.008 55);
   --text-on-dark-muted: oklch(0.76 0.015 285);
+  --inverse-bg: oklch(0.93 0.008 55);
+  --inverse-text: oklch(0.18 0.012 55);
+  --inverse-hover-bg: oklch(0.98 0.006 55);
 
   --accent: oklch(0.74 0.17 15);
   --accent-soft: oklch(0.32 0.08 15);

@@ -142,6 +142,22 @@ function bindEvents() {
   bindTagInput('add-positive-input', 'positive');
   bindTagInput('add-negative-input', 'negative');
 
+  const bindScannerListInput = (inputId, key) => {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    el.addEventListener('keydown', async (e) => {
+      if (e.key !== 'Enter') return;
+      const val = el.value.trim();
+      if (!val) return;
+      const current = await api('/api/settings');
+      const list = [...(current.profile?.scanner?.[key] || [])];
+      if (!list.includes(val)) list.push(val);
+      await saveSettings({ profile: { scanner: { ...(current.profile?.scanner || {}), [key]: list } } });
+      render();
+    });
+  };
+  bindScannerListInput('add-excluded-location-input', 'exclude_locations');
+
   document.querySelectorAll('[data-remove-positive], [data-remove-negative]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const isPositive = btn.hasAttribute('data-remove-positive');
@@ -151,6 +167,18 @@ function bindEvents() {
       const list = [...(current.title_filter?.[field] || [])];
       list.splice(idx, 1);
       await saveSettings({ title_filter: { ...current.title_filter, [field]: list } });
+      render();
+    });
+  });
+
+  document.querySelectorAll('[data-remove-excluded-location]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const idx = parseInt(btn.dataset.removeExcludedLocation, 10);
+      const current = await api('/api/settings');
+      const scanner = current.profile?.scanner || {};
+      const list = [...(scanner.exclude_locations || [])];
+      list.splice(idx, 1);
+      await saveSettings({ profile: { scanner: { ...scanner, exclude_locations: list } } });
       render();
     });
   });
@@ -658,13 +686,14 @@ function renderTimeSeriesCharts(ts) {
 // --- Pipeline ---
 
 async function renderPipeline() {
-  const [items, scanHistory, liveness, fitScores, gapMap, dupGroups] = await Promise.all([
+  const [items, scanHistory, liveness, fitScores, gapMap, dupGroups, settings] = await Promise.all([
     api('/api/pipeline'),
     api('/api/scan-history').catch(() => []),
     api('/api/liveness').catch(() => ({})),
     api('/api/fit-scores').catch(() => ({})),
     api('/api/gap-analysis').catch(() => ({})),
     api('/api/duplicates').catch(() => []),
+    api('/api/settings').catch(() => ({})),
   ]);
 
   // Build url → { canonical, dupCount } so each row knows its dup state.
@@ -676,6 +705,11 @@ async function renderPipeline() {
     }
   }
   const pending = items.filter(i => !i.checked);
+  const titleNegatives = (settings.title_filter?.negative || []).map(normalizeFilterTerm).filter(Boolean);
+  const visiblePending = pending
+    .map((item) => ({ ...item, role: cleanRoleTitle(item.role) }))
+    .filter((item) => !roleMatchesFilter(item.role, titleNegatives));
+  const hiddenByTitleFilter = pending.length - visiblePending.length;
 
   // url → {first_seen, portal} from scan-history.tsv (fallback for never-verified URLs)
   const seenMap = new Map();
@@ -685,14 +719,14 @@ async function renderPipeline() {
     }
   }
 
-  const companies = [...new Set(pending.map(i => i.company))].sort();
+  const companies = [...new Set(visiblePending.map(i => i.company))].sort();
 
   // Build city bucket counts from live pending items — US cities only.
   // Prefer Qwen-classified cityBuckets from the liveness cache (populated
   // by city-classify.mjs); fall back to the regex categorizer only for
   // entries that haven't been classified yet.
   const cityCounts = Object.fromEntries(CITY_BUCKETS.map(b => [b.key, 0]));
-  for (const item of pending) {
+  for (const item of visiblePending) {
     const l = liveness[item.url];
     if (!l || l.live !== true) continue;
     const buckets = Array.isArray(l.cityBuckets) && l.cityBuckets.length
@@ -715,7 +749,7 @@ async function renderPipeline() {
     { key: 'not-posted',label: 'Not posted',    test: (_, sal) => !sal },
   ];
   const salCounts = Object.fromEntries(SALARY_BUCKETS.map(b => [b.key, 0]));
-  for (const item of pending) {
+  for (const item of visiblePending) {
     const l = liveness[item.url];
     if (!l || l.live !== true) continue;
     const sal = l.salary || '';
@@ -725,7 +759,7 @@ async function renderPipeline() {
 
   // Fit counts (based on current cache, US cities only not enforced here — just counts)
   const fitCounts = { '5': 0, '4.5': 0, '4': 0, '3': 0, '2': 0, 'scored': 0, 'unscored': 0 };
-  for (const item of pending) {
+  for (const item of visiblePending) {
     if (liveness[item.url]?.live !== true) continue;
     const s = fitScores[item.url]?.score;
     if (typeof s !== 'number') { fitCounts.unscored++; continue; }
@@ -765,7 +799,7 @@ async function renderPipeline() {
     <div class="view-header">
       <div>
         <h1 class="view-title">Pipeline</h1>
-        <p class="view-subtitle">${pending.length} pending opportunities</p>
+        <p class="view-subtitle">${visiblePending.length} pending opportunities${hiddenByTitleFilter ? ` (${hiddenByTitleFilter} hidden by title exclusions)` : ''}</p>
       </div>
       <div style="display:flex; gap:var(--space-sm); align-items:center; flex-wrap:wrap">
         <button class="btn" id="pipeline-verify" title="Check that visible URLs still host a real posting (uses Playwright)">
@@ -788,7 +822,7 @@ async function renderPipeline() {
       <input type="text" class="filter-input" id="pipeline-search" placeholder="Search company or role...">
       <select class="filter-input" id="pipeline-company">
         <option value="">All companies</option>
-        ${companies.map(c => `<option value="${c}">${c}</option>`).join('')}
+        ${companies.map(c => `<option value="${escapeAttr(c)}">${escapeHtml(c)}</option>`).join('')}
       </select>
       <select class="filter-input" id="pipeline-liveness">
         <option value="alive" selected>✓ Live only</option>
@@ -813,22 +847,25 @@ async function renderPipeline() {
       </div>
       <select class="filter-input" id="pipeline-sort">
         <option value="fit-desc">Fit: highest first</option>
-        <option value="last_seen-desc">Newest first</option>
-        <option value="last_seen-asc">Oldest first</option>
+        <option value="last_seen-desc">Last seen: newest</option>
+        <option value="last_seen-asc">Last seen: oldest</option>
+        <option value="first_seen-desc">First seen: newest</option>
+        <option value="first_seen-asc">First seen: oldest</option>
         <option value="company-asc">Company A→Z</option>
         <option value="company-desc">Company Z→A</option>
         <option value="role-asc">Role A→Z</option>
         <option value="live-desc">Live first</option>
         <option value="live-asc">Dead first</option>
       </select>
-      <span style="color: var(--text-muted); font-size: 0.75rem; margin-left:auto" id="pipeline-count">${pending.length} items</span>
+      <span style="color: var(--text-muted); font-size: 0.75rem; margin-left:auto" id="pipeline-count">${visiblePending.length} items</span>
     </div>
 
     <div class="table-wrap">
       <table id="pipeline-table">
         <thead><tr>
           <th style="width:28px" data-sort="live" data-tooltip="Sort by liveness (live → unverified → dead)">&nbsp;</th>
-          <th data-sort="last_seen" style="width:110px" data-tooltip="When we last confirmed the URL was live. Falls back to discovery date if never verified.">Last seen</th>
+          <th data-sort="first_seen" style="width:110px" data-tooltip="When this URL first entered your scan history.">First seen</th>
+          <th data-sort="last_seen" style="width:110px" data-tooltip="When we last confirmed the URL was live. Blank until verified.">Last seen</th>
           <th data-sort="company">Company</th>
           <th data-sort="role">Role</th>
           <th data-sort="fit" style="width:72px" data-tooltip="Qwen-scored fit (1-5) against your profile. Run node fit-score.mjs to populate.">Fit</th>
@@ -838,7 +875,7 @@ async function renderPipeline() {
           <th style="width:60px" data-tooltip="Generate CV (click the document glyph in any row)">&nbsp;</th>
         </tr></thead>
         <tbody>
-          ${pending.map((item, i) => {
+          ${visiblePending.map((item, i) => {
             const live = liveness[item.url] || null;
             const seen = seenMap.get(item.url);
             const firstSeen = seen?.first_seen || '';
@@ -857,27 +894,24 @@ async function renderPipeline() {
               }
             }
 
-            // "Last seen" cell: prefer the live.last_seen timestamp; fall back
-            // to scan-history first-seen date so users see something useful
-            // even before they've run Verify.
-            let cellText = '—';
-            let cellTip = 'Not in scan history. Click the glyph to verify.';
-            if (live?.last_seen) {
-              cellText = relativeDate(live.last_seen);
-              cellTip = `Last confirmed live: ${new Date(live.last_seen).toLocaleString()}`;
-            } else if (firstSeen) {
-              cellText = relativeDate(firstSeen);
-              cellTip = `Never verified — discovered ${relativeDate(firstSeen)} via ${portal}. Click the glyph to verify.`;
-            }
+            const firstSeenIso = firstSeen && firstSeen.length === 10 ? firstSeen + 'T00:00:00' : firstSeen;
+            const firstSeenTs = firstSeenIso ? new Date(firstSeenIso).getTime() : 0;
+            const firstSeenText = firstSeen ? relativeDate(firstSeen) : '—';
+            const firstSeenTip = firstSeen
+              ? `Discovered ${relativeDate(firstSeen)} via ${portal}`
+              : 'Not in scan history.';
+
+            const lastSeenIso = live?.last_seen || '';
+            const lastSeenTs = lastSeenIso ? new Date(lastSeenIso).getTime() : 0;
+            const lastSeenText = lastSeenIso ? relativeDate(lastSeenIso) : '—';
+            const lastSeenTip = lastSeenIso
+              ? `Last confirmed live: ${new Date(lastSeenIso).toLocaleString()}`
+              : 'Not yet verified live. Click the glyph to verify.';
 
             const deadCls = (live && !live.live) ? ' row-dead' : '';
             // For sorting: canonical live state + a numeric timestamp
             const liveState = live ? (live.live ? 'alive' : 'dead') : 'unknown';
             const liveSortRank = live ? (live.live ? 2 : 0) : 1; // live > unknown > dead
-            // Use last_seen ISO for sort; fall back to first_seen date.
-            const sortIso = live?.last_seen || (firstSeen ? firstSeen + 'T00:00:00' : '');
-            const sortTs = sortIso ? new Date(sortIso).getTime() : 0;
-
             const location = live?.location || '';
             const salary = live?.salary || '';
             const locTip = location
@@ -910,15 +944,16 @@ async function renderPipeline() {
                   ? `<span class="dup-chip dup-canonical" data-tooltip="${dup.dupCount} other URL${dup.dupCount > 1 ? 's' : ''} point to this same role">+${dup.dupCount} dup</span>`
                   : `<a href="${escapeAttr(dup.canonical)}" target="_blank" rel="noopener" class="dup-chip dup-secondary" data-tooltip="Duplicate — canonical URL: ${escapeAttr(dup.canonical)}">↗ canonical</a>`)
               : '';
-            return `<tr class="${deadCls}${hasGap ? ' has-gap' : ''}" data-company="${item.company}" data-role="${item.role}" data-url="${escapeAttr(item.url)}" data-url-hash="${gap?.hash || ''}" data-live="${liveState}" data-live-rank="${liveSortRank}" data-last-seen-ts="${sortTs}" data-location="${escapeAttr(location)}" data-cities="${escapeAttr(cachedCities)}" data-salary="${escapeAttr(salary)}" data-fit="${fitNum ?? ''}">
+            return `<tr class="${deadCls}${hasGap ? ' has-gap' : ''}" data-company="${escapeAttr(item.company)}" data-role="${escapeAttr(item.role)}" data-url="${escapeAttr(item.url)}" data-url-hash="${escapeAttr(gap?.hash || '')}" data-live="${liveState}" data-live-rank="${liveSortRank}" data-first-seen-ts="${firstSeenTs}" data-last-seen-ts="${lastSeenTs}" data-location="${escapeAttr(location)}" data-cities="${escapeAttr(cachedCities)}" data-salary="${escapeAttr(salary)}" data-fit="${fitNum ?? ''}">
               <td data-sort-value="${liveSortRank}"><button class="live-dot-btn" data-verify-url="${escapeAttr(item.url)}" data-tooltip="${escapeAttr(dotTip)}"><span class="${dotClass}"></span></button></td>
-              <td class="first-seen" data-sort-value="${sortTs}" data-tooltip="${escapeAttr(cellTip)}">${cellText}</td>
-              <td>${item.company}${gapBadge}</td>
-              <td>${item.role}${dupBadge}</td>
+              <td class="first-seen" data-sort-value="${firstSeenTs}" data-tooltip="${escapeAttr(firstSeenTip)}">${firstSeenText}</td>
+              <td class="last-seen" data-sort-value="${lastSeenTs}" data-tooltip="${escapeAttr(lastSeenTip)}">${lastSeenText}</td>
+              <td>${escapeHtml(item.company)}${gapBadge}</td>
+              <td>${escapeHtml(item.role)}${dupBadge}</td>
               <td class="cell-fit" data-sort-value="${fitNum ?? -1}" data-tooltip="${escapeAttr(fitTip)}">${fitCell}</td>
               <td class="cell-location" data-sort-value="${escapeAttr(location.toLowerCase())}" data-tooltip="${escapeAttr(locTip)}">${location || '—'}</td>
               <td class="cell-salary" data-sort-value="${escapeAttr(salary.toLowerCase())}" data-tooltip="${escapeAttr(salTip)}">${salary || '—'}</td>
-              <td><a class="url-link" href="${item.url}" target="_blank" rel="noopener">${truncateUrl(item.url)}</a></td>
+              <td><a class="url-link" href="${escapeAttr(item.url)}" target="_blank" rel="noopener" data-tooltip="${escapeAttr(item.url)}">${escapeHtml(displayUrl(item.url))}</a></td>
               <td>
                 <button class="icon-btn generate-cv-btn"
                         data-url="${escapeAttr(item.url)}"
@@ -1074,12 +1109,16 @@ async function renderSettings() {
   const taste = await api('/api/taste').catch(() => ({ exists: false }));
   const comp = s.profile?.compensation || {};
   const loc = s.profile?.location || {};
+  const scanner = s.profile?.scanner || {};
 
   const posTags = (s.title_filter?.positive || []).map((t, i) =>
     `<span class="tag">${escapeHtml(t)}<button class="tag-x" data-remove-positive="${i}" aria-label="Remove">✕</button></span>`
   ).join('');
   const negTags = (s.title_filter?.negative || []).map((t, i) =>
     `<span class="tag">${escapeHtml(t)}<button class="tag-x" data-remove-negative="${i}" aria-label="Remove">✕</button></span>`
+  ).join('');
+  const excludedLocationTags = (scanner.exclude_locations || []).map((t, i) =>
+    `<span class="tag">${escapeHtml(t)}<button class="tag-x" data-remove-excluded-location="${i}" aria-label="Remove">✕</button></span>`
   ).join('');
 
   // Source glyphs: each data source gets a distinct shape so the badge is
@@ -1127,7 +1166,7 @@ async function renderSettings() {
 
     <div class="settings-section">
       <div class="section-label">Target keywords</div>
-      <p class="settings-help">Titles must contain at least one positive keyword and zero negative keywords to pass the scanner's filter.</p>
+      <p class="settings-help">Titles must contain at least one positive keyword and zero negative keyword for manual scans. Negative keywords also apply to the scheduled Telegram scanner. These save to <code>portals.yml</code>.</p>
 
       <div class="settings-subsection">
         <div class="subsection-label">Include (positive)</div>
@@ -1169,6 +1208,7 @@ async function renderSettings() {
 
     <div class="settings-section">
       <div class="section-label">Location</div>
+      <p class="settings-help">Excluded locations are checked before jobs are written to the queue or sent to Telegram. These save to <code>config/profile.yml</code>.</p>
       <div class="settings-grid">
         <label>
           <span class="subsection-label">City</span>
@@ -1178,6 +1218,13 @@ async function renderSettings() {
           <span class="subsection-label">Timezone</span>
           <input type="text" class="filter-input" id="loc-tz" value="${escapeAttr(loc.timezone || '')}" placeholder="PST">
         </label>
+      </div>
+      <div class="settings-subsection">
+        <div class="subsection-label">Exclude locations</div>
+        <div class="tag-list" id="excluded-location-tags">${excludedLocationTags}</div>
+        <div class="tag-input-row">
+          <input type="text" class="filter-input" id="add-excluded-location-input" placeholder="Add a location, press Enter">
+        </div>
       </div>
     </div>
   </div>`;
@@ -1589,7 +1636,10 @@ function filterPipeline() {
 
     const cachedCities = (row.dataset.cities || '').split(',').filter(Boolean);
     const rowCities = cachedCities.length ? cachedCities : categorizeLocations(rowLocation);
-    const matchLocation = !locations.length || locations.some(l => rowCities.includes(l));
+    const intlOnly = rowCities.includes('intl') && !rowCities.some(c => c !== 'intl');
+    const matchLocation = locations.length
+      ? locations.some(l => rowCities.includes(l))
+      : !intlOnly;
 
     const show = matchSearch && matchCompany && matchLive && matchSalary(rowSalary) && matchLocation && matchFit && matchCluster;
     row.style.display = show ? '' : 'none';
@@ -1694,6 +1744,30 @@ function extractReportFile(reportStr) {
   if (!reportStr) return null;
   const m = reportStr.match(/\[.*?\]\(reports\/(.+?)\)/);
   return m ? m[1] : null;
+}
+
+function displayUrl(url) {
+  try {
+    const u = new URL(url);
+    if (u.search || u.hash) return url;
+    return truncateUrl(url);
+  } catch { return url; }
+}
+
+function cleanRoleTitle(role) {
+  return String(role || '')
+    .replace(/^\s*(?:[-*+]|\u2022)+\s*/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeFilterTerm(term) {
+  return cleanRoleTitle(term).toLowerCase();
+}
+
+function roleMatchesFilter(role, terms) {
+  const haystack = cleanRoleTitle(role).toLowerCase();
+  return terms.some((term) => term && haystack.includes(term));
 }
 
 function truncateUrl(url) {
@@ -1876,7 +1950,7 @@ async function verifySingleUrl(btn) {
   if (!url) return;
   const row = btn.closest('tr');
   const dot = row?.querySelector('.live-dot');
-  const seenCell = row?.querySelector('.first-seen');
+  const seenCell = row?.querySelector('.last-seen');
   if (dot) dot.className = 'live-dot live-checking';
   btn.disabled = true;
   try {
@@ -1931,11 +2005,14 @@ async function verifySingleUrl(btn) {
             }
           }
           if (seenCell) {
+            const now = new Date();
             if (msg.live) {
               seenCell.textContent = 'just now';
-              seenCell.setAttribute('data-tooltip', `Last confirmed live: ${new Date().toLocaleString()}`);
+              seenCell.dataset.sortValue = String(now.getTime());
+              if (row) row.dataset.lastSeenTs = String(now.getTime());
+              seenCell.setAttribute('data-tooltip', `Last confirmed live: ${now.toLocaleString()}`);
             } else {
-              seenCell.setAttribute('data-tooltip', `Dead as of ${new Date().toLocaleString()}. ${msg.reason || 'unknown'}`);
+              seenCell.setAttribute('data-tooltip', `Dead as of ${now.toLocaleString()}. ${msg.reason || 'unknown'}`);
             }
           }
           // Re-apply the current liveness filter so the row hides/shows
@@ -2028,7 +2105,7 @@ async function verifyVisibleUrls(btn) {
             .find(tr => tr.dataset.url === msg.url);
           if (row) {
             const dot = row.querySelector('.live-dot');
-            const seenCell = row.querySelector('.first-seen');
+            const seenCell = row.querySelector('.last-seen');
             if (dot) {
               dot.className = `live-dot ${msg.live ? 'live-alive' : 'live-dead'}`;
             }
@@ -2039,8 +2116,11 @@ async function verifyVisibleUrls(btn) {
                 : `Dead. ${msg.reason || 'unknown'} (just now). Click to re-check.`);
             }
             if (seenCell && msg.live) {
+              const now = new Date();
               seenCell.textContent = 'just now';
-              seenCell.setAttribute('data-tooltip', `Last confirmed live: ${new Date().toLocaleString()}`);
+              seenCell.dataset.sortValue = String(now.getTime());
+              row.dataset.lastSeenTs = String(now.getTime());
+              seenCell.setAttribute('data-tooltip', `Last confirmed live: ${now.toLocaleString()}`);
             }
             if (msg.live) row.classList.remove('row-dead');
             else row.classList.add('row-dead');
@@ -2087,7 +2167,7 @@ async function verifyVisibleUrls(btn) {
 }
 
 function escapeHtml(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 // Minimal markdown to HTML

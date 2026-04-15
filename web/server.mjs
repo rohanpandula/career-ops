@@ -10,7 +10,7 @@ const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const ROOT = join(__dirname, '..');
 const PUBLIC_DIR = resolvePath(join(__dirname, 'public'));
 const REPORTS_DIR = resolvePath(join(ROOT, 'reports'));
-const PORT = 3000;
+const PORT = Number(process.env.PORT || 3000);
 const HOST = '0.0.0.0'; // bind to all interfaces so LAN devices can connect
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
 
@@ -516,6 +516,7 @@ route('GET', '/api/settings', async () => {
     profile: {
       compensation: profile.compensation || {},
       location: profile.location || {},
+      scanner: profile.scanner || {},
       target_roles: profile.target_roles || {},
     },
   };
@@ -557,6 +558,12 @@ route('PUT', '/api/settings', async (req) => {
       }
       if (updates.profile.location) {
         profile.location = { ...(profile.location || {}), ...updates.profile.location };
+      }
+      if (updates.profile.scanner) {
+        profile.scanner = { ...(profile.scanner || {}), ...updates.profile.scanner };
+        if (Array.isArray(updates.profile.scanner.exclude_locations)) {
+          profile.scanner.exclude_locations = updates.profile.scanner.exclude_locations;
+        }
       }
       await atomicWrite(join(ROOT, 'config/profile.yml'),
         yaml.dump(profile, { lineWidth: 120, noRefs: true, quotingType: '"' }));
@@ -712,6 +719,37 @@ function formatSalary(min, max, currency = 'USD', unit = null) {
   const body = b && b !== a ? `${a}–${b}` : a;
   const suffix = unit && /hour|day|week|month/i.test(unit) ? ` / ${unit.toLowerCase()}` : '';
   return body + suffix;
+}
+
+function normalizeJobTitleMatchText(value) {
+  return String(value || '')
+    .replace(/&amp;/gi, ' and ')
+    .replace(/[^a-z0-9]+/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function expectedGoogleTitleFromUrl(targetUrl) {
+  try {
+    const u = new URL(targetUrl);
+    if (u.hostname !== 'www.google.com') return '';
+    if (!u.pathname.includes('/about/careers/applications/jobs/results')) return '';
+
+    const detail = decodeURIComponent(u.pathname.split('/jobs/results/')[1] || '').replace(/\/$/, '');
+    const detailMatch = detail.match(/^\d+-(.+)$/);
+    if (detailMatch) return detailMatch[1].replace(/-/g, ' ');
+
+    const hash = decodeURIComponent(u.hash || '').replace(/^#+/, '').replace(/^-+/, '');
+    if (hash) return hash.replace(/-/g, ' ');
+  } catch {}
+  return '';
+}
+
+function googleRequestedTitleMissing(targetUrl, visibleText) {
+  const expected = normalizeJobTitleMatchText(expectedGoogleTitleFromUrl(targetUrl));
+  if (!expected) return false;
+  return !normalizeJobTitleMatchText(visibleText).includes(expected);
 }
 
 async function acquireBrowser(chromium, writer) {
@@ -928,6 +966,9 @@ route('POST', '/api/pipeline/verify', async (req, _params, res) => {
       if (hasStrongClosed) return { url, live: false, status, reason: 'closed marker in body' };
       if (tooShort)        return { url, live: false, status, reason: `empty page (${visibleLen} visible chars)` };
       if (shortWithHint)   return { url, live: false, status, reason: 'short page + not-found hint' };
+      if (googleRequestedTitleMissing(url, visibleText)) {
+        return { url, live: false, status, reason: 'google fallback page missing requested title' };
+      }
 
       // Extract metadata (location, salary, job title) from the live page.
       // Prefer JSON-LD schema.org JobPosting (standardized, most ATS set it).
