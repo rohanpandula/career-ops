@@ -2,7 +2,7 @@
 
 > **This fork extends [santifer/career-ops](https://github.com/santifer/career-ops) with a local-LLM toolkit + web dashboard.** Everything upstream still works; see the [What this fork adds](#what-this-fork-adds) section for the additions.
 
-[English](README.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko-KR.md) | [日本語](README.ja.md) | [Русский](README.ru.md)
+[English](README.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko-KR.md) | [日本語](README.ja.md) | [Русский](README.ru.md) | [繁體中文](README.zh-TW.md)
 
 <p align="center">
   <a href="https://x.com/santifer"><img src="docs/hero-banner.jpg" alt="Career-Ops — Multi-Agent Job Search System" width="800"></a>
@@ -10,7 +10,7 @@
 
 <p align="center">
   <em>I spent months applying to jobs the hard way. So I engineered the system I wish I had.</em><br>
-  Companies use AI to filter candidates. <strong>I gave candidates AI to <em>choose</em> companies.</strong><br>
+  Companies use AI to filter candidates. <strong>I just gave candidates AI to <em>choose</em> companies.</strong><br>
   <em>Now it's open source.</em>
 </p>
 
@@ -31,6 +31,7 @@
   <img src="https://img.shields.io/badge/PT--BR-green?style=flat" alt="PT-BR">
   <img src="https://img.shields.io/badge/KO-white?style=flat" alt="KO">
   <img src="https://img.shields.io/badge/JA-red?style=flat" alt="JA">
+  <img src="https://img.shields.io/badge/ZH--TW-blue?style=flat" alt="ZH-TW">
 </p>
 
 ---
