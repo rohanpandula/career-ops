@@ -37,6 +37,7 @@ Parse the JSON output:
 - `{"status": "up-to-date"}` → say nothing
 - `{"status": "dismissed"}` → say nothing
 - `{"status": "offline"}` → say nothing
+- `{"status": "no-remote-version"}` → say nothing (checker reached GitHub but neither VERSION nor the latest release tag parsed as semver — treat as a silent non-failure, same as offline)
 
 The user can also say "check for updates" or "update career-ops" at any time to force a check.
 To rollback: `node update-system.mjs rollback`
@@ -54,13 +55,18 @@ AI-powered job search automation built on Claude Code: pipeline tracking, offer 
 | `data/scan-history.tsv` | Scanner dedup history |
 | `portals.yml` | Query and company config |
 | `templates/cv-template.html` | HTML template for CVs |
+| `templates/cv-template.tex` | LaTeX/Overleaf template for CVs |
 | `generate-pdf.mjs` | Playwright: HTML to PDF |
+| `generate-latex.mjs` | LaTeX CV validator + pdflatex compiler |
 | `article-digest.md` | Compact proof points from portfolio (optional) |
 | `interview-prep/story-bank.md` | Accumulated STAR+R stories across evaluations |
 | `interview-prep/{company}-{role}.md` | Company-specific interview intel reports |
 | `analyze-patterns.mjs` | Pattern analysis script (JSON output) |
 | `followup-cadence.mjs` | Follow-up cadence calculator (JSON output) |
 | `data/follow-ups.md` | Follow-up history tracker |
+| `scan.mjs` | Zero-token portal scanner — hits Greenhouse/Ashby/Lever APIs directly, zero LLM cost |
+| `check-liveness.mjs` | Job posting liveness checker |
+| `liveness-core.mjs` | Shared liveness logic (expired signals win over generic Apply text) |
 | `reports/` | Evaluation reports (format: `{###}-{company-slug}-{YYYY-MM-DD}.md`). Blocks A-F + G (Posting Legitimacy). Header includes `**Legitimacy:** {tier}`. |
 
 ### OpenCode Commands
@@ -76,6 +82,7 @@ When using [OpenCode](https://opencode.ai), the following slash commands are ava
 | `/career-ops-contact` | `/career-ops contacto` | LinkedIn outreach (find contacts + draft) |
 | `/career-ops-deep` | `/career-ops deep` | Deep company research |
 | `/career-ops-pdf` | `/career-ops pdf` | Generate ATS-optimized CV |
+| `/career-ops-latex` | `/career-ops latex` | Export CV as LaTeX/Overleaf .tex |
 | `/career-ops-training` | `/career-ops training` | Evaluate course/cert against goals |
 | `/career-ops-project` | `/career-ops project` | Evaluate portfolio project idea |
 | `/career-ops-tracker` | `/career-ops tracker` | Application status overview |
@@ -86,6 +93,30 @@ When using [OpenCode](https://opencode.ai), the following slash commands are ava
 | `/career-ops-followup` | `/career-ops followup` | Follow-up cadence tracker |
 
 **Note:** OpenCode commands invoke the same `.claude/skills/career-ops/SKILL.md` skill used by Claude Code. The `modes/*` files are shared between both platforms.
+
+### Gemini CLI Commands
+
+When using the [Gemini CLI](https://github.com/google-gemini/gemini-cli), the following slash commands are available (defined in `.gemini/commands/`):
+
+| Command | Claude Code Equivalent | Description |
+|---------|------------------------|-------------|
+| `/career-ops` | `/career-ops` | Show menu or evaluate JD with args |
+| `/career-ops-pipeline` | `/career-ops pipeline` | Process pending URLs from inbox |
+| `/career-ops-evaluate` | `/career-ops oferta` | Evaluate job offer (A-G scoring) |
+| `/career-ops-compare` | `/career-ops ofertas` | Compare and rank multiple offers |
+| `/career-ops-contact` | `/career-ops contacto` | LinkedIn outreach (find contacts + draft) |
+| `/career-ops-deep` | `/career-ops deep` | Deep company research |
+| `/career-ops-pdf` | `/career-ops pdf` | Generate ATS-optimized CV |
+| `/career-ops-training` | `/career-ops training` | Evaluate course/cert against goals |
+| `/career-ops-project` | `/career-ops project` | Evaluate portfolio project idea |
+| `/career-ops-tracker` | `/career-ops tracker` | Application status overview |
+| `/career-ops-apply` | `/career-ops apply` | Live application assistant |
+| `/career-ops-scan` | `/career-ops scan` | Scan portals for new offers |
+| `/career-ops-batch` | `/career-ops batch` | Batch processing with parallel workers |
+| `/career-ops-patterns` | `/career-ops patterns` | Analyze rejection patterns and improve targeting |
+| `/career-ops-followup` | `/career-ops followup` | Follow-up cadence tracker |
+
+**Note:** Gemini CLI commands are defined in `.gemini/commands/*.toml`. The project context is auto-loaded from `GEMINI.md`. All `modes/*` files are shared across Claude Code, OpenCode, and Gemini CLI.
 
 ### First Run — Onboarding (IMPORTANT)
 
@@ -259,49 +290,20 @@ Default modes are in `modes/` (English). Additional language-specific modes are 
 
 ---
 
-## Automated Scanning (IMPORTANT — read before running any scan)
+## CI/CD and Quality
 
-A local scanner already exists at `scheduled-scan.mjs`. It runs automatically via:
-- **launchd** (`~/Library/LaunchAgents/com.rohan.career-ops-scan.plist`) — every 3 hours
-- **SessionStart hook** (`.claude/settings.local.json`) — fires on every Claude Code session in this directory
+- **GitHub Actions** run on every PR: `test-all.mjs` (63+ checks), auto-labeler (risk-based: 🔴 core-architecture, ⚠️ agent-behavior, 📄 docs), welcome bot for first-time contributors
+- **Branch protection** on `main`: status checks must pass before merge. No direct pushes to main (except admin bypass).
+- **Dependabot** monitors npm, Go modules, and GitHub Actions for security updates
+- **Contributing process**: issue first → discussion → PR with linked issue → CI passes → maintainer review → merge
 
-**DO NOT rebuild the scanner or substitute WebSearch queries.** Just run the existing script:
+## Community and Governance
 
-```bash
-node scheduled-scan.mjs
-```
-
-### What the scanner covers
-
-| Source | Method | Companies |
-|--------|--------|-----------|
-| Greenhouse API | Direct JSON (fast, reliable) | Anthropic, Databricks, Unity, Epic Games, Roblox, Scale AI, DeepMind |
-| Ashby boards | Local Playwright (Mac) | LangChain, Cohere, Pinecone, Modal |
-| ChangeDetection.io | Unraid box at `10.0.0.100:5000` renders SPAs, scanner reads snapshots via API | Apple (LA + Bay Area), Google (LA + Bay Area), Snap, Amazon, Spotify, Palantir, Mistral AI |
-
-### How it works
-1. Fetches Greenhouse APIs for fresh jobs (`first_published` within 48h)
-2. Scrapes Ashby boards via local Playwright
-3. Reads latest snapshots from ChangeDetection.io watches on Unraid (browser-rendered SPAs)
-4. Applies role filter (PM, Solutions Architect, TPM, Partnerships, BD, GTM — NO engineer titles)
-5. Deduplicates against `data/scan-history.tsv` + `data/pipeline.md`
-6. Verifies liveness via Playwright (Greenhouse/Ashby sources only; CD sources pre-verified)
-7. Appends new jobs to `scan-history.tsv` + `pipeline.md`
-8. Sends Telegram notification via `notify-telegram.mjs` (silent when nothing new)
-
-### ChangeDetection.io config
-- **API:** `http://10.0.0.100:5000/api/v1` with key `881f09d4fec93a1ea3a9abb012263736`
-- **SSH:** `ssh root@10.0.0.100` (key auth, no password)
-- **Browserless:** `http://10.0.0.100:3012` with token `2BR6DgQzZL8md4Bk5rewy3K9k`
-- All career-ops watches are tagged `career-ops`
-- To add a new company: create a CD watch via API, then add its UUID to `CD_WATCHES` array in `scheduled-scan.mjs`
-
-### User preferences baked into the scanner
-- **Exclude:** xAI, Meta (severance clawback), Director/Head/VP/MTS titles, engineer titles, ads PM, observability/eval PM, content-focused DevRel
-- **Target:** PM / Senior PM level, Solutions Architect, Partnerships, TPM, BD, GTM
-- **Location:** Los Angeles preferred, open to remote/hybrid
-
----
+- **Code of Conduct**: Contributor Covenant 2.1 with enforcement actions (see `CODE_OF_CONDUCT.md`)
+- **Governance**: BDFL model with contributor ladder — Participant → Contributor → Triager → Reviewer → Maintainer (see `GOVERNANCE.md`)
+- **Security**: private vulnerability reporting via email (see `SECURITY.md`)
+- **Support**: help questions go to Discord/Discussions, not issues (see `SUPPORT.md`)
+- **Discord**: https://discord.gg/8pRpHETxa4
 
 ## Stack and Conventions
 

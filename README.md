@@ -1,8 +1,6 @@
-# Career-Ops (rohanpandula fork)
+# Career-Ops
 
-> **This fork extends [santifer/career-ops](https://github.com/santifer/career-ops) with a local-LLM toolkit + web dashboard.** Everything upstream still works; see the [What this fork adds](#what-this-fork-adds) section for the additions.
-
-[English](README.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko-KR.md) | [日本語](README.ja.md) | [Русский](README.ru.md) | [繁體中文](README.zh-TW.md)
+[English](README.md) | [Español](README.es.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko-KR.md) | [日本語](README.ja.md) | [Русский](README.ru.md) | [简体中文](README.cn.md) | [繁體中文](README.zh-TW.md)
 
 <p align="center">
   <a href="https://x.com/santifer"><img src="docs/hero-banner.jpg" alt="Career-Ops — Multi-Agent Job Search System" width="800"></a>
@@ -17,6 +15,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Claude_Code-000?style=flat&logo=anthropic&logoColor=white" alt="Claude Code">
   <img src="https://img.shields.io/badge/OpenCode-111827?style=flat&logo=terminal&logoColor=white" alt="OpenCode">
+  <img src="https://img.shields.io/badge/Gemini_CLI-4285F4?style=flat&logo=google&logoColor=white" alt="Gemini CLI">
   <img src="https://img.shields.io/badge/Codex_(soon)-6B7280?style=flat&logo=openai&logoColor=white" alt="Codex">
   <img src="https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white" alt="Node.js">
   <img src="https://img.shields.io/badge/Go-00ADD8?style=flat&logo=go&logoColor=white" alt="Go">
@@ -31,6 +30,7 @@
   <img src="https://img.shields.io/badge/PT--BR-green?style=flat" alt="PT-BR">
   <img src="https://img.shields.io/badge/KO-white?style=flat" alt="KO">
   <img src="https://img.shields.io/badge/JA-red?style=flat" alt="JA">
+  <img src="https://img.shields.io/badge/ZH--CN-red?style=flat" alt="ZH-CN">
   <img src="https://img.shields.io/badge/ZH--TW-blue?style=flat" alt="ZH-TW">
 </p>
 
@@ -62,61 +62,6 @@ Career-ops is agentic: Claude Code navigates career pages with Playwright, evalu
 
 Built by someone who used it to evaluate 740+ job offers, generate 100+ tailored CVs, and land a Head of Applied AI role. [Read the full case study](https://santifer.io/career-ops-system).
 
----
-
-## What this fork adds
-
-Everything in upstream is intact. On top of it, this fork adds a web dashboard and five features powered by a **local Qwen3-Coder LLM** — no cloud inference cost, nothing leaves your network.
-
-| Addition | What it does | Upstream equivalent |
-|---|---|---|
-| **Web dashboard** at `localhost:3000` | Visual pipeline + tracker + reports + scanner + settings + digest views | TUI (Go) only |
-| **Role clustering** | Groups your high-fit pending URLs into 6–10 semantic clusters (e.g. "Google YouTube partnerships", "Amazon Alexa AI PM"). Click a cluster to filter the pipeline | — |
-| **JD gap analysis** | For each high-fit role: CV matches (✓), skill gaps (✗), and "no formal X, but did Y" cover-letter analogues — shown by clicking any pipeline row | — |
-| **Near-duplicate detection** | Finds roles posted at multiple URLs (Lever anchor ↔ canonical UUID, ATS mirrors). Conservative — zero false positives in a 25-pair audit | — |
-| **Weekly digest** | Monday-keyed markdown digest: new roles, top-5 fits, quiet applications, one concrete action. Numeric claims are deterministic; Qwen only writes the narrative | — |
-| **Taste inference** | Reads your application history, proposes evidence-backed edits to `modes/_profile.md` — user reviews + Accept/Reject in Settings, with auto-backup | — |
-
-All five inference features:
-- Run against a local `http://10.0.0.3:11434/api/generate` endpoint (configurable in each script)
-- Idempotent — safe to re-run; use `--redo` to bypass cache
-- Parse Qwen JSON defensively (never throw on malformed output)
-- Ship with critique files at `data/critique-task{N}.md` documenting quality bar + known limitations
-
-### Screenshots
-
-**Dashboard** — Command Center with Clusters panel (click a chip to filter Pipeline):
-
-![Dashboard](docs/screenshots/dashboard.png)
-
-**Pipeline** — row click expands into a gap-analysis panel with matches, gaps, and cover-letter bullets:
-
-![Pipeline with gap analysis](docs/screenshots/pipeline-gap-expanded.png)
-
-**Digest** — weekly markdown summary with deterministic numbers + Qwen narrative:
-
-![Weekly digest](docs/screenshots/digest.png)
-
-**Settings** — taste-inference proposal panel (Accept appends to `modes/_profile.md` after backup):
-
-![Settings](docs/screenshots/settings.png)
-
-### Running the fork additions
-
-```bash
-npm run web              # start the web dashboard at http://localhost:3000
-
-npm run cluster          # regenerate data/clusters.json (24h cache; --redo to force)
-npm run gap-analysis     # analyze new fit≥4 URLs; idempotent cache
-npm run duplicates       # detect near-duplicates (conservative)
-npm run digest           # generate this week's digest at data/digest/YYYY-MM-DD.md
-npm run infer-taste      # propose profile edits at data/taste-proposal.md
-```
-
-Per-feature grades and known limitations live in `data/handoff-summary.md` + `data/critique-task{1,3,4,6,9}.md`.
-
----
-
 ## Features
 
 | Feature | Description |
@@ -131,12 +76,6 @@ Per-feature grades and known limitations live in `data/handoff-summary.md` + `da
 | **Dashboard TUI** | Terminal UI to browse, filter, and sort your pipeline |
 | **Human-in-the-Loop** | AI evaluates and recommends, you decide and act. The system never submits an application -- you always have the final call |
 | **Pipeline Integrity** | Automated merge, dedup, status normalization, health checks |
-| **Web Dashboard** | Local web UI at `localhost:3000` — pipeline, tracker, reports, scanner, settings |
-| **Role Clustering (local LLM)** | Groups high-fit pending URLs into 6–10 semantic clusters (e.g. "Google YouTube partnerships", "Amazon Alexa AI PM") — click a cluster to filter the pipeline |
-| **JD Gap Analysis (local LLM)** | Per-URL: CV matches, skill gaps the JD asks for, and cover-letter "no formal X, but did Y" analogues |
-| **Near-duplicate Collapse (local LLM)** | Detects the same role posted at multiple URLs (Lever anchor ↔ canonical UUID, ATS mirrors) — conservative, zero false positives in sampled runs |
-| **Weekly Digest (local LLM)** | Monday-keyed markdown digest with deterministic counts + Qwen narrative + one concrete recommended action |
-| **Taste Inference (local LLM)** | Evidence-backed profile-edit proposals (Accept / Reject in Settings; auto-backup before apply) |
 
 ## Quick Start
 
@@ -172,6 +111,52 @@ claude   # Open Claude Code in this directory
 > **The system is designed to be customized by Claude itself.** Modes, archetypes, scoring weights, negotiation scripts -- just ask Claude to change them. It reads the same files it uses, so it knows exactly what to edit.
 
 See [docs/SETUP.md](docs/SETUP.md) for the full setup guide.
+
+## Gemini CLI Integration
+
+Career-ops supports [Gemini CLI](https://github.com/google-gemini/gemini-cli) natively — the same way it supports Claude Code and OpenCode. All 15 slash commands are available, using the same `modes/*.md` evaluation logic.
+
+### Option A — Native Gemini CLI (Recommended)
+
+```bash
+# 1. Install Gemini CLI
+npm install -g @google/gemini-cli
+# or: npx @google/gemini-cli --version
+
+# 2. Authenticate (free — uses your Google account)
+gemini auth
+
+# 3. Run in the career-ops directory
+cd career-ops
+gemini
+
+# 4. Use slash commands just like Claude Code
+/career-ops "Senior AI Engineer at Anthropic..."
+/career-ops-evaluate --file ./jds/openai.txt
+/career-ops-scan
+/career-ops-pdf
+/career-ops-tracker
+```
+
+The `GEMINI.md` file is auto-loaded as context. All 15 commands are defined in `.gemini/commands/*.toml`.
+
+### Option B — Standalone API Script (No CLI install needed)
+
+```bash
+# 1. Get a free API key at https://aistudio.google.com/apikey
+cp .env.example .env
+# Edit .env → set GEMINI_API_KEY=your_key_here
+
+# 2. Install dependencies
+npm install
+
+# 3. Evaluate a job description
+node gemini-eval.mjs "We are looking for a Senior AI Engineer..."
+node gemini-eval.mjs --file ./jds/my-job.txt
+npm run gemini:eval -- "JD text here"
+```
+
+> **Free tier:** Both options work without billing. Native CLI uses Google OAuth; the API script uses `gemini-2.0-flash` (15 RPM, 1M tokens/day free).
 
 ## Usage
 
@@ -243,40 +228,6 @@ go build -o career-dashboard .
 
 Features: 6 filter tabs, 4 sort modes, grouped/flat view, lazy-loaded previews, inline status changes.
 
-## Web Dashboard
-
-A local web UI at `http://localhost:3000` gives you the same data the TUI shows plus the local-LLM extensions below.
-
-```bash
-node web/server.mjs      # starts the server on :3000 (LAN-accessible)
-```
-
-First-run prints a generated password; LAN connections skip auth. Views: Dashboard, Pipeline, Tracker, Reports, Digest, Scanner, Settings.
-
-## Local LLM Extensions
-
-Five features built on a local Qwen3-Coder-25B endpoint (configurable — see each script's header). They run offline against your pipeline and pipe-fed data, no external API cost.
-
-| Feature | Script | Cache | UI |
-|---------|--------|-------|----|
-| Role clustering | `cluster-roles.mjs` | `data/clusters.json` | Dashboard chips → click to filter Pipeline |
-| JD gap analysis | `gap-analysis.mjs` | `data/gap-analysis.json` | Pipeline rows expand on click |
-| Near-duplicate collapse | `find-duplicates.mjs` | `data/dedupe.json` | `+N dup` chip + `↗ canonical` link on Pipeline rows |
-| Weekly digest | `weekly-digest.mjs` | `data/digest/YYYY-MM-DD.md` | "Digest" nav link |
-| Taste inference | `infer-taste.mjs` | `data/taste-proposal.md` | Settings page — Accept appends to `modes/_profile.md` (with backup) |
-
-Usage:
-
-```bash
-node cluster-roles.mjs          # 24h cache; --redo to recluster
-node gap-analysis.mjs           # per-URL cache; --redo to re-ask Qwen
-node find-duplicates.mjs        # per-pair cache; --redo to re-ask
-node weekly-digest.mjs          # keyed by Monday of current week; --week 2026-04-06 for a past week
-node infer-taste.mjs            # reads applications.md + pipeline; --redo to regenerate
-```
-
-All five are idempotent (re-running is safe) and parse Qwen JSON defensively (never throws on malformed output). Per-feature critique files live at `data/critique-task{N}.md`. Full rollout notes in `data/handoff-summary.md`.
-
 ## Project Structure
 
 ```
@@ -301,12 +252,6 @@ career-ops/
 │   ├── batch-prompt.md          # Self-contained worker prompt
 │   └── batch-runner.sh          # Orchestrator script
 ├── dashboard/                   # Go TUI pipeline viewer
-├── web/                         # Node web dashboard (server.mjs + public/)
-├── cluster-roles.mjs            # Local-LLM feature: role clustering
-├── gap-analysis.mjs             # Local-LLM feature: JD gap analysis
-├── find-duplicates.mjs          # Local-LLM feature: near-duplicate collapse
-├── weekly-digest.mjs            # Local-LLM feature: weekly digest
-├── infer-taste.mjs              # Local-LLM feature: taste inference
 ├── data/                        # Your tracking data (gitignored)
 ├── reports/                     # Evaluation reports (gitignored)
 ├── output/                      # Generated PDFs (gitignored)
@@ -338,8 +283,6 @@ career-ops/
 I'm Santiago -- Head of Applied AI, former founder (built and sold a business that still runs with my name on it). I built career-ops to manage my own job search. It worked: I used it to land my current role.
 
 My portfolio and other open source projects → [santifer.io](https://santifer.io)
-
-☕ [Buy me a coffee](https://buymeacoffee.com/santifer) if career-ops helped your job search.
 
 ## Star History
 
@@ -381,4 +324,3 @@ MIT
 [![X](https://img.shields.io/badge/X-000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/santifer)
 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/8pRpHETxa4)
 [![Email](https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:hi@santifer.io)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy_Me_a_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/santifer)
