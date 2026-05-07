@@ -377,7 +377,25 @@ const APPLE_SEARCHES = [
   { label: "Bay Area", url: "https://jobs.apple.com/en-us/search?location=san-francisco-bay-area-SFMETRO&sort=newest" },
 ];
 
+// Apple posts the same role to multiple regions with URL pattern
+// /details/{job_id}-{region_suffix}/{slug} — e.g., 200662035-0670 (LA) and
+// 200662035-0836 (Bay Area) are the same role. Extract the job_id so we
+// dedup across LA + Bay Area searches AND across runs (against scan-history).
+function appleJobId(url) {
+  const m = url.match(/jobs\.apple\.com\/[^/]+\/details\/(\d+)-/);
+  return m ? m[1] : null;
+}
+
 async function fetchAppleJobs(browser, seen, candidates) {
+  // Pre-build a job-id dedup set from the historical seen URLs so a role
+  // already added under one region suffix is skipped when the other region's
+  // search surfaces it.
+  const appleSeenIds = new Set();
+  for (const url of seen) {
+    const id = appleJobId(url);
+    if (id) appleSeenIds.add(id);
+  }
+
   for (const q of APPLE_SEARCHES) {
     try {
       const page = await browser.newPage();
@@ -401,9 +419,12 @@ async function fetchAppleJobs(browser, seen, candidates) {
       for (const { href, title } of links) {
         const clean = cleanJobTitle(title);
         if (!href || seen.has(href)) continue;
+        const id = appleJobId(href);
+        if (id && appleSeenIds.has(id)) continue;
         if (matchesFilter(clean, "Apple")) {
           candidates.push({ company: "Apple", title: clean, url: href, source: `Apple Playwright (${q.label})` });
           seen.add(href);
+          if (id) appleSeenIds.add(id);
           matchCount++;
         }
       }
@@ -574,10 +595,14 @@ async function runScan() {
         lower.includes("oh snap");
       const hasApply = lower.includes("apply");
       if (!closed && hasApply) {
-        const locMatch =
-          text.match(/(Remote[^\n]{0,30})/i) ||
-          text.match(/(San Francisco|New York|London|Palo Alto|Seattle|Paris|Los Angeles|Austin|Mountain View)[^\n]{0,30}/i);
-        const loc = locMatch ? locMatch[0].trim().substring(0, 50) : (job.location || "-");
+        // Tighter location regex. The previous version greedily captured up
+        // to 30 chars after the city name, which on Apple Maps pages produced
+        // garbage like "San Francisco, review the description". Now we only
+        // accept an optional ", {Capitalized region}" suffix — lowercase
+        // prose ("review the …") fails to match and the city stands alone.
+        const CITY_RE = /\b(Remote(?:\s*-\s*[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)?)?|Cupertino|Sunnyvale|Santa Clara|San Francisco|San Jose|Palo Alto|Mountain View|Bay Area|Los Angeles|Culver City|Austin|Seattle|New York|Boston|London|Paris|Tokyo|Munich|Singapore)(?:,\s+(?:[A-Z]{2,3}|United States|United Kingdom|California|Washington|Texas|Massachusetts|New York))?\b/i;
+        const locMatch = text.match(CITY_RE);
+        const loc = locMatch ? locMatch[0].trim() : (job.location || "-");
         verified.push({ ...job, location: loc });
       }
       await page.close();
