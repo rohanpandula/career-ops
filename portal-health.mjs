@@ -25,7 +25,22 @@ const SILENCE_DAYS = 7;
 const LOG_FILE = "logs/scheduled-scan.log";
 const HEALTH_DIR = "data/portal-health";
 const STATE_FILE = path.join(HEALTH_DIR, "state.json");
-const CLAUDE_BIN = process.env.CLAUDE_BIN || "claude";
+// launchd-spawned processes have a restricted PATH that doesn't include
+// ~/.local/bin where claude usually lives, so resolve to an absolute path
+// when possible. Override with $CLAUDE_BIN.
+function resolveClaudeBin() {
+  if (process.env.CLAUDE_BIN) return process.env.CLAUDE_BIN;
+  const candidates = [
+    `${process.env.HOME || "/Users/rohan"}/.local/bin/claude`,
+    "/usr/local/bin/claude",
+    "/opt/homebrew/bin/claude",
+  ];
+  for (const c of candidates) {
+    try { if (fs.statSync(c).isFile()) return c; } catch {}
+  }
+  return "claude"; // fall through to PATH
+}
+const CLAUDE_BIN = resolveClaudeBin();
 // Don't re-invoke claude for the same portal within this many hours.
 const CLAUDE_THROTTLE_HOURS = 24;
 
@@ -60,10 +75,25 @@ function saveState(state) {
 //   [2026-05-07T15:39:22.885Z]   Apple (PW "LA"): 20 links, 1 role matches
 //   [2026-05-07T15:43:30.831Z]   Pinecone (Ashby): 6 total, 0 fresh matches
 //   [2026-05-07T15:38:57.377Z]   LangChain (Ashby): 0 links scanned     ← BROKEN signal
-//   [2026-05-07T15:38:48.424Z]   ERROR LangChain Ashby: ...
+//   [2026-05-07T15:38:48.424Z]   ERROR LangChain Ashby: ...             ← legacy format (no parens)
+//   [2026-05-07T15:38:48.424Z]   ERROR LangChain (Ashby): ...           ← new format (parens)
 //   [2026-05-07T15:38:48.424Z]   Pinecone (Ashby): HTTP 404
 const HIT_RE = /^\[([0-9T:.Z-]+)\]\s+(\S[^:(]*)\s*\(([^)]+)\):\s*(.+)$/;
 const ERR_RE = /^\[([0-9T:.Z-]+)\]\s+ERROR\s+(\S[^:]+):\s*(.+)$/;
+
+// scheduled-scan.mjs writes ERROR lines in two shapes:
+//   "ERROR Snowflake Ashby: ..."     (legacy — space-separated)
+//   "ERROR Snowflake (Ashby): ..."   (new — parens)
+// Successful lines are always parens. Normalize both ERR shapes into the
+// parens form so the counts merge under one key per portal.
+function normalizeErrIdent(ident) {
+  ident = ident.trim();
+  if (/\(/.test(ident)) return ident; // already parenthesized
+  // "Apple PW \"LA\"" → "Apple (PW \"LA\")"
+  // "Snowflake Ashby" → "Snowflake (Ashby)"
+  const m = ident.match(/^(\S+)\s+(.+)$/);
+  return m ? `${m[1]} (${m[2]})` : ident;
+}
 
 function classify(detail) {
   const d = detail.trim();
@@ -104,7 +134,7 @@ function parseLog(lines, sinceMs) {
       const [, ts, ident, detail] = m;
       const t = Date.parse(ts);
       if (!t || t < sinceMs) continue;
-      const key = ident.trim();
+      const key = normalizeErrIdent(ident);
       if (!stats[key]) stats[key] = { working: 0, broken: 0, lastSeen: ts, lastWorking: null, errorMsg: detail };
       stats[key].broken++;
       stats[key].errorMsg = detail;

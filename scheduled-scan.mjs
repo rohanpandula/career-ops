@@ -516,11 +516,13 @@ async function runScan() {
   }
 
   // Ashby boards via public posting API — uses publishedAt for freshness.
+  // 30s timeout: OpenAI's 661-job response is ~2-3 MB JSON and exceeded a 15s
+  // budget under load.
   for (const [company, slug] of ASHBY_BOARDS) {
     try {
       const apiUrl = `https://api.ashbyhq.com/posting-api/job-board/${slug}?includeCompensation=true`;
-      const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(15000) });
-      if (!resp.ok) { log(`  ${company} (Ashby): HTTP ${resp.status}`); continue; }
+      const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(30000) });
+      if (!resp.ok) { log(`  ERROR ${company} (Ashby): HTTP ${resp.status}`); continue; }
       const data = await resp.json();
       const jobs = data.jobs || [];
       let freshCount = 0;
@@ -540,7 +542,7 @@ async function runScan() {
       }
       log(`  ${company} (Ashby): ${jobs.length} total, ${freshCount} fresh matches`);
     } catch (e) {
-      log(`  ERROR ${company} Ashby: ${e.message.substring(0, 80)}`);
+      log(`  ERROR ${company} (Ashby): ${e.message.substring(0, 80)}`);
     }
   }
 
