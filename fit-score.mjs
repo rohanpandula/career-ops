@@ -27,7 +27,9 @@ const DEFAULT_QWEN_URL = 'http://10.0.0.34:11434/api/generate';
 const DEFAULT_QWEN_MODEL = 'qwen3:14b-16k';
 const DEFAULT_MIXLAYER_BASE_URL = 'https://models.mixlayer.ai/v1';
 const DEFAULT_MIXLAYER_MODEL = 'qwen/qwen3.5-122b-a10b';
-const PARALLEL = Math.max(1, parseInt(process.env.FIT_SCORE_PARALLEL || '5', 10) || 5);
+// parallel=3 keeps API contention low so each request finishes inside the
+// per-request budget; the 397b/35b models can spend 60-150s on reasoning + JSON.
+const PARALLEL = Math.max(1, parseInt(process.env.FIT_SCORE_PARALLEL || '3', 10) || 3);
 
 const args = process.argv.slice(2);
 const MAX = parseInt(args[args.indexOf('--max') + 1] || '500', 10);
@@ -111,7 +113,9 @@ async function mixlayer(prompt, settings) {
       'Content-Type': 'application/json',
     },
     body,
-    signal: AbortSignal.timeout(90_000),
+    // 397b-a17b can spend 100+s on reasoning + JSON output; 90s was too tight
+    // and caused ~50% timeout rate under parallel=5.
+    signal: AbortSignal.timeout(180_000),
   });
 
   if (!r.ok) {
@@ -144,8 +148,16 @@ function parseScore(text) {
       if (isFinite(s) && s >= 0 && s <= 5) return { score: +s.toFixed(1), reason: String(j.reason || '').slice(0, 200) };
     } catch {}
   }
-  // No loose-number fallback: reasoning traces like "Thinking Process: 1."
-  // would otherwise be misread as score=1. Treat as unparseable.
+  // Tolerant fallback: model sometimes hits max_tokens mid-answer and emits
+  // `{"score": 4.0, "reason": "Secondary…` without a closing brace. Salvage
+  // the score (anchored to the field name — safer than any-number heuristic)
+  // and capture whatever reason text follows.
+  const scoreM = text.match(/"score"\s*:\s*([1-5](?:\.\d)?)/);
+  if (scoreM) {
+    const s = parseFloat(scoreM[1]);
+    const reasonM = text.match(/"reason"\s*:\s*"([^"]{0,200})/);
+    return { score: +s.toFixed(1), reason: (reasonM?.[1] || 'truncated').slice(0, 200) };
+  }
   return null;
 }
 
