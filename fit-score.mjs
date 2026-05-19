@@ -371,8 +371,12 @@ async function main() {
   const pending = pipeline.filter(p => !p.checked);
   const targets = [];
   for (const p of pending) {
-    const l = liveness[p.url];
-    if (!l || l.live !== true) continue;
+    const l = liveness[p.url] || {};
+    // Previously skipped any URL where liveness.live !== true. That hid jobs
+    // from the Telegram push as "Fit —" whenever auto-verify produced a false-
+    // negative (Apple pages occasionally trip the "closed marker in body"
+    // heuristic). Score every pending URL — the model call is cheap and the
+    // user wants the score regardless of the liveness probe verdict.
     if (!REDO && cache[p.url]?.score != null) continue;
     targets.push({
       url: p.url,
