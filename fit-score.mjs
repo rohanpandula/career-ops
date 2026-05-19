@@ -96,7 +96,10 @@ async function mixlayer(prompt, settings) {
     ],
     temperature: 0.2,
     top_p: 0.8,
-    max_tokens: parseInt(process.env.MIXLAYER_MAX_TOKENS || '600', 10),
+    // 397b model insists on thinking even with /no_think; need headroom for
+    // reasoning + final JSON. Truncation here causes empty content and
+    // parseScore falls back to misreading "Thinking Process: 1." as score=1.
+    max_tokens: parseInt(process.env.MIXLAYER_MAX_TOKENS || '2000', 10),
     stream: false,
     chat_template_kwargs: { enable_thinking: false },
   });
@@ -118,7 +121,9 @@ async function mixlayer(prompt, settings) {
 
   const d = await r.json();
   const msg = d.choices?.[0]?.message || {};
-  return msg.content || d.choices?.[0]?.text || '';
+  // Some Mixlayer qwen variants put output in `reasoning_content` instead of
+  // `content` despite /no_think — fall back so we can still parse a score.
+  return msg.content || msg.reasoning_content || d.choices?.[0]?.text || '';
 }
 
 async function scorePrompt(prompt, settings) {
@@ -129,17 +134,18 @@ async function scorePrompt(prompt, settings) {
 
 function parseScore(text) {
   // Expect JSON: { "score": X.X, "reason": "..." }
-  const jsonM = text.match(/\{[^{}]*"score"[^{}]*\}/);
-  if (jsonM) {
+  // Prefer the LAST JSON match — reasoning models often emit examples first
+  // and the real answer last.
+  const matches = [...text.matchAll(/\{[^{}]*"score"[^{}]*\}/g)];
+  for (const m of matches.reverse()) {
     try {
-      const j = JSON.parse(jsonM[0]);
+      const j = JSON.parse(m[0]);
       const s = parseFloat(j.score);
       if (isFinite(s) && s >= 0 && s <= 5) return { score: +s.toFixed(1), reason: String(j.reason || '').slice(0, 200) };
     } catch {}
   }
-  // Fallback: first number 1-5 in response
-  const numM = text.match(/\b([1-5](?:\.\d)?)\b/);
-  if (numM) return { score: parseFloat(numM[1]), reason: text.slice(0, 200).replace(/\s+/g, ' ').trim() };
+  // No loose-number fallback: reasoning traces like "Thinking Process: 1."
+  // would otherwise be misread as score=1. Treat as unparseable.
   return null;
 }
 

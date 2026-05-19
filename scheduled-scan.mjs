@@ -712,20 +712,37 @@ function notifyTelegram(jobs) {
   }
 
   const fitScores = loadJsonSafe(join(__dirname, "data/fit-scores.json"));
+  const liveness  = loadJsonSafe(join(__dirname, "web/.liveness.json"));
   const { minScore, notifyUnscored } = telegramPrefs();
-  const passed = jobs.filter((j) => {
+
+  // Belt-and-suspenders location filter: the scan-time filter checks the
+  // initial title+location string, but post-verification can pick up a
+  // non-US location (e.g. "Remote - India") that wasn't visible upfront.
+  // Drop those here so Telegram only ever pushes US-eligible roles.
+  const locationFilter = (j) => {
+    const text = `${j.location || ""} ${liveness[j.url]?.location || ""}`.toLowerCase();
+    if (!text.trim()) return true; // unknown location → pass (don't penalize missing data)
+    return !EXCLUDED_LOCATION_KEYWORDS.some((k) => text.includes(k.toLowerCase()));
+  };
+  const usEligible = jobs.filter(locationFilter);
+  const droppedLocation = jobs.length - usEligible.length;
+  if (droppedLocation > 0) {
+    log(`Location filter dropped ${droppedLocation} non-US jobs from Telegram push`);
+  }
+
+  const passed = usEligible.filter((j) => {
     const s = fitScores[j.url]?.score;
     if (typeof s === "number") return s >= minScore;
     return notifyUnscored;
   });
-  const filteredOut = jobs.length - passed.length;
+  const filteredOut = usEligible.length - passed.length;
   const unscoredIncluded = passed.filter((j) => typeof fitScores[j.url]?.score !== "number").length;
 
   if (passed.length === 0) {
     const reason = notifyUnscored
       ? `all below min_score ${minScore}`
       : `all below min_score ${minScore} or unscored`;
-    log(`No notification — ${jobs.length} new jobs ${reason}`);
+    log(`No notification — ${usEligible.length} US-eligible jobs ${reason}`);
     return;
   }
 
