@@ -26,7 +26,10 @@ const PROFILE = 'config/profile.yml';
 const DEFAULT_QWEN_URL = 'http://10.0.0.34:11434/api/generate';
 const DEFAULT_QWEN_MODEL = 'qwen3:14b-16k';
 const DEFAULT_MIXLAYER_BASE_URL = 'https://models.mixlayer.ai/v1';
-const DEFAULT_MIXLAYER_MODEL = 'qwen/qwen3.5-122b-a10b';
+// 2026-05: Mixlayer retired qwen3.5-122b-a10b (HTTP 400 model_not_found).
+// qwen3.5-35b-a3b is the smallest current model that emits answers in
+// message.content rather than burying them in reasoning_content.
+const DEFAULT_MIXLAYER_MODEL = 'qwen/qwen3.5-35b-a3b';
 // parallel=3 keeps API contention low so each request finishes inside the
 // per-request budget; the 397b/35b models can spend 60-150s on reasoning + JSON.
 const PARALLEL = Math.max(1, parseInt(process.env.FIT_SCORE_PARALLEL || '3', 10) || 3);
@@ -150,12 +153,16 @@ function parseScore(text) {
   }
   // Tolerant fallback: model sometimes hits max_tokens mid-answer and emits
   // `{"score": 4.0, "reason": "Secondary…` without a closing brace. Salvage
-  // the score (anchored to the field name — safer than any-number heuristic)
-  // and capture whatever reason text follows.
-  const scoreM = text.match(/"score"\s*:\s*([1-5](?:\.\d)?)/);
-  if (scoreM) {
-    const s = parseFloat(scoreM[1]);
-    const reasonM = text.match(/"reason"\s*:\s*"([^"]{0,200})/);
+  // the score (anchored to the field name — safer than any-number heuristic).
+  // Prefer the LAST `"score":` occurrence so a value reasoned about earlier in
+  // reasoning_content can't poison the final answer, and reject out-of-range
+  // values (e.g. a truncated "5.9") rather than emitting an invalid score.
+  const scoreMatches = [...text.matchAll(/"score"\s*:\s*([0-9](?:\.\d)?)/g)];
+  for (const m of scoreMatches.reverse()) {
+    const s = parseFloat(m[1]);
+    if (!isFinite(s) || s < 1 || s > 5) continue;
+    const tail = text.slice(m.index);
+    const reasonM = tail.match(/"reason"\s*:\s*"([^"]{0,200})/);
     return { score: +s.toFixed(1), reason: (reasonM?.[1] || 'truncated').slice(0, 200) };
   }
   return null;

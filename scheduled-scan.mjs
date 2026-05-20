@@ -26,6 +26,7 @@ import { spawnSync } from "child_process";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import yaml from "js-yaml";
+import { changedetection } from "./infra-config.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 process.chdir(__dirname);
@@ -142,6 +143,53 @@ const NEGATIVE_KEYWORDS = uniqueStrings([
 
 const EXCLUDED_LOCATION_KEYWORDS = uniqueStrings(SCANNER_PREFS.locationNegatives);
 
+// --- US-eligibility ---
+// A pure substring blocklist wrongly drops multi-region postings that ARE
+// US-eligible (e.g. "London, UK; New York, NY; San Francisco, CA"). Mirror
+// city-classify.mjs: if ANY segment carries a concrete US signal, the role is
+// US-eligible regardless of foreign segments. Only when no US signal exists do
+// we apply the foreign blocklist. Bare "Remote" with no geo is treated as
+// unknown→pass (don't penalize missing data), but "Remote, United Kingdom"
+// still fails because "remote" alone is NOT a US signal.
+const US_CITY_SIGNALS = [
+  "san francisco", "new york", "los angeles", "seattle", "boston", "austin",
+  "chicago", "cupertino", "sunnyvale", "mountain view", "palo alto", "san jose",
+  "santa clara", "menlo park", "redwood city", "san bruno", "culver city",
+  "santa monica", "bellevue", "redmond", "kirkland", "cambridge", "washington dc",
+  "arlington", "mclean", "reston", "atlanta", "denver", "boulder", "miami",
+  "portland", "dallas", "houston", "phoenix", "minneapolis", "nashville",
+  "raleigh", "philadelphia", "san diego", "pittsburgh", "san antonio",
+  "salt lake city", "detroit", "new jersey", "brooklyn", "manhattan",
+];
+const US_COUNTRY_SIGNALS = [
+  "united states", "usa", "u.s.a", "u.s.", "us-remote",
+  "remote - us", "remote, us", "remote (us", "remote-us",
+];
+const US_STATE_CODES = [
+  "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA",
+  "KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ",
+  "NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT",
+  "VA","WA","WV","WI","WY",
+];
+// Match `, NY` / `; CA` / `/ TX` / ` WA` where the code is a standalone token
+// (uppercase, not followed by another letter). The negative lookahead is what
+// stops ", CA" from matching "Canada" or ", OR" from matching "Oregon-City".
+const US_STATE_RE = new RegExp(`(?:,|;|/|\\s)\\s*(?:${US_STATE_CODES.join("|")})(?![A-Za-z])`);
+
+function hasUsSignal(location) {
+  const lower = location.toLowerCase();
+  if (US_COUNTRY_SIGNALS.some((s) => lower.includes(s))) return true;
+  if (US_CITY_SIGNALS.some((s) => lower.includes(s))) return true;
+  return US_STATE_RE.test(location); // original case — state codes are uppercase
+}
+
+function isUsEligibleLocation(location) {
+  if (!location || !location.trim()) return true;     // unknown → pass
+  if (hasUsSignal(location)) return true;             // any US part → pass
+  const lower = location.toLowerCase();
+  return !EXCLUDED_LOCATION_KEYWORDS.some((k) => lower.includes(k.toLowerCase()));
+}
+
 // Freshness window: only notify on jobs updated in the last N hours.
 // Prevents flooding on first run (which would otherwise verify 600+ stale listings).
 const FRESHNESS_HOURS = 48;
@@ -159,13 +207,16 @@ function matchesFilter(title, company, location = "") {
   const cleanTitle = cleanJobTitle(title);
   if (!cleanTitle) return false;
   const lower = cleanTitle.toLowerCase();
-  const locationText = `${cleanTitle} ${location}`.toLowerCase();
   const hasRole = ROLE_KEYWORDS.some((k) => lower.includes(k.toLowerCase()));
   const hasNegative = NEGATIVE_KEYWORDS.some((k) => lower.includes(k.toLowerCase()));
-  const hasExcludedLocation = EXCLUDED_LOCATION_KEYWORDS.some((k) => locationText.includes(k.toLowerCase()));
+  // US-eligibility on the location field (multi-region aware). Separately,
+  // still block a foreign location embedded in the TITLE itself (e.g.
+  // "Solutions Architect, London") since those carry no separate location.
+  const locationOk = isUsEligibleLocation(location);
+  const titleHasExcludedLoc = EXCLUDED_LOCATION_KEYWORDS.some((k) => lower.includes(k.toLowerCase()));
   const capsOut = SENIORITY_CAP_KEYWORDS.some((k) => lower.includes(k.toLowerCase()));
   const excludedCo = EXCLUDED_COMPANIES.some((c) => company && company.toLowerCase() === c.toLowerCase());
-  return hasRole && !hasNegative && !hasExcludedLocation && !capsOut && !excludedCo;
+  return hasRole && !hasNegative && locationOk && !titleHasExcludedLoc && !capsOut && !excludedCo;
 }
 
 // --- Scan sources ---
@@ -193,8 +244,9 @@ const ASHBY_BOARDS = [
 ];
 
 // --- ChangeDetection.io as data source (SPA sites rendered by Unraid box) ---
-const CD_API = "http://10.0.0.100:5000/api/v1";
-const CD_KEY = "881f09d4fec93a1ea3a9abb012263736";
+// changedetection.io credentials come from config/profile.yml (gitignored) or
+// env (CD_API_URL / CD_API_KEY) — never hardcoded in this public-fork file.
+const { apiUrl: CD_API, apiKey: CD_KEY } = changedetection();
 // Watches to read snapshots from. These are rendered by changedetection.io's browser backend.
 // We just read the latest snapshot text, parse job titles, and apply our own filters.
 const CD_WATCHES = [
@@ -716,13 +768,12 @@ function notifyTelegram(jobs) {
   const { minScore, notifyUnscored } = telegramPrefs();
 
   // Belt-and-suspenders location filter: the scan-time filter checks the
-  // initial title+location string, but post-verification can pick up a
-  // non-US location (e.g. "Remote - India") that wasn't visible upfront.
-  // Drop those here so Telegram only ever pushes US-eligible roles.
+  // location known upfront, but post-verification can pick up a location that
+  // wasn't visible then. Use the same US-eligibility helper so multi-region
+  // roles ("London; New York, NY") survive and only pure-foreign ones drop.
   const locationFilter = (j) => {
-    const text = `${j.location || ""} ${liveness[j.url]?.location || ""}`.toLowerCase();
-    if (!text.trim()) return true; // unknown location → pass (don't penalize missing data)
-    return !EXCLUDED_LOCATION_KEYWORDS.some((k) => text.includes(k.toLowerCase()));
+    const text = `${j.location || ""} ${liveness[j.url]?.location || ""}`;
+    return isUsEligibleLocation(text);
   };
   const usEligible = jobs.filter(locationFilter);
   const droppedLocation = jobs.length - usEligible.length;
