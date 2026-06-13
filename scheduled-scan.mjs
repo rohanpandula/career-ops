@@ -293,7 +293,7 @@ async function fetchAmazonJobs(seen, candidates) {
       }
       log(`  Amazon (API "${q.label}"): ${jobs.length} total, ${freshCount} fresh matches`);
     } catch (e) {
-      log(`  ERROR Amazon API: ${e.message.substring(0, 80)}`);
+      log(`  ERROR Amazon (API "${q.label}"): ${e.message.substring(0, 80)}`);
     }
   }
 }
@@ -309,12 +309,14 @@ const LEVER_BOARDS = [
 
 async function fetchLeverBoards(seen, candidates) {
   const freshnessCutoff = Date.now() - FRESHNESS_HOURS * 60 * 60 * 1000;
+  // 30s timeout: Mistral's Lever response is ~4.3 MB JSON and intermittently
+  // exceeded a 15s budget under load (mirrors the Ashby/OpenAI fix in e06b6d7).
   for (const [company, slug] of LEVER_BOARDS) {
     try {
       const resp = await fetch(`https://api.lever.co/v0/postings/${slug}?mode=json`, {
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(30000),
       });
-      if (!resp.ok) { log(`  ${company} (Lever): HTTP ${resp.status}`); continue; }
+      if (!resp.ok) { log(`  ERROR ${company} (Lever): HTTP ${resp.status}`); continue; }
       const jobs = await resp.json();
       let freshCount = 0;
       for (const job of jobs) {
@@ -332,7 +334,7 @@ async function fetchLeverBoards(seen, candidates) {
       }
       log(`  ${company} (Lever): ${jobs.length} total, ${freshCount} fresh matches`);
     } catch (e) {
-      log(`  ERROR ${company} Lever: ${e.message.substring(0, 80)}`);
+      log(`  ERROR ${company} (Lever): ${e.message.substring(0, 80)}`);
     }
   }
 }

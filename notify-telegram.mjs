@@ -16,7 +16,7 @@
  *   3. Fallback: ~/remote_monitor_nanokvm.sh (legacy cd-job-alerts source)
  */
 
-import { readFileSync, existsSync } from "fs";
+import { readFileSync, existsSync, appendFileSync, mkdirSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import https from "https";
@@ -191,10 +191,18 @@ async function main() {
 
   const message = formatMessage(type, text);
 
+  // Log every push locally to logs/telegram-pushes.jsonl for later review/debugging.
+  const logDir = join(__dirname, "logs");
+  const logPath = join(logDir, "telegram-pushes.jsonl");
+  try { mkdirSync(logDir, { recursive: true }); } catch {}
+  const entry = { ts: new Date().toISOString(), type, text, message };
+
   try {
     await sendTelegram(creds.bot_token, creds.chat_id, message);
+    try { appendFileSync(logPath, JSON.stringify({ ...entry, status: "sent" }) + "\n"); } catch {}
     console.log(`Sent ${type} notification to Telegram.`);
   } catch (err) {
+    try { appendFileSync(logPath, JSON.stringify({ ...entry, status: "failed", error: err.message }) + "\n"); } catch {}
     console.error(`Failed to send: ${err.message}`);
     process.exit(1);
   }

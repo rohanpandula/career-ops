@@ -1854,23 +1854,28 @@ select.filter-input {
   color: var(--text-secondary);
 }
 
-/* --- URL link in pipeline --- */
+/* --- URL link in pipeline (glyph) --- */
+
+.cell-url {
+  width: 36px;
+  text-align: center;
+}
 
 .url-link {
-  display: inline-block;
-  max-width: 42ch;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.78rem;
-  font-variant-numeric: tabular-nums;
-  transition: color 0.2s var(--ease-out-quint);
-  letter-spacing: -0.005em;
-  overflow-wrap: anywhere;
-  vertical-align: top;
+  transition: color 0.2s var(--ease-out-quint), background-color 0.2s var(--ease-out-quint);
 }
 
 .url-link:hover {
   color: var(--accent);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 /* --- Back Link --- */

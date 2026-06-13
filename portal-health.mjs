@@ -86,11 +86,28 @@ const ERR_RE = /^\[([0-9T:.Z-]+)\]\s+ERROR\s+(\S[^:]+):\s*(.+)$/;
 //   "ERROR Snowflake (Ashby): ..."   (new — parens)
 // Successful lines are always parens. Normalize both ERR shapes into the
 // parens form so the counts merge under one key per portal.
+//
+// Source-token list lets multi-word company names ("Mistral AI Lever",
+// "Hugging Face Greenhouse") split on the *last* known source token rather
+// than first whitespace. Without this, "Mistral AI Lever" normalized to
+// "Mistral (AI Lever)" while successes logged as "Mistral AI (Lever)" — two
+// buckets, watchdog reported a silent portal that was actually healthy.
+const SOURCE_TOKENS = [
+  "Greenhouse", "Ashby", "Lever", "Workday", "SmartRecruiters",
+  "API", "Algolia",
+];
 function normalizeErrIdent(ident) {
   ident = ident.trim();
   if (/\(/.test(ident)) return ident; // already parenthesized
-  // "Apple PW \"LA\"" → "Apple (PW \"LA\")"
-  // "Snowflake Ashby" → "Snowflake (Ashby)"
+  // Try the source-token list first — handles multi-word companies.
+  for (const tok of SOURCE_TOKENS) {
+    const re = new RegExp(`^(.+?)\\s+(${tok})$`);
+    const sm = ident.match(re);
+    if (sm) return `${sm[1]} (${sm[2]})`;
+  }
+  // Fallback: split on first whitespace.
+  //   "Apple PW \"LA\"" → "Apple (PW \"LA\")"
+  //   "Snowflake Ashby" → "Snowflake (Ashby)"
   const m = ident.match(/^(\S+)\s+(.+)$/);
   return m ? `${m[1]} (${m[2]})` : ident;
 }

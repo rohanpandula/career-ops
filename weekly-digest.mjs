@@ -26,8 +26,8 @@ const FIT  = 'data/fit-scores.json';
 const LIVE = 'web/.liveness.json';
 const OUTDIR = 'data/digest';
 
-const QWEN = 'http://10.0.0.3:11434/api/generate';
-const MODEL = 'hf.co/bartowski/cerebras_Qwen3-Coder-REAP-25B-A3B-GGUF:Q4_K_M';
+const QWEN = 'http://10.0.0.34:11434/api/generate';
+const MODEL = 'qwen3:14b-16k';
 
 const args = process.argv.slice(2);
 const REDO = args.includes('--redo');
@@ -79,7 +79,7 @@ async function qwen(prompt, timeoutMs = 90_000) {
   const r = await fetch(QWEN, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, prompt, stream: false, keep_alive: -1 }),
+    body: JSON.stringify({ model: MODEL, prompt, stream: false, think: false, keep_alive: '5m' }),
     signal: AbortSignal.timeout(timeoutMs),
   });
   if (!r.ok) throw new Error(`qwen HTTP ${r.status}`);

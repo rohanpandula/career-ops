@@ -953,7 +953,7 @@ async function renderPipeline() {
               <td class="cell-fit" data-sort-value="${fitNum ?? -1}" data-tooltip="${escapeAttr(fitTip)}">${fitCell}</td>
               <td class="cell-location" data-sort-value="${escapeAttr(location.toLowerCase())}" data-tooltip="${escapeAttr(locTip)}">${location || '—'}</td>
               <td class="cell-salary" data-sort-value="${escapeAttr(salary.toLowerCase())}" data-tooltip="${escapeAttr(salTip)}">${salary || '—'}</td>
-              <td><a class="url-link" href="${escapeAttr(item.url)}" target="_blank" rel="noopener" data-tooltip="${escapeAttr(item.url)}">${escapeHtml(displayUrl(item.url))}</a></td>
+              <td class="cell-url"><a class="url-link" href="${escapeAttr(item.url)}" target="_blank" rel="noopener" aria-label="Open posting" data-tooltip="${escapeAttr(item.url)}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h-3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3"/><path d="M9.5 2.5h4v4"/><path d="M7 9l6.5-6.5"/></svg></a></td>
               <td>
                 <button class="icon-btn generate-cv-btn"
                         data-url="${escapeAttr(item.url)}"
@@ -1747,11 +1747,7 @@ function extractReportFile(reportStr) {
 }
 
 function displayUrl(url) {
-  try {
-    const u = new URL(url);
-    if (u.search || u.hash) return url;
-    return truncateUrl(url);
-  } catch { return url; }
+  return truncateUrl(url);
 }
 
 function cleanRoleTitle(role) {
