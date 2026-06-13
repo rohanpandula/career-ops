@@ -1,7 +1,13 @@
 # Personal data (user fills these)
+cv.md
 data/applications.md
+data/applications.db
 data/pipeline.md
 data/scan-history.tsv
+data/parser-output/**/*.json
+!data/parser-output/.gitkeep
+!data/parser-output/**/.gitkeep
+data/cache/ats-companies/
 reports/*.md
 !reports/.gitkeep
 output/*
@@ -15,6 +21,14 @@ batch/tracker-additions/**/*.tsv
 jds/*
 !jds/.gitkeep
 
+# Interview prep (accumulated STAR+R stories — user data)
+interview-prep/*
+!interview-prep/.gitkeep
+
+# Writing samples (user's personal files — never committed)
+writing-samples/*
+!writing-samples/README.md
+
 # User config and customization (never auto-updated)
 config/profile.yml
 portals.yml
@@ -22,19 +36,29 @@ modes/_profile.md
 .update-dismissed
 .update-lock
 
+# Secrets (never commit — use .env.example as template)
+.env
+
 # Generated
 .resolved-prompt-*
 node_modules/
 bun.lock
+# Report-number reservation sentinels (ephemeral, created by reserve-report-num.mjs)
+reports/*-RESERVED.md
+
+# Backup files written by normalize-statuses.mjs / dedup-tracker.mjs
+*.bak
 
 # OS
 .DS_Store
 *.mov
 *.mp4
 
-# Claude Code local
+# CLI-specific local config
 .claude/settings.local.json
 .claude/memory/
+.opencode/settings.local.json
+.opencode/memory/
 career-dashboard
 package-lock.json
 
@@ -42,3 +66,9 @@ package-lock.json
 web/.password
 web/.session-secret
 web/.liveness.json
+
+# Playwright MCP server run artifacts (ephemeral, machine-local — never commit)
+.playwright-mcp/
+
+# Planning (local scratchpad)
+plan/
