@@ -19,6 +19,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
+import { homedir } from "node:os";
 import { spawn } from "node:child_process";
 
 const SILENCE_DAYS = 7;
@@ -31,7 +32,7 @@ const STATE_FILE = path.join(HEALTH_DIR, "state.json");
 function resolveClaudeBin() {
   if (process.env.CLAUDE_BIN) return process.env.CLAUDE_BIN;
   const candidates = [
-    `${process.env.HOME || "/Users/rohan"}/.local/bin/claude`,
+    `${process.env.HOME || homedir()}/.local/bin/claude`,
     "/usr/local/bin/claude",
     "/opt/homebrew/bin/claude",
   ];

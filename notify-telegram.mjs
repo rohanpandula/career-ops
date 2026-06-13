@@ -18,6 +18,7 @@
 
 import { readFileSync, existsSync, appendFileSync, mkdirSync } from "fs";
 import { join, dirname } from "path";
+import { homedir } from "os";
 import { fileURLToPath } from "url";
 import https from "https";
 
@@ -39,7 +40,7 @@ function loadProfileYml() {
 }
 
 function loadLegacyCredentials() {
-  const src = join("/Users/rohan", "remote_monitor_nanokvm.sh");
+  const src = join(homedir(), "remote_monitor_nanokvm.sh");
   if (!existsSync(src)) return {};
   const raw = readFileSync(src, "utf-8");
   const tokenMatch = raw.match(/^TELEGRAM_BOT_TOKEN="([^"]+)"/m);
