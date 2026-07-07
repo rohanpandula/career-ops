@@ -171,6 +171,7 @@ Analyze posting signals to assess whether this is a real, active opening.
 **Assessment:** Apply the same three tiers (High Confidence / Proceed with Caution / Suspicious), weighting available signals more heavily. If insufficient signals are available to make a determination, default to "Proceed with Caution" with a note about limited data.
 
 #### Score Global
+Read `modes/_custom.md` → Scoring Rules, if it exists, and apply its override here. Default (if absent or silent): calculate global score based on dimension scores below.
 
 | Dimensión | Score |
 |-----------|-------|
@@ -306,13 +307,14 @@ next_action: "{one concrete next step}"
 9. Construye competency grid (6-8 keyword phrases)
 10. Inyecta keywords en logros existentes (**NUNCA inventa**)
 11. Genera HTML completo desde template (lee `templates/cv-template.html`)
-12. Escribe HTML a `/tmp/cv-candidate-{company-slug}.html`
+12. Escribe HTML a `output/cv-candidate-{company-slug}.html` (NO en /tmp — el HTML registrado es la fuente de regeneración del dashboard)
 13. Ejecuta:
 ```bash
 node generate-pdf.mjs \
-  /tmp/cv-candidate-{company-slug}.html \
+  output/cv-candidate-{company-slug}.html \
   output/cv-candidate-{company-slug}-{{DATE}}.pdf \
-  --format={letter|a4}
+  --format={letter|a4} \
+  --report={{REPORT_NUM}}
 ```
 14. Reporta: ruta PDF, nº páginas, % cobertura keywords
 

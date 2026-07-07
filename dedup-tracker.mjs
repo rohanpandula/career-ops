@@ -2,9 +2,10 @@
 /**
  * dedup-tracker.mjs — Remove duplicate entries from applications.md
  *
- * Groups by normalized company + fuzzy role match.
- * Keeps entry with highest score. If discarded entry had more advanced status,
- * preserves that status. Merges notes.
+ * Groups by normalized company, then merges only rows whose full role title
+ * matches exactly (case- and whitespace-normalized). Keeps entry with highest
+ * score. If discarded entry had more advanced status, preserves that status.
+ * Merges notes.
  *
  * Run: node career-ops/dedup-tracker.mjs [--dry-run]
  */
@@ -12,7 +13,8 @@
 import { readFileSync, writeFileSync, copyFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { roleFuzzyMatch } from './role-matcher.mjs';
+import { rebuildRow } from './tracker-utils.mjs';
+import { resolveColumns, parseTrackerRow } from './tracker-parse.mjs';
 
 const CAREER_OPS = dirname(fileURLToPath(import.meta.url));
 // Support both layouts: data/applications.md (boilerplate) and applications.md
@@ -154,7 +156,7 @@ function sameReportIdentity(a, b) {
 }
 
 /**
- * Build a stable key for logging one protected fuzzy pair only once.
+ * Build a stable key for logging one protected same-title pair only once.
  *
  * The nested dedup loop can encounter a protected pair during cluster building.
  * Sorting the row numbers produces the same key regardless of comparison order,
@@ -168,16 +170,42 @@ function pairKey(a, b) {
   return [a.num, b.num].sort((x, y) => x - y).join(':');
 }
 
-const protectedFuzzyPairs = new Set();
+const protectedTitlePairs = new Set();
+
+/**
+ * Normalize a role title into the key used for exact same-opening comparison.
+ *
+ * Deduplication must only collapse rows that describe the *same* opening, so
+ * the comparison is exact on the meaningful title text. Only presentation noise
+ * is removed — letter case and whitespace (leading, trailing, and repeated
+ * internal spaces). Distinguishing words such as seniority ("Senior") or the
+ * team suffix ("Data Infrastructure" vs "Agent Infrastructure") are preserved,
+ * so sibling roles at one company are never merged.
+ *
+ * @param {string} role - Role title from an applications.md row.
+ * @returns {string} Lowercase, whitespace-collapsed role key.
+ */
+function normalizeRole(role) {
+  return String(role ?? '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
 
 /**
  * Decide whether two same-company tracker rows should be deduplicated.
  *
- * The function first accepts exact report identity, then applies the shared
- * fuzzy role matcher. If either row is already Applied or later, fuzzy matching
- * alone is not enough; dedup keeps both rows and warns because deleting one
- * would lose application status, report link, and notes for a potentially
- * distinct opening.
+ * Rows merge only when they describe the same opening: either the exact same
+ * report identity (same tracker number or bracketed report number), or an exact
+ * role-title match after normalizing case and whitespace. Fuzzy title matching
+ * is deliberately NOT used here — it collapsed distinct sibling roles at one
+ * company (e.g. "Software Engineer, Data Infrastructure" vs "Senior Software
+ * Engineer, Agent Infrastructure"), causing real data loss.
+ *
+ * When titles match exactly but either row is already Applied or later, dedup
+ * still keeps both and warns: deleting an in-flight application would lose its
+ * status, report link, and notes unless the rows are the exact same report
+ * identity.
  *
  * @param {object} a - First parsed applications.md row.
  * @param {object} b - Second parsed applications.md row.
@@ -185,18 +213,18 @@ const protectedFuzzyPairs = new Set();
  */
 function roleMatch(a, b) {
   if (sameReportIdentity(a, b)) return true;
-  if (!roleFuzzyMatch(a.role, b.role)) return false;
+  if (normalizeRole(a.role) !== normalizeRole(b.role)) return false;
 
-  // Fuzzy title matches are intentionally conservative once either row has
-  // entered the real application pipeline. A user may already have applied to
-  // one sibling role, so deleting that row because a higher-scored sibling has
-  // similar wording would lose status, report, and notes. Keep both unless the
-  // rows point to the exact same report identity.
+  // Exact-title duplicates that have entered the real application pipeline are
+  // kept separate. A user may already have applied to one row; deleting it
+  // because a higher-scored exact-title sibling exists would lose status,
+  // report, and notes. Keep both unless the rows point to the exact same
+  // report identity.
   if (isAdvancedStatus(a.status) || isAdvancedStatus(b.status)) {
     const key = pairKey(a, b);
-    if (!protectedFuzzyPairs.has(key)) {
-      protectedFuzzyPairs.add(key);
-      console.warn(`⚠️  Keep #${a.num} and #${b.num}: fuzzy role match but advanced status requires exact report identity`);
+    if (!protectedTitlePairs.has(key)) {
+      protectedTitlePairs.add(key);
+      console.warn(`⚠️  Keep #${a.num} and #${b.num}: exact-title match but advanced status requires exact report identity`);
     }
     return false;
   }
@@ -230,22 +258,7 @@ function parseScore(s) {
  * @returns {object|null} Parsed tracker row, or null for non-application lines.
  */
 function parseAppLine(line) {
-  const parts = line.split('|').map(s => s.trim());
-  if (parts.length < 9) return null;
-  const num = parseInt(parts[1]);
-  if (isNaN(num)) return null;
-  return {
-    num,
-    date: parts[2],
-    company: parts[3],
-    role: parts[4],
-    score: parts[5],
-    status: parts[6],
-    pdf: parts[7],
-    report: parts[8],
-    notes: parts[9] || '',
-    raw: line,
-  };
+  return parseTrackerRow(line, COLMAP);
 }
 
 // Read
@@ -255,6 +268,8 @@ if (!existsSync(APPS_FILE)) {
 }
 const content = readFileSync(APPS_FILE, 'utf-8');
 const lines = content.split('\n');
+// Header-aware column map (tolerates an inserted Location column, etc.).
+const COLMAP = resolveColumns(lines);
 
 // Parse all entries
 const entries = [];
@@ -322,8 +337,8 @@ for (const [company, companyEntries] of groups) {
       const lineIdx = keeper.lineIdx;
       if (lineIdx !== undefined) {
         const parts = lines[lineIdx].split('|').map(s => s.trim());
-        parts[6] = bestStatus;
-        lines[lineIdx] = '| ' + parts.slice(1, -1).join(' | ') + ' |';
+        parts[COLMAP.status] = bestStatus;
+        lines[lineIdx] = rebuildRow(parts);
         console.log(`  📝 #${keeper.num}: status promoted to "${bestStatus}" (from #${cluster.find(e => e.status === bestStatus)?.num})`);
       }
     }
