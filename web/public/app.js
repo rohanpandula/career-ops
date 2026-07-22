@@ -415,7 +415,21 @@ async function renderDashboard() {
     <div class="metrics">
       <div class="metric tint-warm">
         <div class="metric-value accent" data-count="${stats.pending}">${stats.pending}</div>
-        <div class="metric-label">In Queue</div>
+        <div class="metric-label metric-label-with-help">
+          <span>In Queue</span>
+          <button
+            class="metric-info"
+            type="button"
+            aria-label="In Queue means jobs discovered by the scanner that are waiting for evaluation or triage. They have not been applied to."
+            data-tooltip="Jobs discovered by the scanner that are waiting for evaluation or triage. They have not been applied to."
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="8" r="6.25" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 7v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="8" cy="4.75" r=".8" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
       </div>
       <div class="metric tint-mint">
         <div class="metric-value green" data-count="${stats.pipelineLive || 0}">${stats.pipelineLive || 0}</div>

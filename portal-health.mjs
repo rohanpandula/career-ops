@@ -113,6 +113,36 @@ function normalizeErrIdent(ident) {
   return m ? `${m[1]} (${m[2]})` : ident;
 }
 
+// Per-query labels like 'Amazon (API "AI PM")' and 'Snap (API "LA")' split a
+// single portal into label-keyed buckets, while legacy error lines (or fixed
+// errors that drop the label) land in the bare 'Amazon (API)' bucket. Both
+// shapes describe the same portal — collapse to the unlabeled form so the
+// watchdog tracks portal health, not per-query health.
+function canonicalKey(key) {
+  return key.replace(/\s+"[^"]*"\)$/, ")");
+}
+
+// Portals deliberately removed from scheduled-scan.mjs (company migrated ATS,
+// board deleted, etc). Their pre-removal failure lines stay inside the rolling
+// SILENCE_DAYS log window for days after the adapter is gone, so without this
+// the watchdog keeps reporting a dead portal as "silent" — and burns a `claude
+// -p --fix` run per day rediagnosing a portal that no longer exists.
+// Value = where the coverage went, so the suppression is self-documenting.
+const RETIRED_PORTALS = {
+  // Unity deleted its `unity3d` Greenhouse board (now HTTP 404) and moved to
+  // Workday on 2026-07-12. Covered by "Unity (Workday)" via WORKDAY_BOARDS.
+  "Unity (Greenhouse)": "migrated to Workday — see 'Unity (Workday)'",
+  // Mistral emptied its `mistral` Lever board (HTTP 200 + `[]`) and moved to
+  // Ashby on/before 2026-07-18. Covered by "Mistral AI (Ashby)" via ASHBY_BOARDS.
+  "Mistral AI (Lever)": "migrated to Ashby — see 'Mistral AI (Ashby)'",
+};
+
+// portal-health writes its own findings back into the same log it parses:
+//   [ts]   - Unity (Greenhouse): 61 failed, 0 working, last seen ...
+// That line matches HIT_RE (company "- Unity"), so without this guard the
+// watchdog reads its own output back as portal telemetry.
+const SELF_ECHO_RE = /^\s*-\s/;
+
 function classify(detail) {
   const d = detail.trim();
   // 0-link / 0-total signals = broken
@@ -135,7 +165,8 @@ function parseLog(lines, sinceMs) {
       const [, ts, company, source, detail] = m;
       const t = Date.parse(ts);
       if (!t || t < sinceMs) continue;
-      const key = `${company.trim()} (${source.trim()})`;
+      if (SELF_ECHO_RE.test(company)) continue;
+      const key = canonicalKey(`${company.trim()} (${source.trim()})`);
       if (!stats[key]) stats[key] = { working: 0, broken: 0, lastSeen: ts, lastWorking: null };
       const cls = classify(detail);
       if (cls === "working") {
@@ -152,7 +183,7 @@ function parseLog(lines, sinceMs) {
       const [, ts, ident, detail] = m;
       const t = Date.parse(ts);
       if (!t || t < sinceMs) continue;
-      const key = normalizeErrIdent(ident);
+      const key = canonicalKey(normalizeErrIdent(ident));
       if (!stats[key]) stats[key] = { working: 0, broken: 0, lastSeen: ts, lastWorking: null, errorMsg: detail };
       stats[key].broken++;
       stats[key].errorMsg = detail;
@@ -164,8 +195,9 @@ function parseLog(lines, sinceMs) {
 
 function findSilent(stats) {
   // Silent = had at least one run in the window AND zero successful runs.
+  // Retired portals are excluded: their failures are historical by definition.
   return Object.entries(stats)
-    .filter(([_, s]) => s.working === 0 && s.broken > 0)
+    .filter(([portal, s]) => s.working === 0 && s.broken > 0 && !RETIRED_PORTALS[portal])
     .map(([portal, s]) => ({ portal, ...s }))
     .sort((a, b) => b.broken - a.broken);
 }

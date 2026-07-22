@@ -38,7 +38,6 @@ const LEVER_BOARDS = {
 const GREENHOUSE_BOARDS = {
   'anthropic': 'anthropic',
   'databricks': 'databricks',
-  'unity3d': 'unity3d',
   'epicgames': 'epicgames',
   'roblox': 'roblox',
   'scaleai': 'scaleai',
@@ -169,6 +168,36 @@ function greenhouseSalary(j) {
   return null;
 }
 
+// --- Workday (public CXS API) --------------------------------------------
+// Unity migrated off Greenhouse to Workday. Workday serves the same posting
+// JSON that renders the page, so no browser is needed — the CXS endpoint is
+// derived from the public URL by swapping the locale segment for wday/cxs:
+//   public: https://{tenant}.wd{N}.myworkdayjobs.com/en-US/{site}/job/{path}
+//   api:    https://{tenant}.wd{N}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/job/{path}
+const WORKDAY_URL_RE =
+  /^https?:\/\/([^.]+)\.(wd\d+)\.myworkdayjobs\.com\/(?:[a-z]{2}-[A-Z]{2}\/)?([^/]+)\/job\/(.+)$/;
+
+async function fetchWorkdayJob(url) {
+  const m = url.match(WORKDAY_URL_RE);
+  if (!m) return null;
+  const [, tenant, wd, site, path] = m;
+  const api = `https://${tenant}.${wd}.myworkdayjobs.com/wday/cxs/${tenant}/${site}/job/${path}`;
+  const r = await fetch(api, { headers: { Accept: 'application/json' } });
+  if (!r.ok) throw new Error(`workday ${tenant}/${site}: ${r.status}`);
+  const d = await r.json();
+  return d.jobPostingInfo || null;
+}
+
+// Workday exposes no structured comp field — the range sits inline in the
+// jobDescription HTML, so match the same $X–$Y shape Greenhouse falls back to.
+function workdaySalary(j) {
+  if (!j?.jobDescription) return null;
+  const text = j.jobDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 12000);
+  const m = text.match(/\$\s?(\d{2,3}(?:[,.]\d{3})?(?:\s?[Kk])?)\s?(?:[-–—to]+|\sto\s)\s?\$?(\d{2,3}(?:[,.]\d{3})?(?:\s?[Kk])?)/);
+  if (m) return `$${m[1].replace(/\s/g, '')}–$${m[2].replace(/\s/g, '')}`;
+  return null;
+}
+
 // --- Main ----------------------------------------------------------------
 
 async function main() {
@@ -180,6 +209,7 @@ async function main() {
   const ashbyBuckets = {}; // slug -> [items]
   const leverBuckets = {};
   const greenhouseBuckets = {};
+  const workdayItems = [];
 
   for (const it of items) {
     if (cache[it.url]?.salary) continue; // already have salary
@@ -210,11 +240,17 @@ async function main() {
       continue;
     }
 
-    // Greenhouse-proxied hosts (company domain, but backed by Greenhouse board)
-    if (url.match(/unity\.com\/careers\/positions\/\d+/)) {
-      (greenhouseBuckets.unity3d ??= []).push(it);
+    // Workday — per-job CXS fetch (no board-wide listing carries descriptions).
+    if (WORKDAY_URL_RE.test(url)) {
+      workdayItems.push(it);
       continue;
     }
+
+    // Legacy unity.com/careers/positions/{id} URLs fall through unrouted: Unity
+    // migrated to Workday and the `unity3d` Greenhouse board now 404s, so there
+    // is nothing left to enrich them against.
+
+    // Greenhouse-proxied hosts (company domain, but backed by Greenhouse board)
     if (url.match(/databricks\.com\/.*[?&]gh_jid=\d+/)) {
       (greenhouseBuckets.databricks ??= []).push(it);
       continue;
@@ -336,6 +372,30 @@ async function main() {
       }
     } catch (e) {
       log(`greenhouse/${slug} failed: ${e.message}`);
+    }
+  }
+
+  // Workday — one fetch per job (the board listing has no descriptions).
+  if (workdayItems.length) {
+    log(`workday: fetching (${workdayItems.length} items to enrich)`);
+    for (const it of workdayItems) {
+      try {
+        const j = await fetchWorkdayJob(it.url);
+        if (!j) continue;
+        const salary = workdaySalary(j);
+        const prev = cache[it.url] || {};
+        cache[it.url] = {
+          ...prev,
+          verified_at: prev.verified_at || new Date().toISOString(),
+          live: prev.live ?? true,
+          salary: salary || prev.salary || null,
+          jobTitle: j.title || prev.jobTitle || null,
+          location: j.location || prev.location || null,
+        };
+        if (salary) enriched++;
+      } catch (e) {
+        log(`workday failed: ${e.message}`);
+      }
     }
   }
 

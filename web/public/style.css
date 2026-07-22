@@ -316,6 +316,53 @@ body {
   letter-spacing: -0.005em;
 }
 
+.metric-label-with-help {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.metric-info {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: help;
+  transition:
+    color 0.15s var(--ease-out-quint),
+    background-color 0.15s var(--ease-out-quint),
+    transform 0.15s var(--ease-out-expo);
+}
+
+/* Keep the visible glyph quiet while giving mouse/touch users a 40px target. */
+.metric-info::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+}
+
+.metric-info:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.metric-info:active { transform: scale(0.96); }
+
+.metric-info:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* Metric values stay monochrome. Tinted card backgrounds (tint-*) provide
    visual rhythm but don't carry state information. */
 .metric-value.accent,
