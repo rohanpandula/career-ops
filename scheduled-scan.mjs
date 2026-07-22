@@ -220,15 +220,18 @@ function matchesFilter(title, company, location = "") {
 }
 
 // --- Scan sources ---
+// Unity was removed here: it migrated off Greenhouse to Workday. The `unity3d`
+// board now returns HTTP 404 {"status":404,"error":"Job not found"}. It is
+// served by fetchWorkdayBoards() below (WORKDAY_BOARDS).
 const GREENHOUSE_APIS = [
   ["Anthropic",  "https://boards-api.greenhouse.io/v1/boards/anthropic/jobs"],
   ["Databricks", "https://boards-api.greenhouse.io/v1/boards/databricks/jobs"],
-  ["Unity",      "https://boards-api.greenhouse.io/v1/boards/unity3d/jobs"],
   ["Epic Games", "https://boards-api.greenhouse.io/v1/boards/epicgames/jobs"],
   ["Roblox",     "https://boards-api.greenhouse.io/v1/boards/roblox/jobs"],
   ["Scale AI",   "https://boards-api.greenhouse.io/v1/boards/scaleai/jobs"],
   ["DeepMind",   "https://boards-api.greenhouse.io/v1/boards/deepmind/jobs"],
   ["Oura",       "https://boards-api.greenhouse.io/v1/boards/oura/jobs"],
+  ["Peloton",    "https://boards-api.greenhouse.io/v1/boards/peloton/jobs"],
 ];
 
 // Ashby slugs — public posting API. The HTML at jobs.ashbyhq.com/{slug} is a
@@ -241,6 +244,10 @@ const ASHBY_BOARDS = [
   ["Modal",     "modal"],
   ["OpenAI",    "openai"],
   ["Snowflake", "snowflake"],
+  // Mistral emptied its `mistral` Lever board (HTTP 200 + `[]`, not a 404) and
+  // moved to Ashby on/before 2026-07-18. Slug is the literal domain "mistral.ai"
+  // — the dot is part of the board name, not a typo.
+  ["Mistral AI", "mistral.ai"],
 ];
 
 // --- ChangeDetection.io as data source (SPA sites rendered by Unraid box) ---
@@ -304,7 +311,7 @@ async function fetchAmazonJobs(seen, candidates) {
 const LEVER_BOARDS = [
   ["Spotify",    "spotify"],
   ["Palantir",   "palantir"],
-  ["Mistral AI", "mistral"],
+  // Mistral AI moved to Ashby 2026-07-18 — see ASHBY_BOARDS ("mistral.ai").
 ];
 
 async function fetchLeverBoards(seen, candidates) {
@@ -372,6 +379,75 @@ async function fetchSnapJobs(seen, candidates) {
       log(`  Snap (API "${q.label}"): ${hits.length} total, ${matchCount} role matches`);
     } catch (e) {
       log(`  ERROR Snap API: ${e.message.substring(0, 80)}`);
+    }
+  }
+}
+
+// --- Workday public CXS API ---
+// Unity migrated off Greenhouse (the `unity3d` board 404s) to Workday. Workday
+// exposes a public JSON search endpoint per tenant/site — no auth, no Playwright:
+//   POST /wday/cxs/{tenant}/{site}/jobs  {appliedFacets:{}, limit, offset, searchText}
+// Job URLs are built from `externalPath` against /en-US/{site}.
+const WORKDAY_BOARDS = [
+  // [company, tenant, site]
+  ["Unity", "unitytech", "Unity"],
+];
+
+// Workday reports freshness as prose ("Posted Today" / "Posted Yesterday" /
+// "Posted 5 Days Ago" / "Posted 30+ Days Ago"), never a timestamp. Parse it to a
+// day count so the FRESHNESS_HOURS window still applies. Unlike Snap (which has
+// no date at all and leans on `seen`), Unity's board is brand-new to the dedup
+// set, so without this every stale match would flood on the first run.
+// Returns null when unparseable — caller treats null as "unknown", not "fresh".
+function parseWorkdayPostedOn(postedOn) {
+  if (!postedOn) return null;
+  const s = String(postedOn).toLowerCase();
+  if (s.includes("today")) return 0;
+  if (s.includes("yesterday")) return 1;
+  const m = s.match(/(\d+)\+?\s*days?\s*ago/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+async function fetchWorkdayBoards(seen, candidates) {
+  const freshnessDays = FRESHNESS_HOURS / 24;
+  for (const [company, tenant, site] of WORKDAY_BOARDS) {
+    try {
+      const endpoint = `https://${tenant}.wd1.myworkdayjobs.com/wday/cxs/${tenant}/${site}/jobs`;
+      const origin = `https://${tenant}.wd1.myworkdayjobs.com/en-US/${site}`;
+      let total = 0;
+      let freshCount = 0;
+      // Workday hard-caps `limit` at 20, so page until exhausted (guard at 500).
+      for (let offset = 0; offset < 500; offset += 20) {
+        const resp = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ appliedFacets: {}, limit: 20, offset, searchText: "" }),
+          signal: AbortSignal.timeout(30000),
+        });
+        if (!resp.ok) { log(`  ERROR ${company} (Workday): HTTP ${resp.status}`); break; }
+        const data = await resp.json();
+        const postings = data.jobPostings || [];
+        total += postings.length;
+        for (const job of postings) {
+          const title = cleanJobTitle(job.title || "");
+          const path = job.externalPath || "";
+          const location = job.locationsText || "";
+          if (!path) continue;
+          const url = origin + path;
+          if (seen.has(url)) continue;
+          const ageDays = parseWorkdayPostedOn(job.postedOn);
+          if (ageDays === null || ageDays > freshnessDays) continue; // stale/unknown — skip
+          if (matchesFilter(title, company, location)) {
+            candidates.push({ company, title, url, location, source: "Workday API" });
+            seen.add(url);
+            freshCount++;
+          }
+        }
+        if (postings.length < 20) break; // last page
+      }
+      log(`  ${company} (Workday): ${total} total, ${freshCount} fresh matches`);
+    } catch (e) {
+      log(`  ERROR ${company} (Workday): ${e.message.substring(0, 80)}`);
     }
   }
 }
@@ -489,6 +565,51 @@ async function fetchAppleJobs(browser, seen, candidates) {
   }
 }
 
+// --- Meta (Playwright + GraphQL response capture) ---
+// Meta's careers page renders job cards from a private GraphQL query and does
+// not expose useful anchors in the initial HTML. Capture the same anonymous
+// response the official page uses. The page is sorted newest-first so the first
+// page works as an incremental feed; historical URLs in `seen` provide dedup.
+async function fetchMetaJobs(browser, seen, candidates) {
+  const page = await browser.newPage();
+  try {
+    const resultsPromise = page.waitForResponse(
+      (response) => {
+        if (!response.url().includes("/graphql")) return false;
+        const postData = response.request().postData() || "";
+        return postData.includes("CareersJobSearchResultsV2DataQuery");
+      },
+      { timeout: 30000 },
+    );
+    await page.goto("https://www.metacareers.com/jobsearch/?sort_by_new=true", {
+      waitUntil: "domcontentloaded",
+      timeout: 30000,
+    });
+    const response = await resultsPromise;
+    const data = await response.json();
+    const jobs = data?.data?.job_search_with_featured_jobs_v2?.all_jobs || [];
+    let matchCount = 0;
+    for (const job of jobs) {
+      const title = cleanJobTitle(job.title || "");
+      const id = String(job.id || "").trim();
+      const location = Array.isArray(job.locations) ? job.locations.join("; ") : "";
+      if (!id) continue;
+      const url = `https://www.metacareers.com/jobs/${id}/`;
+      if (seen.has(url)) continue;
+      if (matchesFilter(title, "Meta", location)) {
+        candidates.push({ company: "Meta", title, url, location, source: "Meta GraphQL" });
+        seen.add(url);
+        matchCount++;
+      }
+    }
+    log(`  Meta (GraphQL): ${jobs.length} newest jobs, ${matchCount} role matches`);
+  } catch (e) {
+    log(`  ERROR Meta GraphQL: ${e.message.substring(0, 80)}`);
+  } finally {
+    await page.close().catch(() => {});
+  }
+}
+
 async function fetchCDSnapshots(seen, candidates) {
   for (const [company, uuid, sourceUrl] of CD_WATCHES) {
     try {
@@ -542,12 +663,23 @@ async function runScan() {
   // touched on every reindex and is useless for freshness detection).
   for (const [company, apiUrl] of GREENHOUSE_APIS) {
     try {
-      const page = await browser.newPage();
       const apiUrlWithContent = apiUrl + (apiUrl.includes("?") ? "&" : "?") + "content=true";
-      await page.goto(apiUrlWithContent, { waitUntil: "domcontentloaded", timeout: 15000 });
-      const text = await page.innerText("body").catch(() => "");
-      const data = JSON.parse(text);
-      const jobs = data.jobs || [];
+      // Plain fetch, not Playwright: boards-api.greenhouse.io is a pure JSON API
+      // and needs no JS to render (mirrors the Ashby fix in f574b34). Driving it
+      // through page.goto was the source of the recurring
+      // "page.goto: Timeout 15000ms exceeded" failures.
+      const resp = await fetch(apiUrlWithContent, { signal: AbortSignal.timeout(30000) });
+      if (!resp.ok) { log(`  ERROR ${company} (Greenhouse): HTTP ${resp.status}`); continue; }
+      const data = await resp.json();
+      // A dead/renamed board slug returns 200-shaped JSON without a `jobs` array
+      // (or a 404 body). `data.jobs || []` silently degraded that to "0 total",
+      // so a board could be broken for weeks while still logging a clean run.
+      // Treat a missing jobs array as a hard error instead.
+      if (!Array.isArray(data.jobs)) {
+        log(`  ERROR ${company} (Greenhouse): no jobs array — board slug may be dead/renamed`);
+        continue;
+      }
+      const jobs = data.jobs;
       let freshCount = 0;
       for (const job of jobs) {
         const title = cleanJobTitle(job.title || "");
@@ -562,7 +694,6 @@ async function runScan() {
           freshCount++;
         }
       }
-      await page.close();
       log(`  ${company} (Greenhouse): ${jobs.length} total, ${freshCount} fresh matches`);
     } catch (e) {
       log(`  ERROR ${company} Greenhouse: ${e.message.substring(0, 80)}`);
@@ -600,6 +731,9 @@ async function runScan() {
     }
   }
 
+  // Workday public CXS API (Unity) — replaces the dead unity3d Greenhouse board.
+  await fetchWorkdayBoards(seen, candidates);
+
   // Lever public API (Spotify, Palantir, Mistral) — real per-job hostedUrl values.
   await fetchLeverBoards(seen, candidates);
 
@@ -611,6 +745,9 @@ async function runScan() {
 
   // Apple via Playwright anchor extraction — real /en-us/details/{id}/{slug} URLs.
   await fetchAppleJobs(browser, seen, candidates);
+
+  // Meta official careers GraphQL response — newest page, real job-detail URLs.
+  await fetchMetaJobs(browser, seen, candidates);
 
   // Google careers via server-rendered HTML — real /jobs/results/{id}-{slug} URLs.
   await fetchGoogleJobs(seen, candidates);
