@@ -21,12 +21,13 @@
 
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
+import { qwenUrl } from './infra-config.mjs';
 
 const PIPE = 'data/pipeline.md';
 const LIVE = 'web/.liveness.json';
 const FIT  = 'data/fit-scores.json';
 const OUT  = 'data/clusters.json';
-const QWEN_URL = 'http://10.0.0.34:11434/api/generate';
+const QWEN_URL = qwenUrl();
 const MODEL = 'qwen3:14b-16k';
 
 const args = process.argv.slice(2);
@@ -54,6 +55,7 @@ function parsePipeline(md) {
 }
 
 async function qwen(prompt, timeoutMs = 120_000) {
+  if (!QWEN_URL) throw new Error('Qwen is not configured in config/profile.yml or QWEN_URL');
   const r = await fetch(QWEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

@@ -18,12 +18,12 @@
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import yaml from 'js-yaml';
+import { qwenUrl } from './infra-config.mjs';
 
 const PIPE = 'data/pipeline.md';
 const LIVE_PATH = 'web/.liveness.json';
 const FIT_PATH = 'data/fit-scores.json';
 const PROFILE = 'config/profile.yml';
-const DEFAULT_QWEN_URL = 'http://10.0.0.34:11434/api/generate';
 const DEFAULT_QWEN_MODEL = 'qwen3:14b-16k';
 const DEFAULT_MIXLAYER_BASE_URL = 'https://models.mixlayer.ai/v1';
 // 2026-05: Mixlayer retired qwen3.5-122b-a10b (HTTP 400 model_not_found).
@@ -65,7 +65,7 @@ function loadScorerSettings(profile) {
     mixlayerApiKey: process.env.MIXLAYER_API_KEY || mixlayer.api_key || '',
     mixlayerBaseUrl: normalizeBaseUrl(process.env.MIXLAYER_BASE_URL || mixlayer.base_url || DEFAULT_MIXLAYER_BASE_URL),
     mixlayerModel: process.env.MIXLAYER_MODEL || mixlayer.model || DEFAULT_MIXLAYER_MODEL,
-    qwenUrl: process.env.QWEN_URL || qwen.url || DEFAULT_QWEN_URL,
+    qwenUrl: process.env.QWEN_URL || qwen.url || qwenUrl(),
     qwenModel: process.env.QWEN_MODEL || qwen.model || DEFAULT_QWEN_MODEL,
   };
 }
@@ -76,6 +76,7 @@ function scorerLabel(settings) {
 }
 
 async function qwen(prompt, settings) {
+  if (!settings.qwenUrl) throw new Error('Qwen is not configured in config/profile.yml or QWEN_URL');
   const body = JSON.stringify({ model: settings.qwenModel, prompt, stream: false, think: false, keep_alive: '5m' });
   const r = await fetch(settings.qwenUrl, {
     method: 'POST',

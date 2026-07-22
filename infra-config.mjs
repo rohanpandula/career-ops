@@ -70,6 +70,37 @@ export function browserless() {
   };
 }
 
+/** Add a Browserless token without duplicating or corrupting query params. */
+export function tokenizedUrl(endpoint, token) {
+  if (!endpoint) return '';
+  try {
+    const url = new URL(endpoint);
+    if (token) url.searchParams.set('token', token);
+    return url.href;
+  } catch {
+    return '';
+  }
+}
+
+/** Browserless HTTP action endpoint, e.g. browserlessHttpUrl('content'). */
+export function browserlessHttpUrl(action = 'content') {
+  const config = browserless();
+  if (!config.httpUrl) return '';
+  try {
+    const base = new URL(config.httpUrl);
+    base.pathname = `${base.pathname.replace(/\/$/, '')}/${String(action).replace(/^\//, '')}`;
+    return tokenizedUrl(base.href, config.token);
+  } catch {
+    return '';
+  }
+}
+
+/** Configured Browserless Playwright websocket URL with its token. */
+export function browserlessWsUrl() {
+  const config = browserless();
+  return tokenizedUrl(config.wsUrl, config.token);
+}
+
 /** FlareSolverr endpoint (env FLARESOLVERR_URL wins). '' if unset. */
 export function flaresolverrUrl() {
   return process.env.FLARESOLVERR_URL || infra().flaresolverr_url || '';

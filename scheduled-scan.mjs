@@ -27,6 +27,7 @@ import { dirname, join } from "path";
 import { fileURLToPath } from "url";
 import yaml from "js-yaml";
 import { changedetection } from "./infra-config.mjs";
+import { captureResponseDuringNavigation, parseWorkdayPostedOn } from "./scheduled-scan-core.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 process.chdir(__dirname);
@@ -399,14 +400,6 @@ const WORKDAY_BOARDS = [
 // no date at all and leans on `seen`), Unity's board is brand-new to the dedup
 // set, so without this every stale match would flood on the first run.
 // Returns null when unparseable — caller treats null as "unknown", not "fresh".
-function parseWorkdayPostedOn(postedOn) {
-  if (!postedOn) return null;
-  const s = String(postedOn).toLowerCase();
-  if (s.includes("today")) return 0;
-  if (s.includes("yesterday")) return 1;
-  const m = s.match(/(\d+)\+?\s*days?\s*ago/);
-  return m ? parseInt(m[1], 10) : null;
-}
 
 async function fetchWorkdayBoards(seen, candidates) {
   const freshnessDays = FRESHNESS_HOURS / 24;
@@ -426,7 +419,11 @@ async function fetchWorkdayBoards(seen, candidates) {
         });
         if (!resp.ok) { log(`  ERROR ${company} (Workday): HTTP ${resp.status}`); break; }
         const data = await resp.json();
-        const postings = data.jobPostings || [];
+        if (!Array.isArray(data.jobPostings)) {
+          log(`  ERROR ${company} (Workday): no jobPostings array — tenant/site may be invalid`);
+          break;
+        }
+        const postings = data.jobPostings;
         total += postings.length;
         for (const job of postings) {
           const title = cleanJobTitle(job.title || "");
@@ -444,6 +441,9 @@ async function fetchWorkdayBoards(seen, candidates) {
           }
         }
         if (postings.length < 20) break; // last page
+        if (offset === 480 && Number(data.total) > 500) {
+          log(`  WARN ${company} (Workday): ${data.total} postings exceeds the 500-item scan cap`);
+        }
       }
       log(`  ${company} (Workday): ${total} total, ${freshCount} fresh matches`);
     } catch (e) {
@@ -527,8 +527,9 @@ async function fetchAppleJobs(browser, seen, candidates) {
   }
 
   for (const q of APPLE_SEARCHES) {
+    let page;
     try {
-      const page = await browser.newPage();
+      page = await browser.newPage();
       await page.goto(q.url, { waitUntil: "networkidle", timeout: 25000 });
       await page.waitForTimeout(2000);
       const links = await page
@@ -544,7 +545,6 @@ async function fetchAppleJobs(browser, seen, candidates) {
           return out;
         })
         .catch(() => []);
-      await page.close();
       let matchCount = 0;
       for (const { href, title } of links) {
         const clean = cleanJobTitle(title);
@@ -561,6 +561,8 @@ async function fetchAppleJobs(browser, seen, candidates) {
       log(`  Apple (PW "${q.label}"): ${links.length} links, ${matchCount} role matches`);
     } catch (e) {
       log(`  ERROR Apple PW "${q.label}": ${e.message.substring(0, 80)}`);
+    } finally {
+      await page?.close().catch(() => {});
     }
   }
 }
@@ -573,19 +575,20 @@ async function fetchAppleJobs(browser, seen, candidates) {
 async function fetchMetaJobs(browser, seen, candidates) {
   const page = await browser.newPage();
   try {
-    const resultsPromise = page.waitForResponse(
+    const response = await captureResponseDuringNavigation(
+      page,
       (response) => {
         if (!response.url().includes("/graphql")) return false;
         const postData = response.request().postData() || "";
         return postData.includes("CareersJobSearchResultsV2DataQuery");
       },
       { timeout: 30000 },
-    );
-    await page.goto("https://www.metacareers.com/jobsearch/?sort_by_new=true", {
+      "https://www.metacareers.com/jobsearch/?sort_by_new=true",
+      {
       waitUntil: "domcontentloaded",
       timeout: 30000,
-    });
-    const response = await resultsPromise;
+      },
+    );
     const data = await response.json();
     const jobs = data?.data?.job_search_with_featured_jobs_v2?.all_jobs || [];
     let matchCount = 0;
@@ -774,8 +777,9 @@ async function runScan() {
       verified.push({ ...job, location: "-" });
       continue;
     }
+    let page;
     try {
-      const page = await browser.newPage();
+      page = await browser.newPage();
       await page.goto(job.url, { waitUntil: "domcontentloaded", timeout: 12000 });
       await page.waitForTimeout(1500);
       const text = await page.innerText("body").catch(() => "");
@@ -798,9 +802,10 @@ async function runScan() {
         const loc = locMatch ? locMatch[0].trim() : (job.location || "-");
         verified.push({ ...job, location: loc });
       }
-      await page.close();
     } catch {
       // skip failures silently
+    } finally {
+      await page?.close().catch(() => {});
     }
   }
 

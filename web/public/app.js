@@ -1,5 +1,7 @@
 /* career-ops command center */
 
+import { escapeAttr, escapeHtml, markdownToHtml, safeHttpUrl } from './render-utils.mjs';
+
 const API = '';
 let currentView = 'dashboard';
 let statesCache = null;
@@ -91,11 +93,17 @@ async function render() {
     app.querySelector(':scope > *')?.classList.add('view-enter');
     bindEvents();
   } catch (e) {
-    app.innerHTML = `<div class="empty-state"><div class="empty-state-title">Error</div>${e.message}</div>`;
+    app.innerHTML = `<div class="empty-state"><div class="empty-state-title">Error</div>${escapeHtml(e.message)}</div>`;
   }
 }
 
 function bindEvents() {
+  document.getElementById('report-back')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    navigate('reports');
+  });
+  document.getElementById('scan-now-btn')?.addEventListener('click', triggerScan);
+
   // Sortable tables
   document.querySelectorAll('th[data-sort]').forEach(th => {
     th.addEventListener('click', () => handleSort(th));
@@ -228,7 +236,7 @@ function bindEvents() {
       const prev = sel.dataset.current;
       const next = sel.value;
       // Optimistic: update badge color classes immediately
-      sel.className = `status-select badge badge-${next.toLowerCase()}`;
+      sel.className = `status-select badge badge-${cssToken(next)}`;
       try {
         await api(`/api/applications/${id}`, {
           method: 'PUT',
@@ -237,7 +245,7 @@ function bindEvents() {
         sel.dataset.current = next;
       } catch (e) {
         sel.value = prev;
-        sel.className = `status-select badge badge-${prev.toLowerCase()}`;
+        sel.className = `status-select badge badge-${cssToken(prev)}`;
         alert(`Could not update status: ${e.message}`);
       }
     });
@@ -464,7 +472,7 @@ async function renderDashboard() {
         <div class="metric-label">Avg Score</div>
       </div>
       <div class="metric">
-        <div class="metric-value countdown" data-last="${scanStatus.lastScan || ''}" data-interval="${scanStatus.interval}">${countdown}</div>
+        <div class="metric-value countdown" data-last="${escapeAttr(scanStatus.lastScan || '')}" data-interval="${escapeAttr(scanStatus.interval)}">${escapeHtml(countdown)}</div>
         <div class="metric-label">Next Scan</div>
       </div>
     </div>
@@ -500,10 +508,10 @@ async function renderDashboard() {
             <tbody>
               ${stats.applications.slice(0, 10).map(a => {
                 const reportFile = extractReportFile(a.Report);
-                return `<tr class="clickable" ${reportFile ? `data-report="${reportFile}"` : ''}>
-                  <td>${a.Date}</td>
-                  <td>${a.Company}</td>
-                  <td style="max-width:200px">${a.Role}</td>
+                return `<tr class="clickable" ${reportFile ? `data-report="${escapeAttr(reportFile)}"` : ''}>
+                  <td>${escapeHtml(a.Date)}</td>
+                  <td>${escapeHtml(a.Company)}</td>
+                  <td style="max-width:200px">${escapeHtml(a.Role)}</td>
                   <td>${scoreMarkup(a.Score)}</td>
                   <td>${statusBadge(a.Status)}</td>
                 </tr>`;
@@ -519,7 +527,7 @@ async function renderDashboard() {
         <div class="feed">
           ${recentActivity.map(e => `
             <div class="feed-item">
-              <span class="feed-time">${formatTime(e.timestamp)}</span>
+              <span class="feed-time">${escapeHtml(formatTime(e.timestamp))}</span>
               <span class="feed-msg">${escapeHtml(e.message)}</span>
             </div>
           `).join('')}
@@ -551,7 +559,7 @@ async function renderDigest() {
   return `<div>
     <div class="view-header">
       <h1 class="view-title">Weekly digest</h1>
-      <p class="view-subtitle">Week of ${latest.date}</p>
+      <p class="view-subtitle">Week of ${escapeHtml(latest.date)}</p>
     </div>
     <div class="digest-content report-content">${html}</div>
   </div>`;
@@ -565,7 +573,7 @@ function renderGapAnalysis(data) {
   const matches = (data.matches || []).map(s => tag(s, 'gap-match')).join('');
   const gaps = (data.gaps || []).map(s => tag(s, 'gap-gap')).join('');
   const explain = (data.must_explain || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
-  const date = data.analyzedAt ? `<span class="gap-meta">analyzed ${relativeDate(data.analyzedAt)}</span>` : '';
+  const date = data.analyzedAt ? `<span class="gap-meta">analyzed ${escapeHtml(relativeDate(data.analyzedAt))}</span>` : '';
   return `<div class="gap-analysis">
     <div class="gap-grid">
       <div class="gap-section">
@@ -590,12 +598,12 @@ function renderClusters(data) {
   if (!clusters.length) return '';
   return `
     <div class="chart-panel cluster-panel">
-      <div class="section-label">Clusters <span style="color:var(--text-muted); font-weight:400; font-size:0.72rem">semantic grouping of ${data.generatedFor || 0} live fit ≥ ${data.minScore || '3.5'} URLs — click to filter pipeline</span></div>
+      <div class="section-label">Clusters <span style="color:var(--text-muted); font-weight:400; font-size:0.72rem">semantic grouping of ${escapeHtml(data.generatedFor || 0)} live fit ≥ ${escapeHtml(data.minScore || '3.5')} URLs — click to filter pipeline</span></div>
       <div class="cluster-grid">
         ${clusters.map(c => `
           <button class="cluster-chip" data-cluster-id="${escapeAttr(c.id)}" data-tooltip="${escapeAttr((c.sampleTitles || []).join(' · '))}">
             <span class="cluster-name">${escapeHtml(c.name)}</span>
-            <span class="cluster-count">${c.count}</span>
+            <span class="cluster-count">${escapeHtml(c.count)}</span>
           </button>
         `).join('')}
       </div>
@@ -633,19 +641,19 @@ function renderTimeSeriesCharts(ts) {
         <rect x="${(x(i) - barW / 2).toFixed(1)}" y="${yBar(d.discovered).toFixed(1)}"
               width="${barW}" height="${(innerH - (yBar(d.discovered) - PAD.t)).toFixed(1)}"
               class="chart-bar-new" rx="2">
-          <title>${d.date} — ${d.discovered} new, ${d.stillPending} still pending</title>
+          <title>${escapeHtml(d.date)} — ${escapeHtml(d.discovered)} new, ${escapeHtml(d.stillPending)} still pending</title>
         </rect>
       `).join('')}
       <!-- cumulative line -->
       <path d="${linePath}" class="chart-line-cum" fill="none" />
       ${disc.map((d, i) => `
         <circle cx="${x(i).toFixed(1)}" cy="${yLine(d.cumulativePending).toFixed(1)}" r="3" class="chart-line-dot">
-          <title>${d.date} — ${d.cumulativePending} cumulative pending</title>
+          <title>${escapeHtml(d.date)} — ${escapeHtml(d.cumulativePending)} cumulative pending</title>
         </circle>
       `).join('')}
       <!-- x-axis labels -->
       ${disc.map((d, i) => `
-        <text x="${x(i).toFixed(1)}" y="${H - 8}" class="chart-axis" text-anchor="middle">${d.date.slice(5)}</text>
+        <text x="${x(i).toFixed(1)}" y="${H - 8}" class="chart-axis" text-anchor="middle">${escapeHtml(String(d.date).slice(5))}</text>
       `).join('')}
     </svg>`;
   })();
@@ -953,21 +961,23 @@ async function renderPipeline() {
             const hasGap = !!(gap && (gap.matches?.length || gap.gaps?.length));
             const gapBadge = hasGap ? `<span class="gap-toggle" data-tooltip="Click to view CV gap analysis">▾</span>` : '';
             const dup = dupInfo.get(item.url);
+            const canonicalUrl = safeHttpUrl(dup?.canonical);
             const dupBadge = dup
               ? (dup.isCanonical
                   ? `<span class="dup-chip dup-canonical" data-tooltip="${dup.dupCount} other URL${dup.dupCount > 1 ? 's' : ''} point to this same role">+${dup.dupCount} dup</span>`
-                  : `<a href="${escapeAttr(dup.canonical)}" target="_blank" rel="noopener" class="dup-chip dup-secondary" data-tooltip="Duplicate — canonical URL: ${escapeAttr(dup.canonical)}">↗ canonical</a>`)
+                  : canonicalUrl ? `<a href="${escapeAttr(canonicalUrl)}" target="_blank" rel="noopener" class="dup-chip dup-secondary" data-tooltip="Duplicate — canonical URL: ${escapeAttr(canonicalUrl)}">↗ canonical</a>` : '')
               : '';
+            const itemUrl = safeHttpUrl(item.url);
             return `<tr class="${deadCls}${hasGap ? ' has-gap' : ''}" data-company="${escapeAttr(item.company)}" data-role="${escapeAttr(item.role)}" data-url="${escapeAttr(item.url)}" data-url-hash="${escapeAttr(gap?.hash || '')}" data-live="${liveState}" data-live-rank="${liveSortRank}" data-first-seen-ts="${firstSeenTs}" data-last-seen-ts="${lastSeenTs}" data-location="${escapeAttr(location)}" data-cities="${escapeAttr(cachedCities)}" data-salary="${escapeAttr(salary)}" data-fit="${fitNum ?? ''}">
               <td data-sort-value="${liveSortRank}"><button class="live-dot-btn" data-verify-url="${escapeAttr(item.url)}" data-tooltip="${escapeAttr(dotTip)}"><span class="${dotClass}"></span></button></td>
-              <td class="first-seen" data-sort-value="${firstSeenTs}" data-tooltip="${escapeAttr(firstSeenTip)}">${firstSeenText}</td>
-              <td class="last-seen" data-sort-value="${lastSeenTs}" data-tooltip="${escapeAttr(lastSeenTip)}">${lastSeenText}</td>
+              <td class="first-seen" data-sort-value="${firstSeenTs}" data-tooltip="${escapeAttr(firstSeenTip)}">${escapeHtml(firstSeenText)}</td>
+              <td class="last-seen" data-sort-value="${lastSeenTs}" data-tooltip="${escapeAttr(lastSeenTip)}">${escapeHtml(lastSeenText)}</td>
               <td>${escapeHtml(item.company)}${gapBadge}</td>
               <td>${escapeHtml(item.role)}${dupBadge}</td>
               <td class="cell-fit" data-sort-value="${fitNum ?? -1}" data-tooltip="${escapeAttr(fitTip)}">${fitCell}</td>
-              <td class="cell-location" data-sort-value="${escapeAttr(location.toLowerCase())}" data-tooltip="${escapeAttr(locTip)}">${location || '—'}</td>
-              <td class="cell-salary" data-sort-value="${escapeAttr(salary.toLowerCase())}" data-tooltip="${escapeAttr(salTip)}">${salary || '—'}</td>
-              <td class="cell-url"><a class="url-link" href="${escapeAttr(item.url)}" target="_blank" rel="noopener" aria-label="Open posting" data-tooltip="${escapeAttr(item.url)}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h-3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3"/><path d="M9.5 2.5h4v4"/><path d="M7 9l6.5-6.5"/></svg></a></td>
+              <td class="cell-location" data-sort-value="${escapeAttr(location.toLowerCase())}" data-tooltip="${escapeAttr(locTip)}">${escapeHtml(location || '—')}</td>
+              <td class="cell-salary" data-sort-value="${escapeAttr(salary.toLowerCase())}" data-tooltip="${escapeAttr(salTip)}">${escapeHtml(salary || '—')}</td>
+              <td class="cell-url">${itemUrl ? `<a class="url-link" href="${escapeAttr(itemUrl)}" target="_blank" rel="noopener" aria-label="Open posting" data-tooltip="${escapeAttr(itemUrl)}"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5h-3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3"/><path d="M9.5 2.5h4v4"/><path d="M7 9l6.5-6.5"/></svg></a>` : '—'}</td>
               <td>
                 <button class="icon-btn generate-cv-btn"
                         data-url="${escapeAttr(item.url)}"
@@ -1010,7 +1020,7 @@ async function renderTracker() {
       <input type="text" class="filter-input" id="tracker-search" placeholder="Search...">
       <select class="filter-input" id="tracker-status-filter">
         <option value="">All statuses</option>
-        ${stateList.map(s => `<option value="${s}">${s}</option>`).join('')}
+        ${stateList.map(s => `<option value="${escapeAttr(s)}">${escapeHtml(s)}</option>`).join('')}
       </select>
     </div>
 
@@ -1031,23 +1041,23 @@ async function renderTracker() {
           ${apps.map(a => {
             const reportFile = extractReportFile(a.Report);
             return `<tr>
-              <td>${a['#']}</td>
-              <td>${a.Date}</td>
-              <td>${a.Company}</td>
-              <td style="max-width:200px">${a.Role}</td>
+              <td>${escapeHtml(a['#'])}</td>
+              <td>${escapeHtml(a.Date)}</td>
+              <td>${escapeHtml(a.Company)}</td>
+              <td style="max-width:200px">${escapeHtml(a.Role)}</td>
               <td>${scoreMarkup(a.Score)}</td>
               <td>
-                <select class="status-select badge badge-${(a.Status || '').toLowerCase()}" data-id="${a['#']}" data-current="${a.Status}" data-tooltip="${STATUS_TOOLTIP[(a.Status || '').toLowerCase()] || 'Change status'}">
+                <select class="status-select badge badge-${cssToken(a.Status)}" data-id="${escapeAttr(a['#'])}" data-current="${escapeAttr(a.Status)}" data-tooltip="${escapeAttr(STATUS_TOOLTIP[(a.Status || '').toLowerCase()] || 'Change status')}">
                   ${stateList.map(s => {
                     const k = s.toLowerCase();
-                    return `<option value="${s}"${k === (a.Status || '').toLowerCase() ? ' selected' : ''}>${STATUS_GLYPH[k] || '·'}  ${s}</option>`;
+                    return `<option value="${escapeAttr(s)}"${k === (a.Status || '').toLowerCase() ? ' selected' : ''}>${STATUS_GLYPH[k] || '·'}  ${escapeHtml(s)}</option>`;
                   }).join('')}
                 </select>
               </td>
-              <td>${a.PDF}</td>
-              <td>${reportFile ? `<a href="#" class="report-link" data-report="${reportFile}" style="color: var(--accent); text-decoration: none">${a.Report.replace(/[\[\]]/g, '').split('(')[0]}</a>` : a.Report}</td>
+              <td>${escapeHtml(a.PDF)}</td>
+              <td>${reportFile ? `<a href="#" class="report-link" data-report="${escapeAttr(reportFile)}" style="color: var(--accent); text-decoration: none">${escapeHtml(a.Report.replace(/[\[\]]/g, '').split('(')[0])}</a>` : escapeHtml(a.Report)}</td>
               <td style="max-width:250px">
-                <span data-editable="Notes" data-id="${a['#']}" class="editable" title="Click to edit">${a.Notes || '--'}</span>
+                <span data-editable="Notes" data-id="${escapeAttr(a['#'])}" class="editable" title="Click to edit">${escapeHtml(a.Notes || '--')}</span>
               </td>
             </tr>`;
           }).join('')}
@@ -1074,8 +1084,8 @@ async function renderReportsList() {
         <thead><tr><th>Report</th></tr></thead>
         <tbody>
           ${reports.map(r => `
-            <tr class="clickable" data-report="${r.filename}">
-              <td>${r.filename}</td>
+            <tr class="clickable" data-report="${escapeAttr(r.filename)}">
+              <td>${escapeHtml(r.filename)}</td>
             </tr>
           `).join('')}
         </tbody>
@@ -1097,17 +1107,18 @@ async function renderReport(filename) {
     const m = line.match(/^\*\*(.+?):\*\*\s*(.+)$/);
     if (m) meta[m[1]] = m[2];
   }
+  const reportUrl = safeHttpUrl(meta.URL);
 
   return `<div>
-    <a href="#" class="back-link" onclick="event.preventDefault(); navigate('reports');">\u2190 All Reports</a>
+    <a href="#" class="back-link" id="report-back">\u2190 All Reports</a>
 
     ${Object.keys(meta).length > 0 ? `
     <div class="report-meta">
-      ${meta.Score ? `<div class="report-meta-item"><span class="report-meta-label">Score</span><span class="report-meta-value score ${scoreClass(meta.Score)}">${meta.Score}</span></div>` : ''}
-      ${meta.Date ? `<div class="report-meta-item"><span class="report-meta-label">Date</span><span class="report-meta-value">${meta.Date}</span></div>` : ''}
-      ${meta.Archetype ? `<div class="report-meta-item"><span class="report-meta-label">Archetype</span><span class="report-meta-value">${meta.Archetype}</span></div>` : ''}
-      ${meta.URL ? `<div class="report-meta-item"><span class="report-meta-label">URL</span><span class="report-meta-value"><a href="${meta.URL}" target="_blank" rel="noopener" style="color: var(--accent)">${truncateUrl(meta.URL)}</a></span></div>` : ''}
-      ${meta.PDF ? `<div class="report-meta-item"><span class="report-meta-label">PDF</span><span class="report-meta-value">${meta.PDF}</span></div>` : ''}
+      ${meta.Score ? `<div class="report-meta-item"><span class="report-meta-label">Score</span><span class="report-meta-value score ${scoreClass(meta.Score)}">${escapeHtml(meta.Score)}</span></div>` : ''}
+      ${meta.Date ? `<div class="report-meta-item"><span class="report-meta-label">Date</span><span class="report-meta-value">${escapeHtml(meta.Date)}</span></div>` : ''}
+      ${meta.Archetype ? `<div class="report-meta-item"><span class="report-meta-label">Archetype</span><span class="report-meta-value">${escapeHtml(meta.Archetype)}</span></div>` : ''}
+      ${meta.URL ? `<div class="report-meta-item"><span class="report-meta-label">URL</span><span class="report-meta-value">${reportUrl ? `<a href="${escapeAttr(reportUrl)}" target="_blank" rel="noopener" style="color: var(--accent)">${escapeHtml(truncateUrl(reportUrl))}</a>` : escapeHtml(meta.URL)}</span></div>` : ''}
+      ${meta.PDF ? `<div class="report-meta-item"><span class="report-meta-label">PDF</span><span class="report-meta-value">${escapeHtml(meta.PDF)}</span></div>` : ''}
     </div>` : ''}
 
     <div class="report-content">${html}</div>
@@ -1149,7 +1160,7 @@ async function renderSettings() {
         <span class="company-name">${escapeHtml(c.name)}</span>
         <span class="company-notes">${escapeHtml(c.notes || '')}</span>
       </div>
-      <span class="company-source source-${c.source}" data-tooltip="${escapeAttr(tip)}">
+      <span class="company-source source-${cssToken(c.source)}" data-tooltip="${escapeAttr(tip)}">
         <span class="source-glyph">${glyph}</span>
         <span class="source-label">${escapeHtml(c.source_label)}</span>
       </span>
@@ -1215,7 +1226,7 @@ async function renderSettings() {
         </label>
         <label>
           <span class="subsection-label">Minimum (numeric)</span>
-          <input type="number" class="filter-input" id="comp-minimum" value="${comp.minimum || ''}" placeholder="200000">
+          <input type="number" class="filter-input" id="comp-minimum" value="${escapeAttr(comp.minimum || '')}" placeholder="200000">
         </label>
       </div>
     </div>
@@ -1280,11 +1291,11 @@ async function renderScanner() {
 
     <div class="metrics" style="margin-bottom: var(--space-xl)">
       <div class="metric">
-        <div class="metric-value">${lastScanTime}</div>
+        <div class="metric-value">${escapeHtml(lastScanTime)}</div>
         <div class="metric-label">Last Scan</div>
       </div>
       <div class="metric">
-        <div class="metric-value countdown">${countdown}</div>
+        <div class="metric-value countdown">${escapeHtml(countdown)}</div>
         <div class="metric-label">Next Scan</div>
       </div>
       <div class="metric">
@@ -1294,7 +1305,7 @@ async function renderScanner() {
     </div>
 
     <div style="margin-bottom: var(--space-xl)">
-      <button class="btn btn-accent" id="scan-now-btn" onclick="triggerScan()">Scan Now</button>
+      <button class="btn btn-accent" id="scan-now-btn">Scan Now</button>
     </div>
 
     <div class="scanner-grid">
@@ -1308,7 +1319,7 @@ async function renderScanner() {
           <div class="feed">
             ${lastEntries.map(e => `
               <div class="feed-item">
-                <span class="feed-time">${formatTime(e.timestamp)}</span>
+                <span class="feed-time">${escapeHtml(formatTime(e.timestamp))}</span>
                 <span class="feed-msg">${escapeHtml(e.message)}</span>
               </div>
             `).join('')}
@@ -1325,7 +1336,7 @@ async function renderScanner() {
         </div>
         <div class="panel-body">
           ${cdWatches && !cdWatches.error ? renderCdWatches(cdWatches) :
-            `<div class="empty-state">${cdWatches?.error || 'Could not reach ChangeDetection.io'}<br><span style="font-size:0.72rem">http://10.0.0.100:5000</span></div>`}
+            `<div class="empty-state">${escapeHtml(cdWatches?.error || 'Could not reach ChangeDetection.io')}<br><span style="font-size:0.72rem">Configure the service under <code>infra.changedetection</code>.</span></div>`}
         </div>
       </div>
     </div>
@@ -1341,7 +1352,7 @@ function renderCdWatches(watches) {
     ${entries.map(([uuid, watch]) => `
       <div class="feed-item" style="grid-template-columns: 1fr">
         <div>
-          <div style="font-size: 0.82rem; color: var(--text-primary)">${watch.title || watch.url || uuid}</div>
+          <div style="font-size: 0.82rem; color: var(--text-primary)">${escapeHtml(watch.title || watch.url || uuid)}</div>
           <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px">
             ${watch.last_checked ? `Last checked: ${new Date(watch.last_checked * 1000).toLocaleString()}` : 'Not yet checked'}
           </div>
@@ -1717,9 +1728,13 @@ document.getElementById('app').addEventListener('click', e => {
 // --- Helpers ---
 
 function statusBadge(status) {
-  const s = (status || 'pending').toLowerCase().replace(/\s+/g, '-');
+  const s = cssToken(status || 'pending');
   const tip = STATUS_TOOLTIP[s] || 'Status';
-  return `<span class="badge badge-${s}" data-tooltip="${escapeAttr(tip)}">${status || 'Pending'}</span>`;
+  return `<span class="badge badge-${s}" data-tooltip="${escapeAttr(tip)}">${escapeHtml(status || 'Pending')}</span>`;
+}
+
+function cssToken(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'unknown';
 }
 
 function scoreClass(scoreStr) {
@@ -1728,8 +1743,8 @@ function scoreClass(scoreStr) {
 
 function scoreMarkup(scoreStr) {
   const { cls, tip } = scoreTier(scoreStr);
-  if (!cls) return `<span class="score">${scoreStr || '—'}</span>`;
-  return `<span class="score ${cls}" data-tooltip="${escapeAttr(tip)}">${scoreStr}</span>`;
+  if (!cls) return `<span class="score">${escapeHtml(scoreStr || '—')}</span>`;
+  return `<span class="score ${cssToken(cls)}" data-tooltip="${escapeAttr(tip)}">${escapeHtml(scoreStr)}</span>`;
 }
 
 // Relative time — accepts either "2026-04-11" (date only, assumes local
@@ -1803,10 +1818,6 @@ function getCountdown(lastScan, interval) {
   const h = Math.floor(diff / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
-}
-
-function escapeAttr(str) {
-  return String(str).replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 // CV generation — spawns claude -p on the server, streams stdout into a
@@ -1886,7 +1897,7 @@ async function generateCvFor(btn) {
   if (!hadError && reportName) {
     btn.outerHTML = `
       <div style="display:flex; gap:4px; align-items:center">
-        <a class="icon-btn" href="#" onclick="event.preventDefault(); navigate('reports', '${reportName}')" data-tooltip="Open report" aria-label="Open report">
+        <a class="icon-btn report-link" href="#" data-report="${escapeAttr(reportName)}" data-tooltip="Open report" aria-label="Open report">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 1.5H3.5A1.5 1.5 0 0 0 2 3v10a1.5 1.5 0 0 0 1.5 1.5h9A1.5 1.5 0 0 0 14 13V6.5z"/><path d="M9 1.5V6.5H14"/><path d="M4.5 9h7M4.5 11.5h7"/></svg>
         </a>
         ${pdfName ? `<a class="icon-btn" href="/api/output/${encodeURIComponent(pdfName)}" target="_blank" data-tooltip="Open PDF" aria-label="Open PDF">
@@ -1944,15 +1955,19 @@ function openCvModal(company, role) {
     },
     setFooter(reportName, pdfName) {
       footer.innerHTML = `
-        <a class="btn" href="#" onclick="event.preventDefault(); window.closeCvModal(); navigate('reports', '${reportName}')">Open report</a>
+        <a class="btn cv-report-link" href="#" data-report="${escapeAttr(reportName)}">Open report</a>
         ${pdfName ? `<a class="btn" href="/api/output/${encodeURIComponent(pdfName)}" target="_blank">Open PDF</a>` : ''}
-        <button class="btn" onclick="this.closest('.cv-modal-overlay').remove()">Close</button>
+        <button class="btn cv-modal-footer-close">Close</button>
       `;
+      footer.querySelector('.cv-report-link')?.addEventListener('click', (event) => {
+        event.preventDefault();
+        overlay.remove();
+        navigate('reports', event.currentTarget.dataset.report);
+      });
+      footer.querySelector('.cv-modal-footer-close')?.addEventListener('click', () => overlay.remove());
     },
   };
 }
-window.closeCvModal = () => document.querySelector('.cv-modal-overlay')?.remove();
-
 // Single-row verify — kicks the same streaming endpoint with a single URL
 // and updates the clicked row's dot + "Last seen" cell with the result.
 async function verifySingleUrl(btn) {
@@ -2176,82 +2191,6 @@ async function verifyVisibleUrls(btn) {
   }
 }
 
-function escapeHtml(str) {
-  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-// Minimal markdown to HTML
-function markdownToHtml(md) {
-  let html = '';
-  let inTable = false;
-  let inSection = false;
-  const lines = md.split('\n');
-
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-
-    // Headings — wrap each h2 section in a 2-level container so CSS can
-    // animate grid-template-rows 0fr → 1fr without clipping animating content.
-    if (line.startsWith('# ')) {
-      if (inSection) { html += '</div></div>'; inSection = false; }
-      html += `<h1>${processInline(line.slice(2))}</h1>`;
-      continue;
-    }
-    if (line.startsWith('## ')) {
-      if (inSection) { html += '</div></div>'; }
-      html += `<h2>${processInline(line.slice(3))}</h2><div class="report-section visible"><div class="section-inner">`;
-      inSection = true;
-      continue;
-    }
-    if (line.startsWith('### ')) {
-      html += `<h3>${processInline(line.slice(4))}</h3>`;
-      continue;
-    }
-
-    // HR
-    if (line.match(/^-{3,}$/)) {
-      html += '<hr>';
-      continue;
-    }
-
-    // Table
-    if (line.startsWith('|')) {
-      if (!inTable) { html += '<table>'; inTable = true; }
-      if (line.match(/^\|[\s-|]+\|$/)) continue; // separator row
-      const cells = line.split('|').map(c => c.trim()).filter(Boolean);
-      const tag = !html.includes('<tbody>') && inTable && !line.includes('---') ? 'th' : 'td';
-      if (tag === 'th') html += '<thead>';
-      html += '<tr>' + cells.map(c => `<${tag}>${processInline(c)}</${tag}>`).join('') + '</tr>';
-      if (tag === 'th') html += '</thead><tbody>';
-      continue;
-    } else if (inTable) {
-      html += '</tbody></table>';
-      inTable = false;
-    }
-
-    // Empty line
-    if (!line.trim()) {
-      continue;
-    }
-
-    // Paragraph
-    html += `<p>${processInline(line)}</p>`;
-  }
-
-  if (inTable) html += '</tbody></table>';
-  if (inSection) html += '</div></div>';
-
-  return html;
-}
-
-function processInline(text) {
-  return text
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/`(.+?)`/g, '<code style="background:var(--bg-elevated);padding:1px 4px;border-radius:2px;font-size:0.85em">$1</code>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener" style="color:var(--accent)">$1</a>');
-}
-
 // --- Countdown timer ---
 
 setInterval(() => {
@@ -2349,10 +2288,6 @@ function toggleTheme() {
 document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
 
 // --- Init ---
-
-// Make navigate global for onclick handlers
-window.navigate = navigate;
-window.triggerScan = triggerScan;
 
 renderAuthIndicator();
 render();

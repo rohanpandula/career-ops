@@ -18,7 +18,7 @@ import { existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { randomBytes } from 'crypto';
-import { browserless, flaresolverrUrl } from '../infra-config.mjs';
+import { browserlessWsUrl, flaresolverrUrl } from '../infra-config.mjs';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -34,11 +34,11 @@ const AGE_HOURS = parseFloat(argVal('age', '6'));
 const PARALLEL = 6;
 // Browserless / FlareSolverr endpoints from config/profile.yml (gitignored) or
 // env — never hardcoded in this public-fork file. `${ws_url}?token=${token}`.
-const _bl = browserless();
-const BROWSERLESS_WS = _bl.wsUrl ? `${_bl.wsUrl}?token=${_bl.token}` : '';
+const BROWSERLESS_WS = browserlessWsUrl();
 const FLARESOLVERR_URL = flaresolverrUrl();
 
 async function flaresolvCookies(targetUrl) {
+  if (!FLARESOLVERR_URL) return null;
   try {
     const resp = await fetch(FLARESOLVERR_URL, {
       method: 'POST',

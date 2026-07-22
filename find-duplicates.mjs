@@ -21,13 +21,14 @@
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { createHash } from 'crypto';
+import { qwenUrl } from './infra-config.mjs';
 
 const PIPE = 'data/pipeline.md';
 const LIVE = 'web/.liveness.json';
 const FIT  = 'data/fit-scores.json';
 const OUT  = 'data/dedupe.json';
 const CACHE = 'data/dedupe-cache.json';
-const QWEN = 'http://10.0.0.34:11434/api/generate';
+const QWEN = qwenUrl();
 const MODEL = 'qwen3:14b-16k';
 const PARALLEL = 6;
 
@@ -86,6 +87,7 @@ function pairHash(key) {
 }
 
 async function qwen(prompt, timeoutMs = 60_000) {
+  if (!QWEN) throw new Error('Qwen is not configured in config/profile.yml or QWEN_URL');
   const r = await fetch(QWEN, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

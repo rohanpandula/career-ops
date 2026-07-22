@@ -18,6 +18,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { createHash } from 'crypto';
+import { browserlessHttpUrl, qwenUrl } from './infra-config.mjs';
 
 const PIPE = 'data/pipeline.md';
 const LIVE = 'web/.liveness.json';
@@ -26,9 +27,9 @@ const OUT  = 'data/gap-analysis.json';
 const CV   = 'cv.md';
 const PROFILE = 'modes/_profile.md';
 
-const QWEN = 'http://10.0.0.34:11434/api/generate';
+const QWEN = qwenUrl();
 const MODEL = 'qwen3:14b-16k';
-const BROWSERLESS = 'http://10.0.0.100:3012/content?token=2BR6DgQzZL8md4Bk5rewy3K9k';
+const BROWSERLESS = browserlessHttpUrl('content');
 const PARALLEL = 4;
 
 const args = process.argv.slice(2);
@@ -50,6 +51,7 @@ function parsePipeline(md) {
 }
 
 async function fetchJobText(url) {
+  if (!BROWSERLESS) throw new Error('Browserless is not configured in config/profile.yml or the environment');
   // First attempt: networkidle2 (waits for low network activity).
   // Many ATSes (Workday, Greenhouse SPA) need extra time post-load to hydrate.
   for (const opts of [
@@ -97,6 +99,7 @@ function htmlToText(html) {
 }
 
 async function qwen(prompt, timeoutMs = 120_000) {
+  if (!QWEN) throw new Error('Qwen is not configured in config/profile.yml or QWEN_URL');
   const r = await fetch(QWEN, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

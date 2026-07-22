@@ -1,10 +1,17 @@
 import { createServer } from 'http';
-import { readFile, writeFile, readdir, stat, rename } from 'fs/promises';
+import { readFile, writeFile, readdir, stat, rename, unlink } from 'fs/promises';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join, extname, resolve as resolvePath, sep } from 'path';
 import { fileURLToPath } from 'url';
 import { randomBytes, createHmac, timingSafeEqual } from 'crypto';
 import yaml from 'js-yaml';
+import { browserlessWsUrl, changedetection, flaresolverrUrl } from '../infra-config.mjs';
+import { rejectPrivateOrInvalid } from '../liveness-browser.mjs';
+import {
+  formatReportNumber,
+  releaseReportNumbers,
+  reserveReportNumbers,
+} from '../reserve-report-num.mjs';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -222,8 +229,20 @@ route('PUT', '/api/applications/:id', async (req, params) => {
     const body = await readBody(req);
     const updates = JSON.parse(body);
     // Only allow updating Status and Notes
-    if (updates.Status) apps[idx]['Status'] = updates.Status;
-    if (updates.Notes !== undefined) apps[idx]['Notes'] = updates.Notes;
+    if (updates.Status !== undefined) {
+      const statesDoc = yaml.load(await readFile(join(ROOT, 'templates/states.yml'), 'utf-8')) || {};
+      const state = (statesDoc.states || []).find((entry) =>
+        String(entry.label).toLowerCase() === String(updates.Status).toLowerCase()
+      );
+      if (!state) throw { status: 400, message: 'Invalid application status' };
+      apps[idx]['Status'] = state.label;
+    }
+    if (updates.Notes !== undefined) {
+      if (typeof updates.Notes !== 'string' || updates.Notes.length > 10_000) {
+        throw { status: 400, message: 'Notes must be a string of at most 10,000 characters' };
+      }
+      apps[idx]['Notes'] = updates.Notes;
+    }
     await atomicWrite(join(ROOT, 'data/applications.md'), serializeApplicationsTable(apps));
     return apps[idx];
   });
@@ -577,22 +596,23 @@ route('PUT', '/api/settings', async (req) => {
 // Streams NDJSON (one JSON per line) as each URL finishes, so the UI
 // updates live instead of waiting for the whole batch.
 // Uses Playwright per CLAUDE.md ("NEVER trust WebFetch to verify if an offer
-// is still active"). Falls back to browserless (http://10.0.0.100:3012) if
+// is still active"). Falls back to the configured Browserless service if
 // the local browser cannot launch.
 let verifyInFlight = false;
 const LIVENESS_PARALLEL = 8;  // pages checked simultaneously
 const LIVENESS_BATCH = 40;    // queue drain size per announce cycle
-// Playwright connect requires the /playwright/chromium path on browserless v2.
-const BROWSERLESS_HOST = '10.0.0.100:3012';
-const BROWSERLESS_TOKEN = '2BR6DgQzZL8md4Bk5rewy3K9k';
-const BROWSERLESS_WS = `ws://${BROWSERLESS_HOST}/playwright/chromium?token=${BROWSERLESS_TOKEN}`;
+const BROWSERLESS_WS = browserlessWsUrl();
+const BROWSERLESS_HOST = (() => {
+  try { return new URL(BROWSERLESS_WS).host; } catch { return 'configured service'; }
+})();
 
 // FlareSolverr — bypasses Cloudflare WAF/challenge by solving the JS challenge
 // and handing us the resulting `cf_clearance` cookies. We then run Playwright
 // with those cookies so SPAs hydrate normally behind CF.
-const FLARESOLVERR_URL = 'http://10.0.0.36:8191/v1';
+const FLARESOLVERR_URL = flaresolverrUrl();
 
 async function flaresolvCookies(targetUrl) {
+  if (!FLARESOLVERR_URL) return null;
   try {
     const resp = await fetch(FLARESOLVERR_URL, {
       method: 'POST',
@@ -764,6 +784,7 @@ async function acquireBrowser(chromium, writer) {
 
   // Fall back to browserless over websocket
   try {
+    if (!BROWSERLESS_WS) throw new Error('Browserless is not configured');
     const browser = await chromium.connect(BROWSERLESS_WS, { timeout: 10000 });
     writer({ type: 'engine', via: 'browserless', endpoint: BROWSERLESS_HOST });
     return { browser, via: 'browserless' };
@@ -792,10 +813,21 @@ route('POST', '/api/pipeline/verify', async (req, _params, res) => {
     return;
   }
 
-  // Deduplicate while preserving order. No upstream cap — caller decides
-  // how many to throw in. The internal batching below keeps memory bounded
-  // by walking the queue in LIVENESS_BATCH chunks.
-  urls = [...new Set(urls.filter(u => typeof u === 'string' && /^https?:\/\//.test(u)))];
+  // Only verify URLs already present in the local pipeline. Besides catching
+  // stale clients, this prevents the browser endpoint from becoming a
+  // general-purpose fetch proxy for arbitrary or private network targets.
+  const pipelineUrls = new Set(parsePipeline(
+    await readFile(join(ROOT, 'data/pipeline.md'), 'utf-8')
+  ).map((item) => item.url));
+  urls = [...new Set(urls.filter((u) =>
+    typeof u === 'string' && pipelineUrls.has(u) && !rejectPrivateOrInvalid(u)
+  ))];
+  if (urls.length === 0 || urls.length > 500) {
+    res.writeHead(400, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'provide 1–500 public URLs from the local pipeline' }));
+    verifyInFlight = false;
+    return;
+  }
 
   res.writeHead(200, {
     'Content-Type': 'application/x-ndjson',
@@ -1075,6 +1107,12 @@ route('POST', '/api/pipeline/verify', async (req, _params, res) => {
 // report in reports/, a tailored PDF in output/, and a TSV line in
 // batch/tracker-additions/ that merge-tracker.mjs folds into applications.md.
 const cvGenInFlight = new Set();
+const CV_WORKER_TIMEOUT_MS = 15 * 60 * 1000;
+const CV_WORKER_ALLOWED_TOOLS = [
+  'Read', 'Glob', 'Grep', 'Edit', 'Write', 'WebFetch', 'WebSearch',
+  'Bash(node generate-pdf.mjs *)',
+  'Bash(node merge-tracker.mjs *)',
+].join(',');
 
 route('POST', '/api/pipeline/generate-cv', async (req, _params, res) => {
   const body = await readBody(req).catch(() => '');
@@ -1086,9 +1124,12 @@ route('POST', '/api/pipeline/generate-cv', async (req, _params, res) => {
     return;
   }
   const { url, company, role } = payload;
-  if (!url || !/^https?:\/\//.test(url)) {
+  const pipelineUrls = new Set(parsePipeline(
+    await readFile(join(ROOT, 'data/pipeline.md'), 'utf-8')
+  ).map((item) => item.url));
+  if (!url || rejectPrivateOrInvalid(url) || !pipelineUrls.has(url)) {
     res.writeHead(400, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'url required' }));
+    res.end(JSON.stringify({ error: 'a public URL from the local pipeline is required' }));
     return;
   }
   if (cvGenInFlight.has(url)) {
@@ -1104,21 +1145,18 @@ route('POST', '/api/pipeline/generate-cv', async (req, _params, res) => {
     'X-Accel-Buffering': 'no',
   });
   const emit = (obj) => res.write(JSON.stringify(obj) + '\n');
+  let reservation = null;
+  let resolvedPath = null;
+  let jdFile = null;
 
   try {
-    // Reserve the next report number by scanning reports/ for the highest
-    // existing NNN-*.md and adding 1. Not perfect against concurrent CLI
-    // batch runs — but the cvGenInFlight mutex handles same-URL races.
-    const files = await readdir(join(ROOT, 'reports'));
-    let maxNum = 0;
-    for (const f of files) {
-      const m = f.match(/^(\d{3})-/);
-      if (m) maxNum = Math.max(maxNum, parseInt(m[1], 10));
-    }
-    const reportNum = String(maxNum + 1).padStart(3, '0');
+    // Use the shared atomic allocator: different URLs can generate in
+    // parallel, and CLI/batch workers may reserve report IDs concurrently.
+    reservation = await reserveReportNumbers(1, { rootDir: ROOT });
+    const reportNum = formatReportNumber(reservation[0]);
     const date = new Date().toISOString().slice(0, 10);
     const jobId = `web-${Date.now()}`;
-    const jdFile = `/tmp/web-jd-${jobId}.txt`;
+    jdFile = `/tmp/web-jd-${jobId}.txt`;
 
     // Load and resolve the batch system prompt
     const promptTemplate = await readFile(join(ROOT, 'batch/batch-prompt.md'), 'utf-8');
@@ -1129,7 +1167,7 @@ route('POST', '/api/pipeline/generate-cv', async (req, _params, res) => {
       .replace(/\{\{DATE\}\}/g, date)
       .replace(/\{\{ID\}\}/g, jobId);
 
-    const resolvedPath = join(ROOT, `batch/.resolved-web-${jobId}.md`);
+    resolvedPath = join(ROOT, `batch/.resolved-web-${jobId}.md`);
     await writeFile(resolvedPath, resolved);
     // Seed an empty JD file so the prompt's "read {{JD_FILE}}" step doesn't
     // error; Claude will WebFetch from the URL when the file is empty.
@@ -1144,7 +1182,9 @@ route('POST', '/api/pipeline/generate-cv', async (req, _params, res) => {
     const { spawn } = await import('child_process');
     const proc = spawn('claude', [
       '-p',
-      '--dangerously-skip-permissions',
+      '--permission-mode', 'dontAsk',
+      '--allowedTools', CV_WORKER_ALLOWED_TOOLS,
+      '--strict-mcp-config',
       '--append-system-prompt-file', resolvedPath,
       userPrompt,
     ], { cwd: ROOT });
@@ -1163,13 +1203,31 @@ route('POST', '/api/pipeline/generate-cv', async (req, _params, res) => {
     proc.stdout.on('data', d => flush(d.toString('utf8')));
     proc.stderr.on('data', d => flush(d.toString('utf8'), true));
 
-    const exitCode = await new Promise(resolve => proc.on('close', resolve));
+    let timedOut = false;
+    const exitCode = await new Promise((resolve, reject) => {
+      let forceKill = null;
+      const timeout = setTimeout(() => {
+        timedOut = true;
+        proc.kill('SIGTERM');
+        forceKill = setTimeout(() => proc.kill('SIGKILL'), 5_000);
+      }, CV_WORKER_TIMEOUT_MS);
+      proc.once('error', (error) => {
+        clearTimeout(timeout);
+        if (forceKill) clearTimeout(forceKill);
+        reject(error);
+      });
+      proc.once('close', (code) => {
+        clearTimeout(timeout);
+        if (forceKill) clearTimeout(forceKill);
+        resolve(code);
+      });
+    });
     if (buf.trim()) emit({ type: 'log', line: buf.trim().slice(0, 500) });
 
-    // Cleanup temp files
-    const { unlink } = await import('fs/promises');
-    await unlink(resolvedPath).catch(() => {});
-    await unlink(jdFile).catch(() => {});
+    if (timedOut) {
+      emit({ type: 'error', error: 'CV worker exceeded the 15-minute time limit', reportNum });
+      return;
+    }
 
     if (exitCode !== 0) {
       emit({ type: 'error', error: `claude -p exited with code ${exitCode}`, reportNum });
@@ -1178,7 +1236,8 @@ route('POST', '/api/pipeline/generate-cv', async (req, _params, res) => {
     }
 
     // Look up the resulting report + PDF
-    const reportMatch = (await readdir(join(ROOT, 'reports'))).find(f => f.startsWith(`${reportNum}-`));
+    const reportMatch = (await readdir(join(ROOT, 'reports')))
+      .find(f => f.startsWith(`${reportNum}-`) && f !== `${reportNum}-RESERVED.md`);
     const pdfMatch = (await readdir(join(ROOT, 'output')).catch(() => []))
       .find(f => f.startsWith(`${reportNum}-`) && f.endsWith('.pdf'));
 
@@ -1204,6 +1263,9 @@ route('POST', '/api/pipeline/generate-cv', async (req, _params, res) => {
   } catch (e) {
     emit({ type: 'error', error: e.message });
   } finally {
+    if (resolvedPath) await unlink(resolvedPath).catch(() => {});
+    if (jdFile) await unlink(jdFile).catch(() => {});
+    if (reservation) await releaseReportNumbers(reservation, { rootDir: ROOT }).catch(() => {});
     cvGenInFlight.delete(url);
     res.end();
   }
@@ -1211,10 +1273,14 @@ route('POST', '/api/pipeline/generate-cv', async (req, _params, res) => {
 
 // ChangeDetection.io watches
 route('GET', '/api/scanner/cd-watches', async () => {
+  const { apiUrl, apiKey } = changedetection();
+  if (!apiUrl || !apiKey) return { error: 'ChangeDetection.io is not configured' };
   try {
-    const resp = await fetch('http://10.0.0.100:5000/api/v1/watch?tag=career-ops', {
-      headers: { 'x-api-key': '881f09d4fec93a1ea3a9abb012263736' },
+    const resp = await fetch(`${apiUrl.replace(/\/$/, '')}/watch?tag=career-ops`, {
+      headers: { 'x-api-key': apiKey },
+      signal: AbortSignal.timeout(15_000),
     });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
     return await resp.json();
   } catch (e) {
     return { error: 'ChangeDetection.io unreachable', detail: e.message };
@@ -1372,10 +1438,22 @@ route('GET', '/api/applications/csv', async () => {
 
 // --- Server ---
 
-function readBody(req) {
+function readBody(req, maxBytes = 1024 * 1024) {
   return new Promise((resolve, reject) => {
     let data = '';
-    req.on('data', chunk => { data += chunk; });
+    let size = 0;
+    let rejected = false;
+    req.on('data', chunk => {
+      if (rejected) return;
+      size += chunk.length;
+      if (size > maxBytes) {
+        rejected = true;
+        data = '';
+        reject(Object.assign(new Error('request body too large'), { status: 413 }));
+        return;
+      }
+      data += chunk;
+    });
     req.on('end', () => resolve(data));
     req.on('error', reject);
   });

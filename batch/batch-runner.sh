@@ -5,10 +5,9 @@ set -euo pipefail
 # Reads batch-input.tsv, delegates each offer to a claude -p worker,
 # tracks state in batch-state.tsv for resumability.
 #
-# NOTE: This script is Claude Code-specific. It uses claude -p with
-# --dangerously-skip-permissions and --append-system-prompt-file flags
-# that are not available in other CLIs. Multi-CLI support is out of scope
-# for now — contributions welcome.
+# NOTE: This script is Claude Code-specific. It uses claude -p with a bounded
+# tool allowlist and --append-system-prompt-file. Multi-CLI support is out of
+# scope for now — contributions welcome.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -555,7 +554,8 @@ process_offer() {
   # servers: they only evaluate offers and need none. Without it each parallel
   # worker inherits the parent session's MCP (e.g. Playwright) and they deadlock
   # fighting over the single shared browser when --parallel > 1 (issue #506).
-  local -a claude_args=(-p --dangerously-skip-permissions --strict-mcp-config)
+  local allowed_tools='Read,Glob,Grep,Edit,Write,WebFetch,WebSearch,Bash(node generate-pdf.mjs *),Bash(node merge-tracker.mjs *)'
+  local -a claude_args=(-p --permission-mode dontAsk --allowedTools "$allowed_tools" --strict-mcp-config)
   if [[ -n "$RESOLVED_MODEL" ]]; then
     claude_args+=(--model "$RESOLVED_MODEL")
   fi

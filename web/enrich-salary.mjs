@@ -17,7 +17,8 @@ import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';
-import { browserless } from '../infra-config.mjs';
+import { browserlessHttpUrl } from '../infra-config.mjs';
+import { runPool, WORKDAY_URL_RE, workdayApiUrl, workdaySalary } from './enrich-salary-core.mjs';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const ROOT = join(__dirname, '..');
@@ -79,7 +80,9 @@ async function saveLiveness(cache) {
 // --- Ashby ---------------------------------------------------------------
 
 async function fetchAshbyBoard(slug) {
-  const r = await fetch(`https://api.ashbyhq.com/posting-api/job-board/${slug}?includeCompensation=true`);
+  const r = await fetch(`https://api.ashbyhq.com/posting-api/job-board/${slug}?includeCompensation=true`, {
+    signal: AbortSignal.timeout(30_000),
+  });
   if (!r.ok) throw new Error(`ashby ${slug}: ${r.status}`);
   const d = await r.json();
   return d.jobs || [];
@@ -114,7 +117,9 @@ function ashbyJobsToIndex(jobs) {
 // --- Lever ---------------------------------------------------------------
 
 async function fetchLeverBoard(slug) {
-  const r = await fetch(`https://api.lever.co/v0/postings/${slug}?mode=json&limit=500`);
+  const r = await fetch(`https://api.lever.co/v0/postings/${slug}?mode=json&limit=500`, {
+    signal: AbortSignal.timeout(30_000),
+  });
   if (!r.ok) throw new Error(`lever ${slug}: ${r.status}`);
   return r.json();
 }
@@ -133,7 +138,9 @@ function leverSalary(j) {
 // --- Greenhouse ----------------------------------------------------------
 
 async function fetchGreenhouseBoard(slug) {
-  const r = await fetch(`https://boards-api.greenhouse.io/v1/boards/${slug}/jobs?content=true`);
+  const r = await fetch(`https://boards-api.greenhouse.io/v1/boards/${slug}/jobs?content=true`, {
+    signal: AbortSignal.timeout(30_000),
+  });
   if (!r.ok) throw new Error(`greenhouse ${slug}: ${r.status}`);
   const d = await r.json();
   return d.jobs || [];
@@ -174,28 +181,16 @@ function greenhouseSalary(j) {
 // derived from the public URL by swapping the locale segment for wday/cxs:
 //   public: https://{tenant}.wd{N}.myworkdayjobs.com/en-US/{site}/job/{path}
 //   api:    https://{tenant}.wd{N}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/job/{path}
-const WORKDAY_URL_RE =
-  /^https?:\/\/([^.]+)\.(wd\d+)\.myworkdayjobs\.com\/(?:[a-z]{2}-[A-Z]{2}\/)?([^/]+)\/job\/(.+)$/;
-
 async function fetchWorkdayJob(url) {
-  const m = url.match(WORKDAY_URL_RE);
-  if (!m) return null;
-  const [, tenant, wd, site, path] = m;
-  const api = `https://${tenant}.${wd}.myworkdayjobs.com/wday/cxs/${tenant}/${site}/job/${path}`;
-  const r = await fetch(api, { headers: { Accept: 'application/json' } });
-  if (!r.ok) throw new Error(`workday ${tenant}/${site}: ${r.status}`);
+  const api = workdayApiUrl(url);
+  if (!api) return null;
+  const r = await fetch(api, {
+    headers: { Accept: 'application/json' },
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!r.ok) throw new Error(`workday: ${r.status}`);
   const d = await r.json();
   return d.jobPostingInfo || null;
-}
-
-// Workday exposes no structured comp field — the range sits inline in the
-// jobDescription HTML, so match the same $X–$Y shape Greenhouse falls back to.
-function workdaySalary(j) {
-  if (!j?.jobDescription) return null;
-  const text = j.jobDescription.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').slice(0, 12000);
-  const m = text.match(/\$\s?(\d{2,3}(?:[,.]\d{3})?(?:\s?[Kk])?)\s?(?:[-–—to]+|\sto\s)\s?\$?(\d{2,3}(?:[,.]\d{3})?(?:\s?[Kk])?)/);
-  if (m) return `$${m[1].replace(/\s/g, '')}–$${m[2].replace(/\s/g, '')}`;
-  return null;
 }
 
 // --- Main ----------------------------------------------------------------
@@ -378,10 +373,10 @@ async function main() {
   // Workday — one fetch per job (the board listing has no descriptions).
   if (workdayItems.length) {
     log(`workday: fetching (${workdayItems.length} items to enrich)`);
-    for (const it of workdayItems) {
+    await runPool(workdayItems, 6, async (it) => {
       try {
         const j = await fetchWorkdayJob(it.url);
-        if (!j) continue;
+        if (!j) return;
         const salary = workdaySalary(j);
         const prev = cache[it.url] || {};
         cache[it.url] = {
@@ -396,17 +391,18 @@ async function main() {
       } catch (e) {
         log(`workday failed: ${e.message}`);
       }
-    }
+    });
   }
 
   // --- Browserless-rendered hosts (Google, Apple) --------------------------
   // Endpoint + token from config/profile.yml (gitignored) or env — not hardcoded.
-  const { httpUrl: BROWSERLESS, token: BROWSERLESS_TOKEN } = browserless();
+  const BROWSERLESS_CONTENT = browserlessHttpUrl('content');
   const BR_PARALLEL = 6;
 
   async function renderPage(url) {
+    if (!BROWSERLESS_CONTENT) return null;
     try {
-      const r = await fetch(`${BROWSERLESS}/content?token=${BROWSERLESS_TOKEN}`, {
+      const r = await fetch(BROWSERLESS_CONTENT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url, waitForTimeout: 5000 }),
