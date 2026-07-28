@@ -25,7 +25,7 @@ Settled doctrine ([#918](https://github.com/santifer/career-ops/issues/918)): th
 
 ## Why the flat root
 
-The repo keeps its ~50 scripts at the root deliberately ([#1386](https://github.com/santifer/career-ops/issues/1386)). Path stability is a feature here, not an accident: the updater's `SYSTEM_PATHS` allowlist, community plugins, docs, guides, and the muscle memory of thousands of users (`node scan.mjs`) all reference these paths. A cosmetic reorganization would break forks and plugins for no functional gain. The conventions that keep the flat root navigable: one script = one job, `*.test.mjs` sits next to what it tests, and every script is registered in `SYSTEM_PATHS` (enforced in CI by the coverage guard).
+The repo keeps its public command modules at the root deliberately ([#1386](https://github.com/santifer/career-ops/issues/1386)). Path stability is a feature here, not an accident: the updater's `SYSTEM_PATHS` allowlist, community plugins, docs, guides, and established commands such as `node scan.mjs` all reference these paths. A cosmetic reorganization would break forks and plugins for no functional gain. The conventions that keep the flat root navigable are: one command module per job, root regression suites sit beside the command they protect, provider adapters live together under `providers/`, and every tracked path is covered by the updater manifest.
 
 ## Component map
 
@@ -81,7 +81,8 @@ scan ──► data/pipeline.md ──► evaluate (oferta + cv) ──► repor
 
 ## Quality gates
 
-- `test-all.mjs` — the full suite (500+ checks across scoring, scan, tracker, PDF, security, updater).
+- `npm test` — the full suite across scoring, scan, tracker, PDF, security, updater, providers, and documentation contracts.
+- `npm run test:quick` — the reduced local feedback loop.
 - `updater-migration-tests.mjs` — enforces the system/user boundary and safe cross-version upgrades.
 - CI: `test` + CodeQL are required; CodeRabbit reviews every PR; Renovate keeps deps current.
 
@@ -91,3 +92,4 @@ scan ──► data/pipeline.md ──► evaluate (oferta + cv) ──► repor
 - The scoring → `modes/_shared.md` + `modes/oferta.md`
 - Adding a job source → an existing module in `providers/` (mirror it)
 - The updater → `update-system.mjs`
+- All guides → `docs/README.md`

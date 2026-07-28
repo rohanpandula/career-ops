@@ -146,6 +146,17 @@ for (const f of mjsFiles) {
 
 console.log('\n2. Script execution (graceful on empty data)');
 
+// Root-level regression suites stay beside the stable command modules they
+// protect, but are discovered automatically so a new suite cannot be omitted
+// from CI merely because somebody forgot to edit this runner.
+const rootTestFiles = readdirSync(ROOT)
+  .filter((file) => file !== 'test-all.mjs' && (
+    file.endsWith('.test.mjs') ||
+    file.endsWith('-tests.mjs') ||
+    /^test-[^.]+\.mjs$/.test(file)
+  ))
+  .sort();
+
 const scripts = [
   { name: 'cv-sync-check.mjs', expectExit: 1, allowFail: true }, // fails without cv.md (normal in repo)
   { name: 'verify-pipeline.mjs', expectExit: 0 },
@@ -168,23 +179,7 @@ const scripts = [
   { name: 'assessment-log.mjs --self-test', expectExit: 0 },
   { name: 'build-cv-html.mjs --test', expectExit: 0 },
   { name: 'jd-skill-gap.mjs --self-test', expectExit: 0 },
-  { name: 'updater-migration-tests.mjs', expectExit: 0 },
-  { name: 'tracker-columns-tests.mjs', expectExit: 0 },
-  { name: 'agent-inbox-tests.mjs', expectExit: 0 },
-  { name: 'followup-seed-tests.mjs', expectExit: 0 },
-  { name: 'paste-reply-tests.mjs', expectExit: 0 },
-  { name: 'set-status-tests.mjs', expectExit: 0 },
-  { name: 'tracker-writer-lock-tests.mjs', expectExit: 0 },
-  // Root-level standalone suites shipped in SYSTEM_PATHS but previously never
-  // executed by CI (issue #1624). All are fast (<0.5s each), so they run in
-  // both quick and full mode like their siblings above.
-  { name: 'test-trust-validator.mjs', expectExit: 0 },
-  { name: 'test-salary-filter.mjs', expectExit: 0 },
-  { name: 'detect-reposts.test.mjs', expectExit: 0 },
-  { name: 'followup-cadence.test.mjs', expectExit: 0 },
-  { name: 'process-quality.test.mjs', expectExit: 0 },
-  { name: 'reply-matcher.test.mjs', expectExit: 0 },
-  { name: '--test infra-config.test.mjs scheduled-scan-core.test.mjs security-regressions.test.mjs', expectExit: 0 },
+  ...rootTestFiles.map((file) => ({ name: `--test ${file}`, expectExit: 0 })),
   { name: '--test web/test-clean-chips.mjs web/test-enrich-salary.mjs web/test-render-utils.mjs', expectExit: 0 },
   { name: 'validate-portals.mjs --file templates/portals.example.yml', expectExit: 0 },
   { name: 'validate-system-paths-coverage.mjs --self-test', expectExit: 0 },
@@ -3251,6 +3246,53 @@ if (
   pass('README documents CODEX.md and Codex interactive/headless usage');
 } else {
   fail('README is missing required Codex usage guidance');
+}
+
+const docsIndexDoc = readFile('docs/README.md');
+if (
+  /SETUP\.md/.test(docsIndexDoc) &&
+  /CUSTOMIZATION\.md/.test(docsIndexDoc) &&
+  /SCRIPTS\.md/.test(docsIndexDoc) &&
+  /\.\.\/ARCHITECTURE\.md/.test(docsIndexDoc) &&
+  /\.\.\/DATA_CONTRACT\.md/.test(docsIndexDoc)
+) {
+  pass('documentation index routes setup, customization, commands, architecture, and data ownership');
+} else {
+  fail('docs/README.md is missing one or more canonical documentation routes');
+}
+
+const customizationDoc = readFile('docs/CUSTOMIZATION.md');
+if (
+  /config\/profile\.yml/.test(customizationDoc) &&
+  /modes\/_profile\.md/.test(customizationDoc) &&
+  /modes\/_custom\.md/.test(customizationDoc) &&
+  /Do not put personal customization in `modes\/_shared\.md`/i.test(customizationDoc)
+) {
+  pass('customization guide preserves the user/system ownership seam');
+} else {
+  fail('customization guide must route personal changes to profile/custom files and away from _shared.md');
+}
+
+if (
+  /docs\/README\.md/.test(readmeDoc) &&
+  /modes\/_profile\.md/.test(readmeDoc) &&
+  /modes\/_custom\.md/.test(readmeDoc) &&
+  /system-owned shared rules/i.test(readmeDoc) &&
+  /compatibility interface/i.test(readmeDoc)
+) {
+  pass('README documents navigation, personalization ownership, and stable root commands');
+} else {
+  fail('README repository map is missing navigation, ownership, or path-stability guidance');
+}
+
+const packageDoc = readFile('package.json');
+if (
+  /"test"\s*:\s*"node test-all\.mjs"/.test(packageDoc) &&
+  /"test:quick"\s*:\s*"node test-all\.mjs --quick"/.test(packageDoc)
+) {
+  pass('package.json exposes standard full and quick test commands');
+} else {
+  fail('package.json must expose npm test and npm run test:quick');
 }
 
 const setupDoc = readFile('docs/SETUP.md');

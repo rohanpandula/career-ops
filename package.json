@@ -4,6 +4,8 @@
   "description": "AI-powered job search pipeline — works with any AI coding CLI (Claude Code, Codex, OpenCode, Antigravity, Grok, Qwen, Kimi, Copilot)",
   "private": true,
   "scripts": {
+    "test": "node test-all.mjs",
+    "test:quick": "node test-all.mjs --quick",
     "doctor": "node doctor.mjs",
     "or": "node openrouter-runner.mjs",
     "or:scan": "node openrouter-runner.mjs scan",
@@ -17,6 +19,7 @@
     "reconcile": "node reconcile-pipeline.mjs",
     "pdf": "node generate-pdf.mjs",
     "img-to-pdf": "node img-to-pdf.mjs",
+    "build:latex": "node build-cv-latex.mjs",
     "cover-letter": "node generate-cover-letter.mjs --payload",
     "cv:verify-facts": "node verify-cv-facts.mjs",
     "sync-check": "node cv-sync-check.mjs",

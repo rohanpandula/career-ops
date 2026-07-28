@@ -1,11 +1,15 @@
 # Scripts Reference
 
-All scripts live in the project root as `.mjs` modules and are exposed via `npm run <name>`.
+Public command modules intentionally keep stable paths at the project root. Selected commands have npm shortcuts; other modules are run directly with Node. `package.json` is the source of truth for available npm shortcuts.
+
+Use `npm test` for the complete regression suite and `npm run test:quick` for the reduced local feedback loop.
 
 ## Quick Reference
 
 | Command | Script | Purpose |
 |---------|--------|---------|
+| `npm test` | `test-all.mjs` | Run the complete project regression suite |
+| `npm run test:quick` | `test-all.mjs --quick` | Run the reduced local regression suite |
 | `npm run doctor` | `doctor.mjs` | Validate setup prerequisites |
 | `npm run verify` | `verify-pipeline.mjs` | Check pipeline data integrity |
 | `npm run normalize` | `normalize-statuses.mjs` | Fix non-canonical statuses |
@@ -432,7 +436,7 @@ node tracker.mjs export --out repaired.md # write to a file (existing file backe
 
 `sync` detects and reports the corruption classes markdown accumulates — mojibake placeholder cells, scores stranded in the status column, non-canonical statuses (resolved via `templates/states.yml` aliases), missing/duplicate ids, stray pipes — and normalizes them **in the index only**; the markdown is never modified. Fix at the source with `normalize-statuses.mjs` / `dedup-tracker.mjs`, then re-sync. Status changes between syncs accumulate in a `status_events` table, which gives `analyze-patterns.mjs` a real funnel instead of only the current snapshot.
 
-`export` is the inverse of `sync` (round-trip `md → db → md` is lossless for clean input — enforced by `test-all.mjs`). It writes to stdout by default and never touches `applications.md` unless you explicitly pass it as `--out`. Phase 2 of #918 (DB becomes source of truth, markdown becomes a rendered view) is a separate, explicit per-user opt-in — not part of this script yet.
+`export` is the inverse of `sync` (round-trip `md → db → md` is lossless for clean input — enforced by `test-all.mjs`). It writes to stdout by default and never touches `applications.md` unless you explicitly pass it as `--out`. Human-readable files remain the permanent source of truth; SQLite is only a rebuildable derived index.
 
 **Exit codes:** `0` success, `1` validation error, missing prerequisites (Node < 22.5, no `applications.md` to index), or corruption found by `sync --check`.
 

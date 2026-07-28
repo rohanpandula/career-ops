@@ -1,77 +1,61 @@
 # Customization Guide
 
-## Profile (config/profile.yml)
+Career-ops separates your personal configuration from replaceable system logic. Put personal facts and targeting in the user layer so system updates cannot overwrite them.
 
-This is the single source of truth for your identity. All modes read from here.
+## Choose the right customization file
 
-Key sections:
-- **candidate**: Name, email, phone, location, LinkedIn, portfolio
-- **target_roles**: Your North Star roles and archetypes
-- **narrative**: Your headline, exit story, superpowers, proof points
-- **compensation**: Target range, minimum, currency
-- **location**: Country, timezone, visa status, on-site availability
-- **culture_screen**: Structural criteria for team culture (the `deprioritize_if_absent` strict flag caps the culture score at 2/5 if evidence is entirely missing)
+| What you want to change | Where it belongs |
+|---|---|
+| Identity, location, target roles, compensation, model spend | `config/profile.yml` |
+| Archetypes, positioning, proof-point selection, negotiation preferences | `modes/_profile.md` |
+| Procedural house rules, output preferences, custom workflows | `modes/_custom.md` |
+| CV facts and experience | `cv.md` |
+| Portfolio proof points | `article-digest.md` |
+| Scanner companies and filters | `portals.yml` |
+| CV visual design | `templates/cv-template.html` |
 
-## Target Roles (modes/_profile.md)
+Do not put personal customization in `modes/_shared.md`. It is system-owned and may be replaced during an update. If `_profile.md` or `_custom.md` is missing, run the setup doctor to create it from the shipped template.
 
-The archetype table in `_profile.md` determines how offers are scored and CVs are framed. Edit the table to match YOUR career targets:
+## Profile
 
-```markdown
-| Archetype | Thematic axes | What they buy |
-|-----------|---------------|---------------|
-| **Your Role 1** | key skills | what they need |
-| **Your Role 2** | key skills | what they need |
+The profile is the source of truth for identity and high-level search constraints. Its main sections cover:
+
+- candidate contact details;
+- target roles;
+- career narrative and proof points;
+- compensation targets;
+- location, timezone, visa, and on-site policy;
+- team-culture preferences.
+
+## Targeting and negotiation preferences
+
+Use the personal profile mode for archetypes, adaptive framing, role-specific proof points, compensation positioning, and negotiation preferences. These are facts or preferences about you, not shared scoring rules.
+
+## Procedural rules
+
+Use the custom mode for instructions such as output format, workflow order, review gates, or automation preferences. Procedural rules may control how facts are presented, but they must not invent new claims about your experience.
+
+## Portal scanning
+
+Copy the portal template to your user configuration, then customize:
+
+1. positive and negative title filters;
+2. location and content filters;
+3. search queries;
+4. tracked companies and provider settings.
+
+Validate the result before scanning:
+
+```bash
+npm run validate:portals
 ```
 
-Also update the "Adaptive Framing" table to map YOUR specific projects to each archetype.
+## CV template
 
-## Portals (portals.yml)
+The HTML template uses self-hosted fonts and a single-column, ATS-oriented layout. You may change its visual tokens and layout. Keep semantic headings, readable contrast, and printable page sizing intact.
 
-Copy from `templates/portals.example.yml` and customize:
+## Shared system behavior
 
-1. **title_filter.positive**: Keywords matching your target roles
-2. **title_filter.negative**: Tech stacks or domains to exclude
-3. **search_queries**: WebSearch queries for job boards (Ashby, Greenhouse, Lever)
-4. **tracked_companies**: Companies to check directly
+Changes to canonical states, shared scoring, updater behavior, or default modes affect every user. Treat those as project contributions rather than personal customization, and update their tests and documentation together.
 
-## CV Template (templates/cv-template.html)
-
-The HTML template uses these design tokens:
-- **Fonts**: Space Grotesk (headings) + DM Sans (body) -- self-hosted in `fonts/`
-- **Colors**: Cyan primary (`hsl(187,74%,32%)`) + Purple accent (`hsl(270,70%,45%)`)
-- **Layout**: Single-column, ATS-optimized
-
-To customize fonts/colors, edit the CSS in the template. Update font files in `fonts/` if switching fonts.
-
-## Negotiation Scripts (modes/_shared.md)
-
-The negotiation section provides frameworks for salary discussions. Replace the example scripts with your own:
-- Target ranges
-- Geographic arbitrage strategy
-- Pushback responses
-
-## Hooks (Optional)
-
-Career-ops can integrate with external systems via Claude Code hooks. Example hooks:
-
-```json
-{
-  "hooks": {
-    "SessionStart": [{
-      "hooks": [{
-        "type": "command",
-        "command": "echo 'Career-ops session started'"
-      }]
-    }]
-  }
-}
-```
-
-Save hooks in `.claude/settings.json` (Claude Code). OpenCode does not support hooks. For equivalent functionality, use custom commands (`.opencode/commands/`) or agents (`.opencode/agents/`) — see https://opencode.ai/docs/commands/.
-
-## States (templates/states.yml)
-
-The canonical states rarely need changing. If you add new states, update:
-1. `templates/states.yml`
-2. `normalize-statuses.mjs` (alias mappings)
-3. `modes/_shared.md` (any references)
+For the complete ownership contract, see [DATA_CONTRACT.md](../DATA_CONTRACT.md). For setup instructions, see [SETUP.md](SETUP.md).

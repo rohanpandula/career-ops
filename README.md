@@ -84,7 +84,7 @@
 
 career-ops ([career-ops.org](https://career-ops.org), also known as **careerops**) turns any AI coding CLI into a full job search command center. Instead of manually tracking applications in a spreadsheet, you get an AI-powered pipeline that:
 
-- **Evaluates offers** with a structured A-F evaluation (five scoring dimensions feeding a holistic 1.0-5.0 score)
+- **Evaluates offers** with a structured A-G evaluation (five scoring dimensions feeding a holistic 1.0-5.0 score plus a posting-legitimacy check)
 - **Generates tailored PDFs** -- ATS-optimized CVs customized per job description
 - **Scans portals** automatically (Greenhouse, Ashby, Lever, company pages)
 - **Processes in batch** -- evaluate 10+ offers in parallel with sub-agents
@@ -108,13 +108,13 @@ career-ops is the first reference implementation of [the CareerOps Manifesto](ht
 | Feature                  | Description                                                                                                                              |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | **Auto-Pipeline**        | Paste a URL, get a full evaluation + PDF + tracker entry                                                                                 |
-| **6-Block Evaluation**   | Role summary, CV match, level strategy, comp research, personalization, interview prep (STAR+R) -- plus a Block G posting-legitimacy check that flags scams and ghost jobs |
+| **7-Block Evaluation**   | Role summary, CV match, level strategy, comp research, personalization, interview prep (STAR+R), and a posting-legitimacy check that flags scams and ghost jobs |
 | **Interview Story Bank** | Accumulates STAR+Reflection stories across evaluations -- 5-10 master stories that answer any behavioral question                        |
 | **Negotiation Scripts**  | Salary negotiation frameworks, geographic discount pushback, competing offer leverage                                                    |
 | **ATS PDF Generation**   | Keyword-injected CVs with Space Grotesk + DM Sans design                                                                                 |
 | **Cover Letter Generator** | Research-backed cover letters with keyword mirroring, four interactive angle prompts (why/problems/approach/tone), draft-in-chat approval gate, and A4 PDF via the same HTML + Playwright pipeline as CVs. Auto-drafts on every evaluation; complete and generate on demand via `/career-ops cover` |
 | **Application Email Drafts** | Formal recruiter/referral/cold application emails from a report or pasted JD, with subject line, attachment checklist, source-backed fit points, and a profile-driven contact block. Draft-only -- career-ops never sends, submits, or clicks anything. |
-| **Portal Scanner**       | 45+ companies pre-configured (Anthropic, OpenAI, ElevenLabs, Retool, n8n...) + custom queries across Ashby, Greenhouse, Lever, Wellfound |
+| **Portal Scanner**       | Starter companies and queries plus provider modules for public ATS feeds, job boards, RSS, JSON, and company pages |
 | **Batch Processing**     | Parallel evaluation with headless CLI workers (`claude -p` / `opencode run`)                                                             |
 | **Dashboard TUI**        | Terminal UI to browse, filter, and sort your pipeline                                                                                    |
 | **Human-in-the-Loop**    | AI evaluates and recommends, you decide and act. The system never submits an application -- you always have the final call               |
@@ -181,17 +181,21 @@ claude   # or codex / opencode / qwen / agy / grok
 
 </details>
 
-> **The system is designed to be customized by your AI coding CLI itself.** Modes, archetypes, scoring weights, negotiation scripts -- just ask it to change them. It reads the same files it uses, so it knows exactly what to edit.
+> **The system is designed to be customized by your AI coding CLI itself.** Ask it to change your target roles, positioning, negotiation preferences, workflow rules, or portal filters. Personal changes belong in the user-owned profile and custom mode files, so updates cannot overwrite them.
 
-See [docs/SETUP.md](docs/SETUP.md) for the full setup guide, [docs/RUNNING_ON_A_BUDGET.md](docs/RUNNING_ON_A_BUDGET.md) for instructions on running career-ops cheaply using custom or local models, [docs/APPLY_AUTOFILL.md](docs/APPLY_AUTOFILL.md) for details on the ATS auto-fill flow, and [docs/FAQ.md](docs/FAQ.md) for answers to common setup questions.
+Use the [documentation index](docs/README.md) to find the shortest guide for your task. Start with [setup](docs/SETUP.md), [running on a budget](docs/RUNNING_ON_A_BUDGET.md), [application autofill](docs/APPLY_AUTOFILL.md), or the [FAQ](docs/FAQ.md).
 
-## Antigravity CLI Integration
+## Choose Your CLI
+
+All supported CLIs load the same career-ops modes and user profile. The invocation style differs by CLI; see the [supported CLI guide](docs/SUPPORTED_CLIS.md) for the complete matrix.
+
+### Antigravity CLI
 
 career-ops supports Antigravity CLI natively, the same way it supports Claude Code and OpenCode. All slash commands are available through the shared skill entrypoint, using the same `modes/*.md` evaluation logic.
 
 Google has transitioned consumer Gemini CLI access to Antigravity CLI. `GEMINI.md` is now a no-op compatibility guard so Antigravity does not duplicate the full project instructions when it reads both `AGENTS.md` and `GEMINI.md`.
 
-### Native Antigravity CLI
+#### Run it
 
 ```bash
 # 1. Run in the career-ops directory
@@ -208,11 +212,11 @@ agy
 
 The skill is defined using the open standard in `.agents/skills/career-ops/SKILL.md` and symlinked/referenced for each supported CLI (e.g. `.claude/`, `.qwen/`, `.antigravitycli/`, `.grok/`).
 
-## Codex Integration
+### Codex
 
 career-ops supports Codex through the same shared router, but the invocation model is different from CLIs that auto-register slash commands. For the full guide, see [docs/CODEX.md](docs/CODEX.md).
 
-### Interactive Codex
+#### Interactive Codex
 
 ```bash
 cd career-ops
@@ -229,7 +233,7 @@ Run the career-ops pdf mode for the latest evaluated role.
 Run the career-ops tracker mode and summarize the current statuses.
 ```
 
-### One-shot Codex (`codex exec`)
+#### One-shot Codex (`codex exec`)
 
 ```bash
 codex exec "Evaluate this JD with career-ops auto-pipeline: https://company.com/jobs/123"
@@ -239,11 +243,11 @@ codex exec "Run career-ops pdf mode for the latest evaluated role."
 codex exec "Run career-ops tracker mode and summarize the current statuses."
 ```
 
-## Grok Build CLI Integration
+### Grok Build CLI
 
 career-ops supports Grok Build CLI natively, the same way it supports Claude Code and OpenCode. `AGENTS.md` is auto-loaded as project rules, and all slash commands are available through the shared skill entrypoint.
 
-### Native Grok Build CLI
+#### Run it
 
 ```bash
 # 1. Run in the career-ops directory
@@ -260,7 +264,7 @@ grok
 
 For headless batch workers, use `grok -p "prompt"` (add `--yolo` to auto-approve tool executions).
 
-### Standalone Gemini API Script (No CLI install needed)
+### Standalone Gemini API script
 
 ```bash
 # 1. Get a free API key at https://aistudio.google.com/apikey
@@ -277,7 +281,7 @@ node agent-inbox.mjs add "..."   # queue a request for the next session
 npm run gemini:eval -- "JD text here"
 ```
 
-> **Free tier:** Both options work without billing. Native CLI uses Google OAuth; the API script uses `gemini-2.5-flash` (15 RPM, 1M tokens/day free).
+> **Free tier:** Both options can run without billing. Native CLI uses Google OAuth; the API script uses a configured Gemini model. See the [free-tier guide](docs/FREE_TIER.md) for current model and quota guidance.
 
 ## Usage
 
@@ -316,7 +320,7 @@ You paste a job URL or description
 └────────┬─────────┘
          │
 ┌────────▼─────────┐
-│  A-F Evaluation  │  Match, gaps, comp research, STAR stories
+│  A-G Evaluation  │  Match, gaps, comp, stories, legitimacy
 │  (reads cv.md)   │
 └────────┬─────────┘
          │
@@ -328,7 +332,7 @@ You paste a job URL or description
 
 ## Pre-configured Portals
 
-The scanner comes with **45+ companies** ready to scan and **19 search queries** across major job boards. Copy `templates/portals.example.yml` to `portals.yml` and add your own:
+The scanner ships with starter companies and search queries across major job boards. Copy `templates/portals.example.yml` to `portals.yml` and add your own:
 
 **AI Labs:** Anthropic, OpenAI, Mistral, Cohere, LangChain, Pinecone
 **Voice AI:** ElevenLabs, PolyAI, Parloa, Hume AI, Deepgram, Vapi, Bland AI
@@ -339,7 +343,7 @@ The scanner comes with **45+ companies** ready to scan and **19 search queries**
 **Automation:** n8n, Zapier, Make.com
 **European:** Factorial, Attio, Tinybird, Clarity AI, Travelperk
 
-**Job boards searched:** 21 provider modules cover ATS APIs, board-wide feeds, XML/RSS feeds, markdown feeds, and local parsers. See [Supported job boards](docs/SUPPORTED_JOB_BOARDS.md) for the full table.
+**Job boards searched:** provider modules cover ATS interfaces, board-wide feeds, XML/RSS feeds, markdown feeds, and local parsers. See [supported job boards](docs/SUPPORTED_JOB_BOARDS.md) for the current coverage table.
 
 By default `node scan.mjs` (a.k.a. `npm run scan`) trusts what each ATS feed returns. Some companies leave stale postings in their public API even after the role is closed, so those expired entries can leak into `pipeline.md`. Pass `--verify` to launch Playwright after the API pass and drop expired postings before they hit the pipeline:
 
@@ -362,43 +366,38 @@ Features: 6 filter tabs, 4 sort modes, grouped/flat view, lazy-loaded previews, 
 
 There is also an **experimental web UI** (alpha, opt-in — nothing runs unless you start it): see [`web/README.md`](web/README.md).
 
-## Project Structure
+## Repository Map
+
+Public command modules intentionally remain at the repository root. Their paths are a compatibility interface used by users, plugins, guides, and the self-updater. Internal modules and adapters are grouped by purpose; personal data stays in the user layer and is never replaced by updates.
+
+Personal targeting belongs in `modes/_profile.md`; procedural preferences belong in `modes/_custom.md`. The shared mode is system-owned rather than a personalization file.
 
 ```
 career-ops/
-├── AGENTS.md                    # Canonical agent instructions (all CLIs)
-├── CLAUDE.md                    # Claude Code wrapper (imports AGENTS.md)
-├── CODEX.md                     # Codex wrapper (imports AGENTS.md)
-├── OPENCODE.md                  # OpenCode wrapper (imports AGENTS.md)
-├── GEMINI.md                    # Legacy no-op guard to avoid Antigravity duplicate context
-├── cv.md                        # Your CV (create this)
-├── article-digest.md            # Your proof points (optional)
-├── config/
-│   └── profile.example.yml      # Template for your profile
-├── modes/                       # Skill modes
-│   ├── _shared.md               # Shared context (customize this)
-│   ├── oferta.md                # Single evaluation
-│   ├── pdf.md                   # PDF generation
-│   ├── cover.md                 # Cover letter generation
-│   ├── email.md                 # Formal application email drafts
-│   ├── scan.md                  # Portal scanner
-│   ├── batch.md                 # Batch processing
-│   └── ...
-├── templates/
-│   ├── cv-template.html         # ATS-optimized CV template
-│   ├── portals.example.yml      # Scanner config template
-│   └── states.yml               # Canonical statuses
-├── batch/
-│   ├── batch-prompt.md          # Self-contained worker prompt
-│   └── batch-runner.sh          # Orchestrator script
-├── dashboard/                   # Go TUI pipeline viewer
-├── data/                        # Your tracking data (gitignored)
-├── reports/                     # Evaluation reports (gitignored)
-├── output/                      # Generated PDFs (gitignored)
-├── fonts/                       # Space Grotesk + DM Sans
-├── docs/                        # Setup, customization, budget guide, architecture
-└── examples/                    # Sample CV, report, proof points
+├── *.mjs                        # Stable command modules and colocated regressions
+├── AGENTS.md                    # Canonical instructions shared by supported CLIs
+├── modes/                       # Evaluation and workflow modes
+│   ├── _shared.md               # System-owned shared rules
+│   ├── _profile.md              # Your targeting and positioning
+│   └── _custom.md               # Your procedural preferences
+├── providers/                   # Public job-board adapters
+├── lib/                         # Shared internal implementations
+├── utils/                       # Cross-workflow utilities
+├── tests/                       # Auto-discovered integration and provider suites
+├── test/                        # Focused Node unit suites
+├── templates/                   # CV, portal, state, and configuration templates
+├── batch/                       # Parallel evaluation orchestration
+├── dashboard/                   # Optional Go terminal interface
+├── web/                         # Optional experimental web interface
+├── docs/                        # Task-oriented guides and documentation index
+├── config/                      # Profile templates and your local profile
+├── data/ and reports/           # Your canonical tracking data and evaluations
+└── output/ and jds/             # Generated files and saved job descriptions
 ```
+
+Read [Architecture](ARCHITECTURE.md) for the system flow and path-stability decision. Read the [Data Contract](DATA_CONTRACT.md) before changing ownership or update behavior.
+
+Root regression suites remain beside the stable command modules they protect and are discovered automatically. `npm test` runs those suites together with the integration, provider, updater, dashboard, and documentation checks.
 
 ## Tech Stack
 
@@ -409,9 +408,9 @@ career-ops/
 ![Bubble Tea](https://img.shields.io/badge/Bubble_Tea-FF75B5?style=flat&logo=go&logoColor=white)
 
 - **Agent**: AI coding CLI with shared skills and modes (`AGENTS.md` + CLI wrapper)
-- **PDF**: Playwright/Puppeteer + HTML template
+- **PDF**: Playwright + HTML templates
 - **Cover letters**: HTML template + Playwright (A4 PDF, same pipeline as CVs)
-- **Scanner**: Playwright + Greenhouse API + WebSearch
+- **Scanner**: Public provider modules with Playwright liveness verification
 - **Dashboard**: Go + Bubble Tea + Lipgloss (Catppuccin Mocha theme)
 - **Data**: Markdown tables + YAML config + TSV batch files
 
