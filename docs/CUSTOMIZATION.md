@@ -24,8 +24,8 @@ The profile is the source of truth for identity and high-level search constraint
 - target roles;
 - career narrative and proof points;
 - compensation targets;
-- location, timezone, visa, and on-site policy;
-- team-culture preferences.
+- location, timezone, visa, and on-site policy — including structured work authorization (`authorized_in`, `needs_sponsorship`) that drives the Work-Auth signal in evaluation (an explicit no-sponsorship JD becomes a hard blocker);
+- team-culture preferences (`culture_screen`; its `deprioritize_if_absent` strict flag caps the culture score at 2/5 when evidence is entirely missing).
 
 ## Targeting and negotiation preferences
 
