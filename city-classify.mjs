@@ -18,33 +18,14 @@
  */
 
 import { readFile, writeFile } from 'fs/promises';
-import { existsSync, readFileSync } from 'fs';
-import * as yaml from 'js-yaml';
-import { qwenUrl } from './infra-config.mjs';
+import { existsSync } from 'fs';
+import { llmText, llmProvider } from './infra-config.mjs';
 
 const LIVE = 'web/.liveness.json';
-// Local Qwen endpoint from config/profile.yml (gitignored) or env QWEN_URL.
-const QWEN = qwenUrl();
-const MODEL = 'qwen3:14b-16k';
 const REDO = process.argv.includes('--redo');
-
-// Mixlayer settings piggyback on fit-score's scorer.mixlayer block so both
-// scripts share one key + model knob. Env vars win, matching fit-score.
-function loadMixlayer() {
-  let cfg = {};
-  try {
-    cfg = yaml.load(readFileSync('config/profile.yml', 'utf-8'))?.scorer?.mixlayer || {};
-  } catch {}
-  return {
-    apiKey: process.env.MIXLAYER_API_KEY || cfg.api_key || '',
-    model: process.env.MIXLAYER_MODEL || cfg.model || 'qwen/qwen3.5-35b-a3b',
-    baseUrl: (process.env.MIXLAYER_BASE_URL || cfg.base_url || 'https://models.mixlayer.ai/v1').replace(/\/+$/, ''),
-  };
-}
-const MIXLAYER = loadMixlayer();
-const PROVIDER = MIXLAYER.apiKey ? 'mixlayer' : 'qwen';
+const LLM = llmProvider();
 // Mixlayer runs remote with rate limits — match fit-score's proven parallel=3.
-const PARALLEL = PROVIDER === 'mixlayer' ? 3 : 6;
+const PARALLEL = LLM.provider === 'mixlayer' ? 3 : 6;
 
 const BUCKETS = {
   remote:   'Remote / work from home / no specific location',
@@ -110,49 +91,7 @@ function buildPrompt(loc) {
   return `${PROMPT_HEAD}\nLocation: ${JSON.stringify(loc)}\nReturn ONLY a JSON array of bucket keys on one line.`;
 }
 
-async function qwen(prompt) {
-  const r = await fetch(QWEN, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, prompt, stream: false, think: false, keep_alive: '5m' }),
-    signal: AbortSignal.timeout(60_000),
-  });
-  const d = await r.json();
-  return d.response || '';
-}
 
-async function mixlayer(prompt) {
-  const r = await fetch(`${MIXLAYER.baseUrl}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${MIXLAYER.apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: MIXLAYER.model,
-      messages: [
-        { role: 'system', content: '/no_think\nYou output only compact JSON. Do not reason. Do not explain.' },
-        { role: 'user', content: `${prompt}\n\n/no_think` },
-      ],
-      temperature: 0.2,
-      top_p: 0.8,
-      max_tokens: 2000,
-      stream: false,
-      chat_template_kwargs: { enable_thinking: false },
-    }),
-    signal: AbortSignal.timeout(120_000),
-  });
-  if (!r.ok) {
-    const text = await r.text().catch(() => '');
-    throw new Error(`mixlayer HTTP ${r.status}${text ? `: ${text.slice(0, 160)}` : ''}`);
-  }
-  const d = await r.json();
-  const msg = d.choices?.[0]?.message || {};
-  // Same quirk fit-score handles: some models answer in reasoning_content.
-  return msg.content || msg.reasoning_content || d.choices?.[0]?.text || '';
-}
-
-const llm = PROVIDER === 'mixlayer' ? mixlayer : qwen;
 
 const VALID = new Set(Object.keys(BUCKETS));
 function parse(text) {
@@ -184,7 +123,7 @@ async function main() {
 
   const unique = [...byLoc.keys()];
   if (!unique.length) { log('nothing to classify'); return; }
-  log(`provider: ${PROVIDER === 'mixlayer' ? `${MIXLAYER.model} via Mixlayer` : `${MODEL} via local Qwen`}`);
+  log(`provider: ${LLM.description}`);
   log(`classifying ${unique.length} unique locations covering ${[...byLoc.values()].reduce((a, b) => a + b.length, 0)} URLs`);
 
   const classified = {}; // location → buckets[]
@@ -195,7 +134,7 @@ async function main() {
       const loc = queue.shift();
       if (!loc) { classified[loc] = []; ok++; continue; }
       try {
-        const resp = await llm(buildPrompt(loc));
+        const resp = await llmText(buildPrompt(loc));
         const buckets = parse(resp);
         if (buckets != null) {
           classified[loc] = buckets;

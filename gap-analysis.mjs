@@ -18,7 +18,7 @@
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { createHash } from 'crypto';
-import { browserlessHttpUrl, qwenUrl } from './infra-config.mjs';
+import { browserlessHttpUrl, llmText } from './infra-config.mjs';
 
 const PIPE = 'data/pipeline.md';
 const LIVE = 'web/.liveness.json';
@@ -27,8 +27,6 @@ const OUT  = 'data/gap-analysis.json';
 const CV   = 'cv.md';
 const PROFILE = 'modes/_profile.md';
 
-const QWEN = qwenUrl();
-const MODEL = 'qwen3:14b-16k';
 const BROWSERLESS = browserlessHttpUrl('content');
 const PARALLEL = 4;
 
@@ -98,18 +96,6 @@ function htmlToText(html) {
   return s;
 }
 
-async function qwen(prompt, timeoutMs = 120_000) {
-  if (!QWEN) throw new Error('Qwen is not configured in config/profile.yml or QWEN_URL');
-  const r = await fetch(QWEN, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, prompt, stream: false, think: false, keep_alive: '5m' }),
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  if (!r.ok) throw new Error(`qwen HTTP ${r.status}`);
-  const d = await r.json();
-  return d.response || '';
-}
 
 function extractJson(text) {
   const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/);
@@ -211,7 +197,7 @@ async function analyze(job, cv, profile) {
       ? buildPrompt(cv, profile, job)
       : buildPrompt(cv, profile, job) + '\n\nPREVIOUS ATTEMPT was filtered out as too generic. Be SPECIFIC — name technologies, frameworks, domains, products. NO soft skills.';
     try {
-      const resp = await qwen(prompt);
+      const resp = await llmText(prompt);
       const parsed = extractJson(resp);
       const v = validate(parsed);
       if (v.ok) return v.value;

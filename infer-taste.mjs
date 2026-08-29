@@ -16,7 +16,7 @@
 
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
-import { qwenUrl } from './infra-config.mjs';
+import { llmText } from './infra-config.mjs';
 
 const APPS = 'data/applications.md';
 const PIPE = 'data/pipeline.md';
@@ -25,8 +25,6 @@ const LIVE = 'web/.liveness.json';
 const PROFILE = 'modes/_profile.md';
 const OUT  = 'data/taste-proposal.md';
 
-const QWEN = qwenUrl();
-const MODEL = 'qwen3:14b-16k';
 
 const args = process.argv.slice(2);
 const REDO = args.includes('--redo');
@@ -52,17 +50,6 @@ function parsePipeline(md) {
   return out;
 }
 
-async function qwen(prompt, timeoutMs = 120_000) {
-  if (!QWEN) throw new Error('Qwen is not configured in config/profile.yml or QWEN_URL');
-  const r = await fetch(QWEN, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, prompt, stream: false, think: false, keep_alive: '5m' }),
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  if (!r.ok) throw new Error(`qwen HTTP ${r.status}`);
-  return (await r.json()).response || '';
-}
 
 function bucket(apps) {
   const out = { applied: [], rejected: [], interview: [], offer: [], discarded: [], skip: [], evaluated: [] };
@@ -182,7 +169,7 @@ async function main() {
       : buildPrompt(buckets.applied, buckets.rejected, buckets.discarded, buckets.skip, highFitUnapplied, profile)
         + `\n\nPREVIOUS ATTEMPT had issues: ${issues.join('; ')}. Fix them.`;
     try {
-      proposal = (await qwen(prompt)).trim().replace(/^```\w*\n?|```$/g, '').trim();
+      proposal = (await llmText(prompt)).trim().replace(/^```\w*\n?|```$/g, '').trim();
       issues = validate(proposal, buckets.applied);
       if (!issues.length) break;
       log(`attempt ${attempt}: ${issues.join(' / ')}`);

@@ -18,10 +18,9 @@
  */
 
 import { readFile, writeFile, mkdir } from 'fs/promises';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync } from 'fs';
 import { dirname } from 'path';
-import * as yaml from 'js-yaml';
-import { qwenUrl } from './infra-config.mjs';
+import { llmText } from './infra-config.mjs';
 
 const APPS = 'data/applications.md';
 const PIPE = 'data/pipeline.md';
@@ -30,24 +29,6 @@ const FIT  = 'data/fit-scores.json';
 const LIVE = 'web/.liveness.json';
 const OUTDIR = 'data/digest';
 
-const QWEN = qwenUrl();
-const MODEL = 'qwen3:14b-16k';
-
-// Mixlayer settings piggyback on fit-score's scorer.mixlayer block so all
-// LLM scripts share one key + model knob. Env vars win, matching fit-score.
-function loadMixlayer() {
-  let cfg = {};
-  try {
-    cfg = yaml.load(readFileSync('config/profile.yml', 'utf-8'))?.scorer?.mixlayer || {};
-  } catch {}
-  return {
-    apiKey: process.env.MIXLAYER_API_KEY || cfg.api_key || '',
-    model: process.env.MIXLAYER_MODEL || cfg.model || 'qwen/qwen3.5-35b-a3b',
-    baseUrl: (process.env.MIXLAYER_BASE_URL || cfg.base_url || 'https://models.mixlayer.ai/v1').replace(/\/+$/, ''),
-  };
-}
-const MIXLAYER = loadMixlayer();
-const PROVIDER = MIXLAYER.apiKey ? 'mixlayer' : 'qwen';
 
 const args = process.argv.slice(2);
 const REDO = args.includes('--redo');
@@ -95,51 +76,7 @@ function parsePipeline(md) {
   return out;
 }
 
-async function qwen(prompt, timeoutMs = 90_000) {
-  if (!QWEN) throw new Error('Qwen is not configured in config/profile.yml or QWEN_URL');
-  const r = await fetch(QWEN, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, prompt, stream: false, think: false, keep_alive: '5m' }),
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  if (!r.ok) throw new Error(`qwen HTTP ${r.status}`);
-  return (await r.json()).response || '';
-}
 
-async function mixlayer(prompt, timeoutMs = 120_000) {
-  const r = await fetch(`${MIXLAYER.baseUrl}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${MIXLAYER.apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: MIXLAYER.model,
-      // Digest output is prose, not JSON — suppress reasoning, not the answer.
-      messages: [
-        { role: 'system', content: '/no_think\nFollow the user instructions exactly. Output only the requested text, no reasoning, no preamble.' },
-        { role: 'user', content: `${prompt}\n\n/no_think` },
-      ],
-      temperature: 0.2,
-      top_p: 0.8,
-      max_tokens: 2000,
-      stream: false,
-      chat_template_kwargs: { enable_thinking: false },
-    }),
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  if (!r.ok) {
-    const text = await r.text().catch(() => '');
-    throw new Error(`mixlayer HTTP ${r.status}${text ? `: ${text.slice(0, 160)}` : ''}`);
-  }
-  const d = await r.json();
-  const msg = d.choices?.[0]?.message || {};
-  // Same quirk fit-score handles: some models answer in reasoning_content.
-  return msg.content || msg.reasoning_content || d.choices?.[0]?.text || '';
-}
-
-const llm = PROVIDER === 'mixlayer' ? mixlayer : qwen;
 
 function aggregate(scan, apps, pipeline, fit, live, weekStart, weekEnd) {
   // Numeric facts
@@ -294,7 +231,7 @@ async function main() {
     const prompt = attempt === 1 ? buildPrompt(facts)
       : buildPrompt(facts) + `\n\nPREVIOUS ATTEMPT had issues: ${issues.join('; ')}. Fix them.`;
     try {
-      narrative = (await llm(prompt)).trim();
+      narrative = (await llmText(prompt)).trim();
       // Strip any accidental code fences
       narrative = narrative.replace(/^```\w*\n?|```$/g, '').trim();
       issues = postValidate(narrative, facts);

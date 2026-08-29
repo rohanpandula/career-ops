@@ -21,14 +21,12 @@
 
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
-import { qwenUrl } from './infra-config.mjs';
+import { llmText } from './infra-config.mjs';
 
 const PIPE = 'data/pipeline.md';
 const LIVE = 'web/.liveness.json';
 const FIT  = 'data/fit-scores.json';
 const OUT  = 'data/clusters.json';
-const QWEN_URL = qwenUrl();
-const MODEL = 'qwen3:14b-16k';
 
 const args = process.argv.slice(2);
 const REDO = args.includes('--redo');
@@ -54,18 +52,6 @@ function parsePipeline(md) {
   return out;
 }
 
-async function qwen(prompt, timeoutMs = 120_000) {
-  if (!QWEN_URL) throw new Error('Qwen is not configured in config/profile.yml or QWEN_URL');
-  const r = await fetch(QWEN_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, prompt, stream: false, think: false, keep_alive: '5m' }),
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  if (!r.ok) throw new Error(`qwen HTTP ${r.status}`);
-  const d = await r.json();
-  return d.response || '';
-}
 
 function extractJson(text) {
   const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/);
@@ -104,7 +90,7 @@ Return ONLY JSON: {"sub": [{"name":"${company} ...","indices":[...]}, ...]}`;
 
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      const resp = await qwen(prompt);
+      const resp = await llmText(prompt);
       const parsed = extractJson(resp);
       if (!parsed?.sub || !Array.isArray(parsed.sub) || parsed.sub.length < 2) continue;
       // Dedupe + validate
@@ -183,7 +169,7 @@ ${titles}
 
 Return ONLY the name as plain text, no quotes, no JSON.`;
   try {
-    const resp = await qwen(prompt, 60_000);
+    const resp = await llmText(prompt, 60_000);
     let name = resp.trim().split('\n')[0].replace(/^["'`]|["'`]$/g, '').replace(/^(name|answer|output)\s*[:=]\s*/i, '').trim();
     // Strip any leading/trailing markdown
     name = name.replace(/^\*+|\*+$/g, '').trim();
@@ -210,7 +196,7 @@ ${titles}
 
 Return ONLY the name as plain text, no quotes, no JSON.`;
   try {
-    const resp = await qwen(prompt, 60_000);
+    const resp = await llmText(prompt, 60_000);
     let name = resp.trim().split('\n')[0].replace(/^["'`]|["'`]$/g, '').replace(/^(name|answer|output)\s*[:=]\s*/i, '').trim();
     name = name.replace(/^\*+|\*+$/g, '').trim();
     if (!name || name.length > 80) return 'Other roles (small-count companies)';

@@ -21,15 +21,13 @@
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
 import { createHash } from 'crypto';
-import { qwenUrl } from './infra-config.mjs';
+import { llmText } from './infra-config.mjs';
 
 const PIPE = 'data/pipeline.md';
 const LIVE = 'web/.liveness.json';
 const FIT  = 'data/fit-scores.json';
 const OUT  = 'data/dedupe.json';
 const CACHE = 'data/dedupe-cache.json';
-const QWEN = qwenUrl();
-const MODEL = 'qwen3:14b-16k';
 const PARALLEL = 6;
 
 const args = process.argv.slice(2);
@@ -86,17 +84,6 @@ function pairHash(key) {
   return createHash('sha1').update(key).digest('hex').slice(0, 12);
 }
 
-async function qwen(prompt, timeoutMs = 60_000) {
-  if (!QWEN) throw new Error('Qwen is not configured in config/profile.yml or QWEN_URL');
-  const r = await fetch(QWEN, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, prompt, stream: false, think: false, keep_alive: '5m' }),
-    signal: AbortSignal.timeout(timeoutMs),
-  });
-  if (!r.ok) throw new Error(`qwen HTTP ${r.status}`);
-  return (await r.json()).response || '';
-}
 
 function extractJson(text) {
   const fence = text.match(/```(?:json)?\s*([\s\S]*?)```/);
@@ -145,7 +132,7 @@ Confidence < 0.85 means we WILL NOT trust same=true. Be honest about confidence.
 
 async function classify(a, b) {
   try {
-    const resp = await qwen(buildPrompt(a, b));
+    const resp = await llmText(buildPrompt(a, b));
     const parsed = extractJson(resp);
     if (!parsed) return { same: false, confidence: 0, reason: 'parse error' };
     const same = parsed.same === true;
