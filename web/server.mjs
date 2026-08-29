@@ -4,7 +4,7 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join, extname, resolve as resolvePath, sep } from 'path';
 import { fileURLToPath } from 'url';
 import { randomBytes, createHmac, timingSafeEqual } from 'crypto';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import { browserlessWsUrl, changedetection, flaresolverrUrl } from '../infra-config.mjs';
 import { rejectPrivateOrInvalid } from '../liveness-browser.mjs';
 import {

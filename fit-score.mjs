@@ -17,7 +17,7 @@
 
 import { readFile, writeFile } from 'fs/promises';
 import { existsSync } from 'fs';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 import { qwenUrl } from './infra-config.mjs';
 
 const PIPE = 'data/pipeline.md';

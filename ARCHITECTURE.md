@@ -1,6 +1,6 @@
 # Architecture
 
-A high-level map of how career-ops is put together. For the precise system/user file boundary, see [DATA_CONTRACT.md](DATA_CONTRACT.md); for contribution mechanics, see [CONTRIBUTING.md](CONTRIBUTING.md).
+A high-level map of how career-ops is put together. For the precise system/user file boundary, see [DATA_CONTRACT.md](DATA_CONTRACT.md); for contribution mechanics, see [CONTRIBUTING.md](CONTRIBUTING.md); for runtime flow diagrams (evaluation steps, batch processing), see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Principles
 
@@ -25,7 +25,13 @@ Settled doctrine ([#918](https://github.com/santifer/career-ops/issues/918)): th
 
 ## Why the flat root
 
-The repo keeps its public command modules at the root deliberately ([#1386](https://github.com/santifer/career-ops/issues/1386)). Path stability is a feature here, not an accident: the updater's `SYSTEM_PATHS` allowlist, community plugins, docs, guides, and established commands such as `node scan.mjs` all reference these paths. A cosmetic reorganization would break forks and plugins for no functional gain. The conventions that keep the flat root navigable are: one command module per job, root regression suites sit beside the command they protect, provider adapters live together under `providers/`, and every tracked path is covered by the updater manifest.
+The repo keeps its ~70 scripts at the root deliberately ([#1386](https://github.com/santifer/career-ops/issues/1386)). Path stability is a feature here, not an accident: the updater's `SYSTEM_PATHS` allowlist, community plugins, docs, guides, and the muscle memory of thousands of users (`node scan.mjs`) all reference these paths. A cosmetic reorganization would break forks and plugins for no functional gain. The conventions that keep the flat root navigable: one script = one job, and every script is registered in `SYSTEM_PATHS` (enforced in CI by the coverage guard).
+
+Tests are the one thing the flat root does not hold. Suites live in `tests/`, named `{module}.test.mjs` for the root script they cover, and `test-all.mjs` discovers `tests/**/*.test.mjs` — no registration list, so a new suite runs the moment it is written and a typo cannot silently turn CI green ([#1440](https://github.com/santifer/career-ops/issues/1440)). Write new ones there; `*.test.mjs` at the repo root is not discovered and will not run.
+
+Discovery imports a suite in-process and shares its counters; a `node:test` suite is child-processed instead, so its results survive ([#2828](https://github.com/santifer/career-ops/issues/2828)). A discovered suite therefore reports through `pass`/`fail` from `tests/helpers.mjs` and never calls `process.exit()` or `finish()`, both of which would forge the run's verdict.
+
+This was three arrangements until recently — `tests/`, a `test/` directory, and suites sitting beside the scripts they covered — with the latter two registered by hand in `test-all.mjs`. Hand registration meant three suites shipped in `SYSTEM_PATHS` to every install while running nowhere ([#3247](https://github.com/santifer/career-ops/issues/3247), [#3303](https://github.com/santifer/career-ops/issues/3303)), which is what consolidated them ([#3306](https://github.com/santifer/career-ops/issues/3306)). No suite is registered by hand any more — `test-all.mjs`'s `SCRIPTS` list holds scripts and their `--self-test` entry points, not test files. Playwright specs are the deliberate exception: `tests/cv-visual/` is named `*.spec.mjs`, which discovery does not match, and runs from `playwright.cv.config.mjs`.
 
 ## Component map
 
@@ -47,7 +53,7 @@ AI coding CLI  ─┐
 Finds jobs from **open, no-auth public sources**. `scan.mjs` is zero-token: it calls public ATS APIs (Greenhouse, Ashby, Lever, BambooHR, Teamtailor, Workday, Breezy) and RSS/JSON boards via per-board modules in `providers/`. Auth-gated/login-required sources are intentionally out of core (they belong in the plugin layer). Results land in `data/pipeline.md`.
 
 ### Evaluation — `modes/oferta.md` + `modes/_shared.md`
-The heart of the tool. `oferta.md` defines the A–G evaluation blocks; `_shared.md` defines the 1–5 scoring system, archetype detection, posting-legitimacy signals, and global rules. The AI reads these plus your `cv.md` and produces a structured report.
+The heart of the tool. `oferta.md` defines the A–H evaluation blocks (H is conditional, on scores of 4.5 and above); `_shared.md` defines the 1–5 scoring system, archetype detection, posting-legitimacy signals, and global rules. The AI reads these plus your `cv.md` and produces a structured report.
 
 **Standalone evaluators** let you run the same scoring without an interactive CLI, against cheaper/local models: `gemini-eval.mjs` (Google free tier), `ollama-eval.mjs` (fully local), and `openai-eval.mjs` (any OpenAI-compatible endpoint).
 
@@ -81,8 +87,7 @@ scan ──► data/pipeline.md ──► evaluate (oferta + cv) ──► repor
 
 ## Quality gates
 
-- `npm test` — the full suite across scoring, scan, tracker, PDF, security, updater, providers, and documentation contracts.
-- `npm run test:quick` — the reduced local feedback loop.
+- `test-all.mjs` — the full suite (500+ checks across scoring, scan, tracker, PDF, security, updater).
 - `updater-migration-tests.mjs` — enforces the system/user boundary and safe cross-version upgrades.
 - CI: `test` + CodeQL are required; CodeRabbit reviews every PR; Renovate keeps deps current.
 
@@ -90,6 +95,5 @@ scan ──► data/pipeline.md ──► evaluate (oferta + cv) ──► repor
 
 - The boundary → `DATA_CONTRACT.md`
 - The scoring → `modes/_shared.md` + `modes/oferta.md`
-- Adding a job source → an existing module in `providers/` (mirror it)
+- Adding a job source → [`providers/README.md`](providers/README.md)
 - The updater → `update-system.mjs`
-- All guides → `docs/README.md`

@@ -25,7 +25,7 @@ import { readFileSync, writeFileSync, appendFileSync, existsSync, mkdirSync } fr
 import { spawnSync } from "child_process";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";
-import yaml from "js-yaml";
+import * as yaml from "js-yaml";
 import { changedetection } from "./infra-config.mjs";
 import { captureResponseDuringNavigation, parseWorkdayPostedOn } from "./scheduled-scan-core.mjs";
 

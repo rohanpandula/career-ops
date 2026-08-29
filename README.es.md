@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[English](README.md) | [Español](README.es.md) | [Deutsch](README.de.md) | [Français](README.fr.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko-KR.md) | [日本語](README.ja.md) | [简体中文](README.cn.md) | [繁體中文](README.zh-TW.md) | [Українська](README.ua.md) | [Русский](README.ru.md) | [Polski](README.pl.md) | [Dansk](README.da.md) | [العربية](README.ar.md) | [हिन्दी](README.hi.md)
+[English](README.md) | [Español](README.es.md) | [Deutsch](README.de.md) | [Français](README.fr.md) | [Português (Brasil)](README.pt-BR.md) | [한국어](README.ko-KR.md) | [日本語](README.ja.md) | [简体中文](README.cn.md) | [繁體中文](README.zh-TW.md) | [Українська](README.ua.md) | [Русский](README.ru.md) | [Polski](README.pl.md) | [Dansk](README.da.md) | [தமிழ்](README.ta.md) | [العربية](README.ar.md) | [हिन्दी](README.hi.md)
 
 </div>
 
@@ -78,7 +78,7 @@
 
 career-ops convierte cualquier CLI de IA en un centro de mando de búsqueda de empleo. En vez de trackear aplicaciones en un spreadsheet, tienes un pipeline AI que:
 
-- **Evalúa ofertas** con una evaluación estructurada A-F (cinco dimensiones que alimentan una puntuación de 1.0-5.0)
+- **Evalúa ofertas** con una evaluación estructurada A-H (cinco dimensiones que alimentan una puntuación de 1-5)
 - **Genera PDFs personalizados** -- CVs ATS-optimizados por oferta
 - **Escanea portales** automaticamente (Greenhouse, Ashby, Lever, webs de empresas)
 - **Procesa en batch** -- evalúa 10+ ofertas en paralelo con sub-agentes
@@ -95,14 +95,14 @@ Construido por alguien que lo usó para evaluar 740+ ofertas, generar 100+ CVs p
 | Feature                    | Descripción                                                                                                                    |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | **Auto-Pipeline**          | Pega una URL, obtiene evaluación + PDF + entrada en tracker                                                                    |
-| **Evaluación A-F**         | Resumen del rol, match con CV, estrategia de nivel, research de comp, personalización, prep de entrevista (STAR+R) -- más una verificación de legitimidad de la oferta (Bloque G) que detecta estafas y ofertas fantasma |
+| **Evaluación A-H**         | Resumen del rol, match con CV, estrategia de nivel, research de comp, personalización, prep de entrevista (STAR+R) -- más una verificación de legitimidad de la oferta (Bloque G) que detecta estafas y ofertas fantasma |
 | **Banco de historias**     | Acumula historias STAR+Reflexión entre evaluaciones -- 5-10 historias maestras que responden cualquier pregunta behavioral     |
 | **Scripts de negociación** | Frameworks de negociación salarial, pushback de descuentos geográficos, leverage de ofertas competidoras                       |
 | **PDFs ATS**               | CVs con keywords inyectados, diseño Space Grotesk + DM Sans                                                                    |
 | **Scanner de portales**    | 45+ empresas pre-configuradas (Anthropic, OpenAI, ElevenLabs, Retool, n8n...) + queries en Ashby, Greenhouse, Lever, Wellfound |
 | **Batch**                  | Evaluación en paralelo con workers `claude -p`                                                                                 |
 | **Dashboard TUI**          | Terminal UI para navegar, filtrar y ordenar tu pipeline                                                                        |
-| **Human-in-the-Loop**      | La IA evalúa y recomienda, tú decides y actuas. El sistema nunca envía una aplicación -- tú siempre tienes la última palabra   |
+| **Human-in-the-Loop**      | La IA evalúa y recomienda, tú decides y actúas. El sistema nunca envía una candidatura: tú siempre tienes la última palabra <!-- hitl: absolute guarantee. Do not add "automatically", "by itself", "without your permission" or any other hedge when translating this row. -->   |
 | **Integridad de pipeline** | Merge automático, dedup, normalización de estados, health checks                                                               |
 
 ## Inicio rápido
@@ -135,6 +135,18 @@ claude   # abre tu CLI de IA — te guiará en el primer arranque
 ```
 
 </details>
+
+### Instalación global
+
+```bash
+npm i -g @santifer/career-ops
+```
+
+Esto instala el binario `career-ops` de forma global para que puedas ejecutarlo directamente en lugar de usar `npx`. A diferencia de `npx @santifer/career-ops init` (que prepara un directorio de proyecto), la instalación global te da un comando `career-ops` persistente disponible en cualquier terminal.
+
+**¿Cuál deberías usar?**
+- `npx @santifer/career-ops init` — mejor para el primer uso; crea una carpeta de proyecto dedicada.
+- `npm i -g @santifer/career-ops` — mejor una vez que tienes una carpeta de proyecto y quieres ejecutar comandos de career-ops directamente.
 
 > **El sistema está diseñado para que Claude lo personalice.** Modes, arquetipos, scoring, scripts de negociación -- solo pídelo. Claude lee los mismos archivos que usa, así que sabe exactamente qué editar.
 
@@ -171,7 +183,7 @@ Pegas una URL o descripción de oferta
 └────────┬─────────┘
          │
 ┌────────▼─────────┐
-│  Evaluación A-F  │  Match, gaps, comp research, historias STAR
+│  Evaluación A-H  │  Match, gaps, comp research, historias STAR
 │  (lee cv.md)     │
 └────────┬─────────┘
          │

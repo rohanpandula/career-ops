@@ -20,11 +20,13 @@
  * @property {string} location May be empty.
  * @property {string} [description] Job description text, populated ONLY when the
  *                               provider's list payload carries it for free (no
- *                               extra per-job request — the scanner is zero-token).
- *                               Lever supplies it via `descriptionPlain`; most
- *                               providers omit it. Consumed by scan.mjs's
- *                               content_filter; an empty/absent value always
- *                               passes the filter.
+ *                               extra per-job request — the scanner is zero-token),
+ *                               or when a board opts into vdab/smartrecruiters-style
+ *                               `fetchDetails` (bounded per-job enrichment, skipped
+ *                               while probing). Lever/Ashby supply it via
+ *                               `descriptionPlain`; most providers omit it.
+ *                               Consumed by scan.mjs's content_filter; an
+ *                               empty/absent value always passes the filter.
  * @property {number} [postedAt] Epoch ms when the posting was published.
  *                               Omitted when the source doesn't expose a
  *                               usable date. scan.mjs ignores it; consumers
@@ -95,6 +97,7 @@
  * @property {('http')} transport
  * @property {(url: string, opts?: FetchOptions) => Promise<string>}  fetchText
  * @property {(url: string, opts?: FetchOptions) => Promise<unknown>} fetchJson
+ * @property {(url: string, opts?: FetchOptions) => Promise<Response>} fetchResponse  Raw Response (timeout + non-2xx guard applied); for providers needing response headers.
  * @property {number} [maxPages] Optional pagination hint. When set (verify-portals.mjs's
  *                              health probe passes 1), a paginating provider SHOULD stop
  *                              after this many pages — the probe only needs the first page

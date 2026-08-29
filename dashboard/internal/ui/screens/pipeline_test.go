@@ -186,6 +186,45 @@ func TestSearchIsCaseInsensitive(t *testing.T) {
 	}
 }
 
+func TestOpenURLKeyFlashesWhenApplicationHasNoURL(t *testing.T) {
+	apps := []model.CareerApplication{
+		{Company: "Acme", Role: "Triage Engineer", Status: "Evaluated", Score: 4.0},
+	}
+	pm := NewPipelineModel(theme.NewTheme("catppuccin-mocha"), apps, model.PipelineMetrics{Total: 1}, "..", 120, 40)
+	pm.viewMode = "flat"
+	pm.applyFilterAndSort()
+
+	updated, cmd := pm.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'o'}})
+	if cmd != nil {
+		t.Fatal("expected no open command when the application has no URL")
+	}
+	if updated.flash != "No URL found for this application" {
+		t.Fatalf("flash = %q, want missing-URL notice", updated.flash)
+	}
+}
+
+func TestOpenURLKeyEmitsTrackerURL(t *testing.T) {
+	const jobURL = "https://jobs.example.com/triage"
+	apps := []model.CareerApplication{
+		{Company: "Acme", Role: "Triage Engineer", Status: "Evaluated", Score: 4.0, JobURL: jobURL},
+	}
+	pm := NewPipelineModel(theme.NewTheme("catppuccin-mocha"), apps, model.PipelineMetrics{Total: 1}, "..", 120, 40)
+	pm.viewMode = "flat"
+	pm.applyFilterAndSort()
+
+	_, cmd := pm.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'o'}})
+	if cmd == nil {
+		t.Fatal("expected an open command for the tracker URL")
+	}
+	msg, ok := cmd().(PipelineOpenURLMsg)
+	if !ok {
+		t.Fatalf("command returned %T, want PipelineOpenURLMsg", cmd())
+	}
+	if msg.URL != jobURL {
+		t.Fatalf("opened URL = %q, want %q", msg.URL, jobURL)
+	}
+}
+
 func TestSearchEnterCommitsAndEscClearsCommittedQuery(t *testing.T) {
 	apps := []model.CareerApplication{
 		{Company: "Stripe", Role: "Backend Engineer", Status: "Evaluated", Score: 4.6},
@@ -687,5 +726,43 @@ func TestWithReloadedDataPreservesDiscardAndHiredFlow(t *testing.T) {
 	}
 	if reloaded.hiredStep != 1 || reloaded.hiredApp.Company != "Acme" {
 		t.Fatalf("hired flow lost: step=%d app=%+v", reloaded.hiredStep, reloaded.hiredApp)
+	}
+}
+
+func TestGetStatusPairsPinsCurrentStatusToFront(t *testing.T) {
+	base := getStatusPairs("")
+
+	ordered := getStatusPairs("applied")
+	if ordered[0].Canonical != "Applied" {
+		t.Fatalf("ordered[0].Canonical = %q, want Applied", ordered[0].Canonical)
+	}
+	if len(ordered) != len(base) {
+		t.Fatalf("len(ordered) = %d, want %d (no entries added or dropped)", len(ordered), len(base))
+	}
+
+	// The rest of the list keeps its original relative order.
+	var restGotWithoutApplied []string
+	for _, pair := range ordered[1:] {
+		restGotWithoutApplied = append(restGotWithoutApplied, pair.Canonical)
+	}
+	var restWant []string
+	for _, pair := range base {
+		if pair.Canonical != "Applied" {
+			restWant = append(restWant, pair.Canonical)
+		}
+	}
+	if strings.Join(restGotWithoutApplied, ",") != strings.Join(restWant, ",") {
+		t.Fatalf("rest of list reordered: got %v, want %v", restGotWithoutApplied, restWant)
+	}
+}
+
+func TestGetStatusPairsUnrecognizedStatusFallsBackToStaticOrder(t *testing.T) {
+	base := getStatusPairs("")
+	got := getStatusPairs("some-unmapped-status")
+
+	for i := range base {
+		if got[i].Canonical != base[i].Canonical {
+			t.Fatalf("got[%d].Canonical = %q, want %q (static order)", i, got[i].Canonical, base[i].Canonical)
+		}
 	}
 }

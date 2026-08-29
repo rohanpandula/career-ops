@@ -1,7 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
+import * as yaml from "js-yaml";
 import { atomicWrite } from "@/lib/core/safe-write";
 import { parseApplications } from "@/lib/tracker-table.mjs";
+// One definition of the `{n}-RESERVED.md` convention, shared with
+// run-cli-support.mjs — see report-files.mjs for why it lives there.
+import { isReservedReportFile } from "@/lib/report-files.mjs";
 
 /**
  * Resolve the career-ops "home" — the directory holding the user's sibling
@@ -23,7 +27,9 @@ export function careerOpsRoot(): string {
  * as module imports and fails the production build otherwise.
  */
 export function rootScript(nameNoExt: string): string {
-  return path.join(careerOpsRoot(), `${nameNoExt}.mjs`);
+  // The core checkout is selected at runtime and must not be bundled into the
+  // web server output when Turbopack sees this dynamic script path.
+  return path.join(/* turbopackIgnore: true */ careerOpsRoot(), `${nameNoExt}.mjs`);
 }
 
 // Feature-detect the core's `tracker.mjs delete --num` row-delete (#1200) by probing
@@ -47,10 +53,20 @@ function read(rel: string): string | null {
 
 export type InboxJob = { url: string; company: string; role: string; location?: string; compensation?: string; done: boolean; postedAt?: string };
 
-/** Parse data/pipeline.md — `- [ ] URL | Company | Role [| Location [| Compensation]]`.
- *  Positional split (NOT a greedy trailing group): the optional 4th `location`
- *  (#1015) and 5th `compensation` (#1017) columns must NOT bleed into `role`;
- *  any further trailing columns are ignored gracefully. */
+/** A pipeline-row segment like `posted: 2026-07-14`, `trust: 62 stale` or
+ *  `note: …` — the core appends these LABELED segments after whatever
+ *  positional shape a row has (3/4/5 columns), so a naive positional reader
+ *  would misread them as location/compensation on short rows. Any
+ *  `word:`-prefixed segment is treated as labeled (forward-compatible with
+ *  labels the core hasn't invented yet). */
+const LABELED_SEGMENT = /^([a-z][a-z_-]*):\s*(.*)$/i;
+
+/** Parse data/pipeline.md — `- [ ] URL | Company | Role [| Location [| Compensation]] [| label: …]*`.
+ *  Positional split for the first columns (the optional 4th `location` #1015
+ *  and 5th `compensation` #1017 must NOT bleed into `role`); labeled segments
+ *  (posted:/trust:/note:/…) are filtered out of positional assignment wherever
+ *  they appear and surfaced when useful (posted: → postedAt). Unknown labels
+ *  and further trailing columns are ignored gracefully. */
 export function readInbox(): InboxJob[] {
   const md = read("data/pipeline.md");
   if (!md) return [];
@@ -58,8 +74,17 @@ export function readInbox(): InboxJob[] {
   for (const line of md.split("\n")) {
     const m = line.match(/^\s*-\s*\[([ xX])\]\s*(.+)$/);
     if (!m) continue;
-    const parts = m[2].split("|").map((s) => s.trim());
+    const all = m[2].split("|").map((s) => s.trim());
+    const labels = new Map<string, string>();
+    const parts: string[] = [];
+    for (const [i, seg] of all.entries()) {
+      // the URL cell can contain a colon-y value but is always position 0
+      const lm = i >= 3 ? seg.match(LABELED_SEGMENT) : null;
+      if (lm) labels.set(lm[1].toLowerCase(), lm[2].trim());
+      else parts.push(seg);
+    }
     if (parts.length < 3 || !parts[0]) continue; // need at least url | company | role
+    const posted = labels.get("posted");
     jobs.push({
       done: m[1].toLowerCase() === "x",
       url: parts[0],
@@ -67,6 +92,9 @@ export function readInbox(): InboxJob[] {
       role: parts[2],
       location: parts[3] || undefined, // optional 4th column (#1015)
       compensation: parts[4] || undefined, // optional 5th column (#1017); 6th+ ignored
+      // the row's own posting date (scan.mjs `posted:` label) — a more direct
+      // freshness signal than the scan-history join, which stays as fallback
+      postedAt: posted && /^\d{4}-\d{2}-\d{2}$/.test(posted) ? posted : undefined,
     });
   }
   return jobs;
@@ -187,33 +215,77 @@ export function pipelineSummary(): PipelineSummary {
     rootExists: fs.existsSync(root),
     // join the freshness date (first_seen) onto each raw posting — the inbox's
     // triage view orders/faceted-filters on it entirely client-side.
-    inbox: readInbox().map((j) => ({ ...j, postedAt: scanDates.get(j.url) })),
+    inbox: readInbox().map((j) => ({ ...j, postedAt: j.postedAt ?? scanDates.get(j.url) })),
     applications: readApplications(),
   };
 }
 
 export type ReportData = { content: string; file: string };
 
-/** Locate the evaluation report for an application number
- *  (reports/{n}-{slug}-{date}.md; the leading number may be zero-padded). */
+/** Locate the evaluation report for an application number.
+ *  The tracker row's own report link is authoritative: report FILE numbers can
+ *  differ from application numbers (e.g. app #309 → reports/308-…), so
+ *  resolving only by leading filename number misses those. Links are
+ *  normalized relative to the tracker file's directory (see #760). Falls back
+ *  to the filename scan (reports/{n}-{slug}-{date}.md, possibly zero-padded)
+ *  for rows without a parseable link.
+ *
+ *  Both the linked lookup and the fallback scan skip `{n}-RESERVED.md`
+ *  placeholder files.
+ *  `reserve-report-num.mjs` writes an empty `NNN-RESERVED.md` sentinel to
+ *  claim a report number before a worker has actually written the report;
+ *  it's normally deleted once the real report lands (or GC'd after 4h if
+ *  abandoned). But "RESERVED" sorts alphabetically before nearly every real
+ *  slug (company names start with lowercase/uppercase letters after the
+ *  number-dash, "R" often lands mid-alphabet or earlier), so if a sentinel
+ *  outlives its report — e.g. a worker was driven directly instead of
+ *  through the orchestrator that owns cleanup — `.find()` could return the
+ *  empty sentinel instead of the real report, making the report body and the
+ *  Apply/PDF-ready checks disappear. */
 export function findReportFile(n: string): string | null {
   const target = parseInt(n, 10);
   if (Number.isNaN(target)) return null;
+  const root = careerOpsRoot();
+  const app = readApplications().find((a) => parseInt(a.n, 10) === target);
+  const linked = app?.report.match(/\]\(([^)]+)\)/)?.[1];
+  if (linked) {
+    const p = path.resolve(root, "data", linked);
+    // Containment: a hand-edited link must not resolve outside the project.
+    if (p.endsWith(".md") && !isReservedReportFile(p) && containedRealpath(p, root)) return p;
+  }
   let files: string[];
   try {
-    files = fs.readdirSync(path.join(careerOpsRoot(), "reports"));
+    files = fs.readdirSync(path.join(root, "reports"));
   } catch {
     return null;
   }
-  const match = files.find((f) => f.endsWith(".md") && parseInt(f, 10) === target);
-  return match ? path.join(careerOpsRoot(), "reports", match) : null;
+  const match = files.find(
+    (f) => f.endsWith(".md") && !isReservedReportFile(f) && parseInt(f, 10) === target,
+  );
+  if (!match) return null;
+  const p = path.join(root, "reports", match);
+  return containedRealpath(p, root) ? p : null;
+}
+
+/** True containment check: resolves symlinks before comparing, so a link
+ *  planted under data/ or reports/ can't leak files outside the project. */
+function containedRealpath(p: string, root: string): boolean {
+  try {
+    return fs.realpathSync(p).startsWith(fs.realpathSync(root) + path.sep);
+  } catch {
+    return false; // missing file or unresolvable link — treat as not found
+  }
 }
 
 export function readReport(n: string): ReportData | null {
   const file = findReportFile(n);
   if (!file) return null;
   try {
-    return { content: fs.readFileSync(file, "utf8"), file: path.basename(file) };
+    // Reports live in the user's runtime checkout, outside the web build graph.
+    return {
+      content: fs.readFileSync(/* turbopackIgnore: true */ file, "utf8"),
+      file: path.basename(file),
+    };
   } catch {
     return null;
   }
@@ -281,4 +353,103 @@ export function rememberFact(fact: string): "ok" | "deduped" | "error" {
   } catch {
     return "error";
   }
+}
+
+
+/**
+ * AGENTS.md's two language axes, resolved from config/profile.yml.
+ *
+ * `language.output` governs human-facing prose; `language.modes_dir` selects the
+ * market vocabulary and local evaluation rules. They compose freely — English
+ * output with DACH vocabulary is a valid configuration — so they are returned
+ * as separate fields rather than collapsed into one "locale".
+ */
+export type LanguageConfig = {
+  /** language.output — prose language for user-facing text. Default "en". */
+  output: string;
+  /** language.modes_dir, normalized without a trailing slash. Default "modes". */
+  modesDir: string;
+  /** The market's evaluation-mode file, repo-root-relative. Default "modes/oferta.md". */
+  evalModeFile: string;
+};
+
+/**
+ * A `modes_dir` value we are willing to turn into a filesystem path.
+ *
+ * profile.yml is user-editable and this value is used to read a directory and
+ * to build a path handed to an agent, so it is validated rather than trusted:
+ * a crafted `modes/../../etc` must not escape the checkout. Rejecting falls
+ * back to the default, which is always correct, never dangerous.
+ */
+const MODES_DIR_RE = /^modes(?:\/[A-Za-z0-9_-]+)?$/;
+
+/**
+ * Every localized evaluation mode's title line states the block range it
+ * produces — "Valutazione completa A-F", "完整的 A-G 维度评估", "전체 평가 A-G".
+ * Older translations say A-F and newer ones A-G (Block G, posting legitimacy),
+ * so both count; the dash may be ASCII or typographic.
+ *
+ * This is what identifies the evaluation mode inside a market directory, in
+ * preference to a hardcoded {dir → filename} map. A map would have to list all
+ * 18 market directories that exist today and would silently go stale the next
+ * time a translation lands — the exact class of bug this function is fixing.
+ * Verified against every market directory in the repo: each contains exactly
+ * one file whose title line matches, and no apply-mode collides.
+ */
+const EVAL_MODE_TITLE_RE = /A[-\u2010-\u2015][FG]/;
+
+const DEFAULT_EVAL_MODE = "modes/oferta.md";
+
+/**
+ * Find the evaluation mode inside a market directory. Returns the default when
+ * the directory is unreadable or nothing in it looks like an evaluation mode —
+ * a wrong-but-working English evaluation beats a run that cannot start.
+ */
+function resolveEvalModeFile(root: string, modesDir: string): string {
+  if (modesDir === "modes") return DEFAULT_EVAL_MODE;
+  let names: string[];
+  try {
+    names = fs.readdirSync(path.join(root, modesDir));
+  } catch {
+    return DEFAULT_EVAL_MODE;
+  }
+  for (const name of names.sort()) {
+    // `_shared.md`, `_profile.md` and friends are includes, never entry points.
+    if (!name.endsWith(".md") || name.startsWith("_") || name === "README.md") continue;
+    try {
+      const first = fs.readFileSync(path.join(root, modesDir, name), "utf8").split("\n", 1)[0] ?? "";
+      if (EVAL_MODE_TITLE_RE.test(first)) return `${modesDir}/${name}`;
+    } catch {
+      /* unreadable file — keep looking */
+    }
+  }
+  return DEFAULT_EVAL_MODE;
+}
+
+/**
+ * Read the language configuration. Never throws: a missing or malformed
+ * profile.yml yields the English/global default, because a broken config
+ * should degrade the market vocabulary, not block every evaluation.
+ */
+export function readLanguageConfig(): LanguageConfig {
+  const root = careerOpsRoot();
+  let modesDir = "modes";
+  let output = "en";
+  try {
+    const parsed = yaml.load(fs.readFileSync(path.join(root, "config", "profile.yml"), "utf8"));
+    if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+      const language = (parsed as Record<string, unknown>).language;
+      if (language && typeof language === "object" && !Array.isArray(language)) {
+        const l = language as Record<string, unknown>;
+        if (typeof l.output === "string" && l.output.trim()) output = l.output.trim();
+        if (typeof l.modes_dir === "string" && l.modes_dir.trim()) {
+          const candidate = l.modes_dir.trim().replace(/\/+$/, "");
+          if (MODES_DIR_RE.test(candidate)) modesDir = candidate;
+        }
+      }
+    }
+  } catch {
+    /* no profile yet, or malformed — defaults are correct */
+  }
+  return { output, modesDir, evalModeFile: resolveEvalModeFile(root, modesDir) };
 }

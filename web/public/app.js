@@ -551,7 +551,7 @@ async function renderDigest() {
       </div>
       <div class="empty-state">
         <div class="empty-state-title">No digest yet</div>
-        Run <code>node weekly-digest.mjs</code> from the project root to generate one.
+        Run <code>node pipeline-digest.mjs</code> from the project root to generate one.
       </div>
     </div>`;
   }
