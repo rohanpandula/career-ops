@@ -23,7 +23,7 @@ Use `npm test` for the complete regression suite and `npm run test:quick` for th
 | `npm run upskill` | `upskill.mjs` | Aggregate skill-gap map from tracked reports (or `--url-text <url\|file>` for a single-JD targeted gap analysis) |
 | `npm run add` | `add-entry.mjs` | Dedup + insert a `/career-ops add` entry into cv.md / article-digest.md |
 | `npm run update:check` | `update-system.mjs check` | Check for upstream updates |
-| `npm run update` | `update-system.mjs apply` | Apply upstream update |
+| `npm run update` | `update-system.mjs apply --confirm` | Apply upstream update |
 | `npm run rollback` | `update-system.mjs rollback` | Rollback last update |
 | `npm run liveness` | `check-liveness.mjs` | Test if job URLs are still active |
 | `npm run extract` | `browser-extract.mjs` | Headless read-only page extractor (opt-in `scan.extractor: cli`) — compact JSON for scan/JD |
@@ -34,6 +34,8 @@ Use `npm test` for the complete regression suite and `npm run test:quick` for th
 | `npm run find` | `find.mjs` | Resolve a report#/tracker#/company query to its full pipeline identity |
 | `npm run invite-match` | `invite-match.mjs` | Fuzzy-match a pasted interview-invite email against `data/applications.md` |
 | `npm run paste-reply` | `paste-reply.mjs` | Manual/no-Gmail input into the `reply-watch.mjs` classification pipeline |
+| `npm run freshness` | `check-table-freshness.mjs` | Staleness validator for jurisdiction data tables (`as_of` / `next_effective` watchdog) |
+| `npm run jd-archive` | `check-jd-archive.mjs` | Validate every `reports/*.md` has an archived JD (embedded section or `jds/` capture) — flags `missing-jd-archive` |
 | `npm run openai:tailor` | `openai-tailor.mjs` | Tailor a CV via any OpenAI-compatible endpoint (headless companion to `openai-eval.mjs`) |
 
 ---
@@ -112,7 +114,7 @@ Processed TSVs are moved to `batch/tracker-additions/merged/`.
 
 Validates `portals.yml` before running the scanner. The validator is offline: it reads YAML, loads local provider IDs from `providers/*.mjs`, and checks common configuration mistakes without fetching any job boards.
 
-It reports errors for invalid YAML shape, unknown explicit providers, malformed URLs, empty filter keywords, and invalid local parser blocks. Duplicate enabled company names are warnings because they may be intentional during migrations, but they are worth reviewing.
+It reports errors for invalid YAML shape, unknown explicit providers, malformed URLs, empty filter keywords, and invalid local parser blocks. `tracked_companies` and `job_boards` entries are checked against the same schema, and their names share one namespace: a duplicate enabled name — within either list or across the two — is a warning (it may be intentional during a migration, but is worth reviewing).
 
 ```bash
 npm run validate:portals
@@ -308,6 +310,137 @@ Log line format (TSV, one per line, `#`-prefixed lines are comments; for `report
 
 ---
 
+## company-history
+
+Read-only per-company evidence-card aggregator. Joins `data/applications.md` (tracker), `data/follow-ups.md`, and `data/scan-history.tsv` per company (and a `funnel-velocity.mjs` status-log source, loaded defensively via dynamic `import()` — probed for optional applied-date/median helpers and degrading to `false` when they are absent). Companies are joined on a normalized key (`normalizeCompany`); rows whose company normalizes to an empty key (e.g. non-Latin names that strip to nothing) are never merged into another company's card — they are excluded and counted in `dataQuality.unjoinable` instead.
+
+Each card covers two independent fact axes, never combined into a single verdict:
+
+- **`responsiveness`** — has this company ever responded to you, or gone silent on an Applied row past the silence window? A rejection counts as a response (it's an answer, not silence). Labels: `responded-before`, `silent-on-you`, `mixed`, `no-history`. Rows younger than the silence window are **pending** — right-censored, never labeled silent. Facts older than 365 days are **stale** and excluded from label computation unless `--include-stale` is passed. Follow-ups sent never change the label — they only annotate a silent fact's `confidence` (`confirmed-by-followups` vs `unconfirmed`).
+- **`postingChurn`** — does this company repost the same role repeatedly (evergreen requisition / re-opened search), sourced from `detect-reposts.mjs` clusters over `data/scan-history.tsv`. Labels: `reposts-detected`, `none-detected`, `no-scan-data`, `aggregator-not-evaluated`. The last two both mean the check did not run — `no-scan-data` because there is no scan history, `aggregator-not-evaluated` because the company is marked `aggregator: true` in `portals.yml` (a multi-employer board, where an identical title is a different employer's job, so the "same company + same title = same opening" assumption fails). Neither is the same claim as `none-detected`, which means the check ran and found nothing.
+
+The script deliberately reports **facts, not verdicts** — output is always descriptive and past-tense ("silent 34d since 2026-05-01"), never "ghosted" or "risk". Every silent fact carries a dated `clearInstruction` (the exact `set-status.mjs` command to run if the company actually did respond and it just wasn't logged), and every card with a silent fact is accompanied by an innocent-explanations line: high-volume inboxes, evergreen requisitions, re-opened searches, and the candidate's own unlogged responses all produce the same raw signals as genuine silence. Before trusting the output against real data, run a dry read (`node company-history.mjs --summary`) and sanity-check a few cards where you already know the real story.
+
+```bash
+node company-history.mjs                        # full JSON evidence cards to stdout
+node company-history.mjs --summary               # human-readable cards (hygiene nudge, then silent-first, window caveat printed once)
+node company-history.mjs --company "Acme"         # single-card lookup (unknown company returns the minimal no-history/no-scan-data shape)
+node company-history.mjs --silence-window 21      # override the default silence window in days
+node company-history.mjs --include-stale          # include facts older than 365d in label computation
+node company-history.mjs --self-test
+```
+
+Default silence window: `templates/benchmarks.yml` `days_first_response.range_days[1] * 2` when that file exists, else `28` days.
+
+**Exit codes:** `0` success, including empty/no-data runs (a missing tracker, follow-ups, or scan-history source degrades gracefully rather than failing), `1` unrecognized CLI flag or an unexpected runtime error.
+
+---
+
+## contacts
+
+Your job-search phonebook, exportable to your phone. Reads `data/contacts.tsv` (one contact per line — the schema is the vCard fields, nothing more) and emits vCard 3.0 (`VERSION:3.0` for iOS/Android import compatibility) with CRLF line endings, byte-safe 75-octet line folding, and a stable deterministic UID `careerops-{uidPart(name)}--{uidPart(company)}` (double-dash boundary between the two parts). Each `uidPart` is the lowercase slug of the raw value (non-alphanumeric runs collapsed to single dashes, ends trimmed) suffixed with an 8-hex sha1 of the *raw* value — e.g. `jane-doe-cac7bbb6`; when the slug is empty — a fully non-ASCII value such as a CJK name — the part is the bare 8-hex hash. Hashing the raw value (not the lossy slug) keeps distinct inputs that slug identically — e.g. `José` and `Josè` both slug to `jos` (the accented char drops out), and `Acme Inc` and `Acme, Inc.` both to `acme-inc` — from colliding into one UID. Re-importing updates existing entries instead of duplicating them on platforms that honor vCard UID (iOS fallback: assign imports to a group, delete the group to bulk-remove). `--caller-id` renders the display name as `Jane Doe (Acme recruiter)` so the lock screen tells you which recruiter is calling — useful when a phone number is known (often it isn't). Malformed rows are reported in a `quality` block, never dropped silently.
+
+```bash
+node contacts.mjs                    # JSON (contacts + quality + total)
+node contacts.mjs --summary          # human-readable table
+node contacts.mjs --vcf [path]       # write vCard file (default output/contacts.vcf)
+node contacts.mjs --vcf --caller-id  # FN as "Jane Doe (Acme recruiter)"
+node contacts.mjs --self-test
+```
+
+Contact line format (TSV, one per line, `#`-prefixed lines are comments):
+
+```text
+{name}\t{company}\t{type}\t{title}\t{phone}\t{email}\t{linkedin}\t{tracker#|-}\t{notes}
+```
+
+`type`: recruiter | hiring-manager | peer | interviewer | other — optional; when present it must be one of the enum, else it is flagged in `quality`. Only name + company are required (>= 4 cells); all channels are optional; `-` for the tracker number when the contact precedes an application. Lines are updated in place when a contact's details change — unlike the append-only salary log. If two lines resolve to the same generated UID (`careerops-{uidPart(name)}--{uidPart(company)}` — normally rows with the same name + company), the LAST one wins the `--vcf` export (JSON keeps all rows and reports the clash in `quality.duplicates`). Import: send the `.vcf` to your phone (AirDrop/email/messaging) and open it — iOS Contacts offers "Add All Contacts", Android imports via Contacts → Fix & manage → Import.
+
+**Exit codes:** `0` always (an empty/missing store prints an explanatory message and writes no file), `1` self-test failure or a `--vcf` path escaping the project directory.
+
+---
+
+## weekly-digest
+
+Rolls up `interview-prep/sessions/*.md` — the structured, machine-readable transcripts `interview/debrief` and `interview/practice` already write (schema in `interview-prep/sessions/README.md`) — into a single digest for a date range (default: the current ISO week, Monday–Sunday). Groups sessions by company/role into a per-company round rollup (round type + date per round), counts `<!-- competency: tag[, tag...] -->` annotations across all sessions in range and flags any tag appearing 2+ times as recurring, and — best-effort, since `interview-prep/question-bank.md` has no fixed schema — attributes 🔴-tagged lines to whichever in-range company's heading they fall under. Purely mechanical: front-matter parsing, date filtering, and tag counting, no LLM judgment calls.
+
+```bash
+node weekly-digest.mjs                                   # JSON, current ISO week
+node weekly-digest.mjs --summary                          # human-readable digest
+node weekly-digest.mjs --from 2026-07-13 --to 2026-07-19  # explicit date range
+node weekly-digest.mjs --dir path/to/sessions             # override sessions dir (test isolation)
+node weekly-digest.mjs --self-test
+```
+
+`interview-prep/sessions/` is gitignored, and session content contains real interviewer names and companies — see the "Privacy — important" section of `interview-prep/sessions/README.md` for the source of that statement. A fresh clone or a week with no interviews reports "no interviews recorded in this range" and exits `0`, never an error.
+
+**Exit codes:** `0` always (missing sessions dir/question bank, or an empty range, produce an explanatory empty result), `1` invalid `--from`/`--to` or self-test failure.
+## check-table-freshness
+
+Staleness validator for the jurisdiction data tables (umbrella #2026). The tables' correctness decays on a schedule — minimum wages adjust annually, pre-announced legal changes land on known dates — and every row already carries the metadata to watch: a mandatory `as_of` verification date and, for rate-style rows, `next_effective`. This script is the watchdog: zero LLM, zero network, zero writes.
+
+Discovery is schema-agnostic: any `templates/*.yml` (non-recursive) whose parsed YAML contains at least one object row with an `as_of` field is treated as a jurisdiction table — rows may sit in a top-level array or in an array under any top-level key (e.g. `covenants:`). Files without `as_of` rows (`states.yml`, `portals.example.yml`, `benchmarks.yml`) are silently skipped, so new tables are picked up automatically with no per-table registration. On a checkout with no jurisdiction tables yet, the script reports zero tables and exits `0` — that is the designed empty state, not an error.
+
+Two finding types:
+
+- **`expired`** (hard) — the row has a `next_effective` date, today ≥ `next_effective`, and the row was not re-verified on or after that date (`as_of` < `next_effective`): the pre-announced change has arrived and the table hasn't been updated.
+- **`review-due`** (soft) — `as_of` is older than the review threshold (default 12 months): nobody has re-verified the row in a legal cycle. Threshold precedence: `--max-age-months` flag > `config/profile.yml` `table_freshness.max_age_months` > default. Thresholds are strict positive integers — an invalid flag value is a usage error (exit 1, fail-fast, never a silent fallback); an invalid config value is reported as a warning and the default applies.
+
+Each finding copies the row's `sources`, so whoever picks it up knows exactly where to re-verify. Malformed or missing dates produce a warning entry and the row is skipped — never a crash: once an array qualifies as a row-set (≥1 row with `as_of`), a sibling row that *forgot* its mandatory `as_of` warns too, instead of silently vanishing from validation. All date math is UTC-midnight calendar math (no time-of-day drift); dates in tables are quoted `YYYY-MM-DD` strings.
+
+```bash
+npm run freshness
+node check-table-freshness.mjs                    # JSON
+node check-table-freshness.mjs --summary          # human-readable table
+node check-table-freshness.mjs --max-age-months 6 # override review threshold
+node check-table-freshness.mjs --today 2026-10-02 # deterministic date for tests
+node check-table-freshness.mjs --self-test
+```
+
+**Exit codes (CI-friendly):** `1` if any `expired` finding or on invalid usage (bad `--max-age-months` / `--today` values), `0` otherwise — `review-due` alone never fails the run, so a scheduled job only goes red when a known legal change has actually landed unaddressed.
+
+---
+
+## check-jd-archive
+
+Validator for JD archival (#2789). A report's `**URL:**` header is a live pointer, not an archive — it rots once a posting closes, which reliably happens somewhere between applying and a later interview round. `modes/oferta.md` and `modes/pdf.md` require every report to archive the JD's verbatim text, primarily as an embedded `## Job Description (archived verbatim)` section (the report is the one artifact guaranteed to get written and tracked), with a `jds/{file}` capture as an acceptable alternative. This script is the watchdog: zero LLM, zero network, zero writes.
+
+A report counts as archived when EITHER holds:
+
+- it carries a `## Job Description` section (with or without the `(archived verbatim)` suffix) containing at least 40 non-whitespace characters after stripping HTML comments — enough to reject an empty placeholder or a "TBD" stub, or
+- a corresponding `jds/` capture exists for it, resolved via `jd-capture.mjs`'s `findCaptureForReport` (the same report-number lookup `outcome.mjs` already relies on) using the report number and company slug parsed straight from the report's own filename (`{###}-{company-slug}-{YYYY-MM-DD}.md`). Only captures written with a numeric report-number prefix (`archive-posting.mjs --report=N`) are resolvable this way — the other `jds/` naming conventions in play (date-prefixed, sha1-suffixed, bare company-role slugs; see "JD captures (`jds/`)" below) have no report number to key on, so they cannot be credited here. Prefer `--report=N` when archiving to a side file for this reason.
+
+Reports missing both are flagged `missing-jd-archive`.
+
+```bash
+npm run jd-archive
+node check-jd-archive.mjs                      # JSON
+node check-jd-archive.mjs --summary             # human-readable table
+node check-jd-archive.mjs --reports-dir <path>  # override reports/ (testing)
+node check-jd-archive.mjs --jds-dir <path>      # override jds/ (testing)
+node check-jd-archive.mjs --self-test
+```
+
+**Exit codes:** `1` if any `missing-jd-archive` finding, `0` otherwise (including the empty-repo case — `reports/*.md` is gitignored, so a fresh checkout has nothing to scan). Wired into `test-all.mjs`'s `--self-test` invocation; backfilling JD text for pre-existing reports that predate this validator is explicitly out of scope (#2789) — this only prevents the gap going forward.
+
+---
+
+## rejection-latency
+
+Post-interview response-latency signal. Cross-references `data/active-interviews.md` (latest interview date per application — company + role, fuzzy role match via `role-matcher.mjs`) with `data/applications.md` (rows still in `Interview` state — i.e. no `Responded`/`Offer`/`Rejected` transition recorded since) and flags applications whose silence exceeds a soft **courtesy** threshold (30-day default, no legal claim attached) from `rejection_latency.courtesy_days` or `--courtesy-days`. (An earlier revision also shipped a jurisdiction-backed statutory tier; it was removed — the underlying legal threshold could change and the script has no way to re-verify it.) Each flag carries a ready-to-copy `data/blacklist.md` row (same suggestion-only bridge as `modes/interview-redflag.md`, #1854/#1856) — the script never writes to `data/blacklist.md`, `data/applications.md`, or `data/active-interviews.md` (#1742 opt-in guarantee). Surfaced by the `followup` mode.
+
+```bash
+node rejection-latency.mjs             # JSON
+node rejection-latency.mjs --summary   # human-readable table + suggested blacklist rows
+node rejection-latency.mjs --courtesy-days 21
+node rejection-latency.mjs --today 2026-07-17   # deterministic runs/tests
+node rejection-latency.mjs --self-test
+```
+
+**Exit codes:** `0` always (missing data files produce an explanatory empty result), `1` self-test failure.
+
+---
+
 ## update:check
 
 Checks whether a newer version of career-ops is available upstream. Outputs JSON to stdout:
@@ -460,7 +593,7 @@ node tracker.mjs export --out repaired.md # write to a file (existing file backe
 
 `query` and `history` auto-resync when the markdown changed since the last sync, so the index can never serve stale reads.
 
-`sync` detects and reports the corruption classes markdown accumulates — mojibake placeholder cells, scores stranded in the status column, non-canonical statuses (resolved via `templates/states.yml` aliases), missing/duplicate ids, stray pipes — and normalizes them **in the index only**; the markdown is never modified. Fix at the source with `normalize-statuses.mjs` / `dedup-tracker.mjs`, then re-sync. Status changes between syncs accumulate in a `status_events` table, which gives `analyze-patterns.mjs` a real funnel instead of only the current snapshot.
+`sync` detects and reports the corruption classes markdown accumulates — mojibake placeholder cells, scores stranded in the status column, non-canonical statuses (resolved via `templates/states.yml` aliases), missing/malformed/duplicate ids, stray pipes — and normalizes them **in the index only**; the markdown is never modified. Fix at the source with `normalize-statuses.mjs` / `dedup-tracker.mjs`, then re-sync. Status changes between syncs accumulate in a `status_events` table, which gives `analyze-patterns.mjs` a real funnel instead of only the current snapshot.
 
 `export` is the inverse of `sync` (round-trip `md → db → md` is lossless for clean input — enforced by `test-all.mjs`). It writes to stdout by default and never touches `applications.md` unless you explicitly pass it as `--out`. Human-readable files remain the permanent source of truth; SQLite is only a rebuildable derived index.
 
@@ -508,6 +641,293 @@ From: <sender>
 If no `Subject:`/`From:` header lines are found, the whole file is treated as the body. After appending, run `node reply-watch.mjs` to classify the new candidate and review suggested tracker updates.
 
 **Exit codes:** `0` candidate appended, `1` missing `--file` argument, input file not found, or no subject/body text found.
+
+---
+
+## or (OpenRouter runner)
+
+Runs the pipeline on OpenRouter free models with automatic fallback — no
+Claude Code CLI required.
+
+```bash
+npm run or:scan                 # scan configured companies for new listings
+npm run or:eval -- <url>        # evaluate a job by URL (no URL: paste interactively)
+npm run or:pipeline             # process pending URLs
+npm run or:apply                # application assistance
+```
+
+---
+
+## reconcile
+
+Syncs the `data/pipeline.md` "Pendientes" section with `batch/batch-state.tsv`.
+`batch-runner.sh` records evaluated offers in the state file but never writes
+back to `pipeline.md`, so batch-processed offers would otherwise be
+re-surfaced by every later scan or pipeline run.
+
+```bash
+npm run reconcile
+```
+
+---
+
+## cover-letter
+
+Renders a cover-letter JSON payload to PDF: fills
+`templates/cover-letter-template.html` with the payload, then renders via the
+same Playwright pipeline as CVs.
+
+```bash
+npm run cover-letter -- payload.json
+node generate-cover-letter.mjs --payload payload.json --out output/slug-cover.pdf
+```
+
+---
+
+## verify:portals
+
+Online ATS-slug validator — complements the offline `validate:portals`. A wrong
+slug or a dead board 404s silently on every future scan, so this probes each
+portals entry to confirm it still resolves: Greenhouse / Ashby / Lever slugs
+directly, every other host through the same provider plugins the scanner uses.
+Both `tracked_companies` and `job_boards` entries are swept — a job board
+going dark is as invisible on the next scan as a company board 404ing. An entry
+that no provider claims (no `provider:` field and no plugin `detect()` match) is
+reported `skipped`, not confirmed — those are a coverage gap, not a pass.
+
+```bash
+npm run verify:portals
+```
+
+---
+
+## reposts
+
+Repost detector. Reads `data/scan-history.tsv`, fuzzy-matches role titles per
+company, and flags any company+role listed 2+ times with different URLs
+within a 90-day window — a strong ghost-job / re-listing signal.
+
+```bash
+npm run reposts                 # JSON
+node detect-reposts.mjs --summary
+```
+
+---
+
+## rank-pipeline
+
+Opt-in LLM relevance re-ranker for `data/pipeline.md`. **Off by default and not
+part of any scan** — `scan.mjs` stays 100% zero-token, and this costs nothing
+unless you run it yourself.
+
+It **annotates, it does not filter**: eligible pending rows can gain a labeled
+`rank: {score}/5 — {reason}` segment, riding after `posted:`/`trust:`/`note:`
+like any other labeled segment. No row is removed, reordered, or hidden — the
+reason is there so you can disagree with the score. An entry the model scores
+but cannot explain is left un-annotated rather than reduced to a bare number,
+and a whole batch is left un-annotated if the CLI call fails or returns
+unusable JSON.
+
+Cost is bounded and reported. Only pending (`- [ ]`) rows that are not already
+annotated are eligible, `--limit` caps each run (default 20, hard ceiling 200
+that the flag cannot raise), and a summary prints the entries ranked, the number
+of CLI calls, and elapsed time. Re-runs are idempotent — an already-annotated
+row is skipped, so you can work through a large pipeline in bounded passes.
+
+The ranking is done by whichever agent CLI you already have installed (the
+Headless / Batch Mode table in `AGENTS.md`): `claude`, `opencode`, `codex`,
+`copilot`, `qwen`, `agy`, `grok` — first one found wins. No API key, no new
+dependency, no new network endpoint. Each call sends a `cv.md` excerpt (the
+first ~2000 chars) and the selected postings through that CLI's own auth and
+provider handling — review your chosen CLI's data-retention/provider settings
+before running this on sensitive CV content.
+
+```bash
+node rank-pipeline.mjs                  # rank up to 20 pending entries
+node rank-pipeline.mjs --limit 10
+node rank-pipeline.mjs --cli codex      # override auto-detection
+node rank-pipeline.mjs --dry-run        # print annotations, write nothing
+```
+
+Writes go through `pipeline-lock.mjs`, the same lock `scan.mjs` and
+`scan-ats-full.mjs` use, and the file is re-read inside the lock — so a
+concurrent scan cannot lose rows to this script.
+
+---
+
+## gemini:eval / ollama:eval / openai:eval
+
+Standalone evaluators — run the same evaluation logic
+(`modes/oferta.md` + `modes/_shared.md` + `cv.md`) without an interactive AI
+CLI:
+
+- `gemini:eval` — Google Gemini free tier (`GEMINI_API_KEY` in `.env`)
+- `ollama:eval` — fully local and private via Ollama
+- `openai:eval` — any OpenAI-compatible endpoint (OpenAI, OpenRouter, Groq,
+  DeepSeek, LM Studio, llama.cpp, vLLM, ...)
+
+```bash
+npm run gemini:eval -- "We are looking for a Senior AI Engineer..."
+node gemini-eval.mjs --file ./jds/my-job.txt
+npm run ollama:eval -- "JD text"
+npm run openai:eval -- "JD text"
+```
+
+---
+
+## star
+
+Zero-LLM, zero-browser behavioural question matcher. Parses
+`interview-prep/story-bank.md`, scores each STAR story against the question
+text (optionally plus a JD file), and returns the top matches formatted to
+ATS paste length (250-500 words).
+
+```bash
+npm run star -- "Tell me about a time you disagreed with a decision"
+```
+
+---
+
+## archive
+
+Saves a live job posting as PDF via Playwright before it disappears —
+postings vanish once filled, and the original requirements matter for
+interview prep and salary negotiation evidence.
+
+```bash
+npm run archive -- https://example.com/job/123
+```
+
+---
+
+## prepare:application
+
+ATS auto-fill helper for Greenhouse, Ashby, and Lever. Detects the ATS from
+the apply URL, reads candidate data from `config/profile.yml`, and prints a
+prefill summary to stdout. **Never POSTs anything** — you review the output,
+open the apply URL, and submit yourself. See
+[APPLY_AUTOFILL.md](APPLY_AUTOFILL.md).
+
+```bash
+npm run prepare:application -- --url https://boards.greenhouse.io/acme/jobs/123
+```
+
+---
+
+## build:dashboard
+
+Cross-platform build wrapper for the Go TUI dashboard: picks the
+platform-correct output name (`career-dashboard.exe` on Windows, else
+`career-dashboard`), since a bare `go build -o` writes an extension-less
+binary on Windows. Requires Go 1.24+.
+
+```bash
+npm run build:dashboard
+npm run serve:dashboard    # or run the TUI directly without building
+```
+
+---
+
+## Agent-invoked utilities
+
+These have no `npm run` binding — modes and agents call them with
+`node <script>` directly. Each script's header comment documents its flags.
+
+| Invocation | Purpose |
+|------------|---------|
+| `node set-status.mjs <report#\|company> <State> [--note]` | Canonical tracker write path: strict states.yml validation, shared lock, atomic write. Modes call this instead of hand-editing `applications.md` |
+| `node mark-pdf-ready.mjs <report#> [--dry-run] [--json]` | Mark the matched tracker's PDF cell ready after the web PDF render path finishes; resolves the report number, uses the shared tracker lock, and writes atomically |
+| `node followup-cadence.mjs [--summary]` | Follow-up cadence per active application; flags overdue entries |
+| `node followup-seed.mjs [--backfill]` | Seed `data/follow-ups.md` with a pinned first follow-up date when a row turns Applied |
+| `node reply-watch.mjs` | Classify employer replies from `data/reply-candidates.json`, match to tracker rows, print a review digest |
+| `node process-quality.mjs [--summary]` | Aggregate `[process-friction]` tags from `data/active-interviews.md` per company |
+| `node reserve-report-num.mjs [--count N]` | Atomically reserve report numbers for parallel workers (fixes the #749 race) |
+| `node agent-inbox.mjs add "..."` | Append a request to the queue the agent drains at the next session start |
+| `node generate-latex.mjs <input.tex> [output.pdf]` | Validate and compile a generated `.tex` CV via tectonic or pdflatex |
+| `node classify-tier.mjs` | Classify a job title into intern / entry / mid / senior |
+| `node plugins.mjs list\|run <id> [hook]` | CLI host for non-provider plugin hooks (see [PLUGINS.md](PLUGINS.md)) |
+| `node plugin-install.mjs` | Clone/scaffold/validate community plugins (allowlisted URLs, pinned SHA) |
+| `node plugin-audit.mjs` | Static safety scan for community/registry plugins |
+| `node validate-plugin-registry.mjs` | Shape gate for `plugins-registry/<id>.json` files |
+
+---
+
+## process-quality.mjs
+
+Aggregates candidate-authored `[process-friction]` tags from the Notes column
+of `data/active-interviews.md` into a per-company friction signal. The tag
+stays free-text on purpose — there's no enforced taxonomy — but here are a
+few example friction patterns worth tagging, illustrative and non-exhaustive:
+
+- `[process-friction: call scheduled for a rejection with no info beyond what email would convey]`
+- `[process-friction: prescreen repeated info already given in a prior round]`
+- `[process-friction: interview rescheduled 2+ times same week]`
+- `[process-friction: no confirmation after stated timeline passed]`
+
+---
+
+## set-status.mjs
+
+Canonical tracker write path: strict `states.yml` validation, shared lock, atomic write. Modes and agents call this instead of hand-editing `applications.md`.
+
+```bash
+node set-status.mjs <report#|company> <state> [--note "..."] [--on YYYY-MM-DD] [--force] [--dry-run] [--json]
+node set-status.mjs --row N <state> [--note "..."]          # explicit tracker row ID
+node set-status.mjs --report N <state> [--note "..."]       # row whose Report cell links report #N
+node set-status.mjs "Company Name" Applied --role "Role"    # narrow match by role fragment
+node set-status.mjs --row 12 Applied
+node set-status.mjs --report 345 Applied --on 2026-08-01
+```
+
+A bare number or company name is convenient, but becomes ambiguous when multiple tracker rows exist for a company or when tracker row IDs and report IDs diverge. That divergence is permanent once it starts: `reserve-report-num.mjs` treats tracker row IDs as occupied when it allocates a report number, so a row that never got a report still consumes a number the report sequence then skips — the two counters leapfrog each other and never realign. On a diverged tracker "5" may mean tracker row #5 or report #5, which are different applications. Base selectors resolve the main target, while explicit selectors and filters disambiguate the target row:
+
+- `--row N`: Selects the row whose `#` cell is `N`.
+- `--report N`: Selects the row whose `Report` cell links report `N`.
+- `--role <role>`: Narrowing selector that refines a company, report, row, or bare-number match when multiple tracker rows exist for a single target.
+- `--on <date>`: Specifies an explicit transition date (YYYY-MM-DD) for status logs and notes.
+- `--json`: Formats command output as structured JSON.
+
+`--row` and `--report` are mutually exclusive. Because an explicit selector answers the report-mismatch guard rather than overriding it, `--row` bypasses that guard without needing `--force` (which silences the check while the ambiguity is still real).
+
+This is worth preferring in practice, not just in principle. Once the counters have diverged, a bare number trips the guard whenever the row it matches links a report number other than its own `#`, or links no report at all while a different row claims that number as its report — so on a tracker with a wide gap the check keeps firing, and a check that keeps firing teaches callers to pass `--force` by reflex, which disables it everywhere including the cases it was written to catch. Reach for a selector (or the company name) instead.
+
+### Bare numbers vs. explicit selectors
+
+- **Use a bare number** when tracker row IDs and report IDs are identical or when querying interactively.
+- **Use `--row N` or `--report N`** in automated scripts, modes, or whenever row IDs and report IDs have diverged to avoid triggering report-number mismatch guards or ambiguous updates. Use `--role` alongside a base selector to narrow down multiple matching roles for a company.
+
+Exit codes (the shared `CLI_EXIT` contract in `tracker-utils.mjs`, so these values are stable across every canonical tracker writer):
+
+- `0` success, including an idempotent no-op re-run that changed nothing.
+- `1` for an invalid or conflicting selector, or a non-canonical state.
+- `2` when the selector matches no tracker row.
+- `3` when a bare numeric selector triggers the report-number mismatch guard (`report-number-mismatch`), or a company matches several rows.
+- `4` when the shared tracker lock is busy — retryable, unlike the others.
+
+Nothing is written on any non-zero exit.
+
+To identify a row before writing to it, [find](#find) resolves a number, company, or role fragment to its full identity and surfaces collisions between the two numbering schemes rather than picking one silently.
+
+## mark-pdf-ready.mjs
+
+The web PDF render path calls this utility after a CV PDF has been generated so
+the matching tracker row can be marked ready. It is not normally a manual
+day-to-day command. The argument is the report number from the `reports/NNN-...`
+filename or Report cell, not the tracker row's `#` value.
+
+```bash
+node mark-pdf-ready.mjs <report#>                  # mark the matching row
+node mark-pdf-ready.mjs <report#> --dry-run       # validate without writing
+node mark-pdf-ready.mjs <report#> --json          # emit machine-readable output
+```
+
+The script resolves the report-to-row link, refuses ambiguous matches, and
+leaves an already-ready row unchanged. Writes use the same shared tracker lock
+and atomic replacement as `set-status.mjs`, so concurrent tracker updates do
+not overwrite one another. Exit status `0` covers a successful mark and an
+idempotent no-op; `1` is a usage, column, or write error; `2` means the tracker
+or report row was not found; `3` means the report matched more than one row;
+and `4` means the tracker lock timed out and the operation should be retried.
 
 ---
 
