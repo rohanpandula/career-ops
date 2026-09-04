@@ -33,7 +33,10 @@ async function fetchInContext(url, { timeoutMs = DEFAULT_TIMEOUT_MS, headers = {
   try {
     const res = await fetch(url, {
       method,
-      headers: { 'user-agent': DEFAULT_USER_AGENT, ...headers },
+      // Pin accept-encoding to codecs undici decodes reliably — amazon.jobs
+      // started serving zstd (2026-08) and undici's zstd decoder truncates
+      // the body at the first flush.
+      headers: { 'user-agent': DEFAULT_USER_AGENT, 'accept-encoding': 'gzip, deflate, br', ...headers },
       body,
       redirect,
       signal: controller.signal,

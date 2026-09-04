@@ -143,6 +143,12 @@ const RETIRED_PORTALS = {
 // watchdog reads its own output back as portal telemetry.
 const SELF_ECHO_RE = /^\s*-\s/;
 
+// RETRY/WARN progress lines ("RETRY Unity (Workday): HTTP 503 at offset 0,
+// attempt 1/3") are transient status, not run outcomes — the terminal ERROR or
+// success line carries the verdict. Left unfiltered they match HIT_RE with the
+// prefix glued onto the company ("RETRY Unity") and pollute the stats.
+const STATUS_PREFIX_RE = /^\[[0-9T:.Z-]+\]\s+(RETRY|WARN)\s/;
+
 function classify(detail) {
   const d = detail.trim();
   // 0-link / 0-total signals = broken
@@ -150,8 +156,12 @@ function classify(detail) {
   if (/^HTTP\s*[45]\d\d/i.test(d)) return "broken";
   if (/^0 total/i.test(d)) return "broken";
   if (/^0 links/i.test(d) && !/role matches/.test(d)) return "broken";
-  // "X total, ..." or "X links, ..." with X>0 = working (regardless of fresh count)
-  const m = d.match(/^(\d+)\s+(total|links|jobs)\b/i);
+  if (/^0 newest jobs/i.test(d)) return "broken";
+  // "X total, ..." or "X links, ..." with X>0 = working (regardless of fresh count).
+  // Meta logs "784 newest jobs, 0 role matches" — allow an adjective between
+  // the count and the unit noun, or every healthy Meta run classifies as
+  // "unknown" and one transient timeout marks the portal silent.
+  const m = d.match(/^(\d+)\s+(?:newest\s+)?(total|links|jobs)\b/i);
   if (m && parseInt(m[1], 10) > 0) return "working";
   return "unknown";
 }
@@ -160,7 +170,27 @@ function parseLog(lines, sinceMs) {
   // Map of "Company (Source)" → { working: count, broken: count, lastSeen: timestamp }
   const stats = {};
   for (const line of lines) {
-    let m = line.match(HIT_RE);
+    // ERR_RE must run before HIT_RE: parens-form error lines like
+    //   "[ts]   ERROR Unity (Workday): HTTP 503"
+    // also match HIT_RE, which reads the company as "ERROR Unity" and files the
+    // failure under a phantom portal ("ERROR Unity (Workday)"). The phantom can
+    // never log a success, so a single transient 5xx keeps it "silent" for
+    // SILENCE_DAYS and burns a `claude -p --fix` run per day on a portal that
+    // doesn't exist — while the real portal's bucket stays healthy.
+    let m = line.match(ERR_RE);
+    if (m) {
+      const [, ts, ident, detail] = m;
+      const t = Date.parse(ts);
+      if (!t || t < sinceMs) continue;
+      const key = canonicalKey(normalizeErrIdent(ident));
+      if (!stats[key]) stats[key] = { working: 0, broken: 0, lastSeen: ts, lastWorking: null, errorMsg: detail };
+      stats[key].broken++;
+      stats[key].errorMsg = detail;
+      if (ts > stats[key].lastSeen) stats[key].lastSeen = ts;
+      continue;
+    }
+    if (STATUS_PREFIX_RE.test(line)) continue;
+    m = line.match(HIT_RE);
     if (m) {
       const [, ts, company, source, detail] = m;
       const t = Date.parse(ts);
@@ -175,18 +205,6 @@ function parseLog(lines, sinceMs) {
       } else if (cls === "broken") {
         stats[key].broken++;
       }
-      if (ts > stats[key].lastSeen) stats[key].lastSeen = ts;
-      continue;
-    }
-    m = line.match(ERR_RE);
-    if (m) {
-      const [, ts, ident, detail] = m;
-      const t = Date.parse(ts);
-      if (!t || t < sinceMs) continue;
-      const key = canonicalKey(normalizeErrIdent(ident));
-      if (!stats[key]) stats[key] = { working: 0, broken: 0, lastSeen: ts, lastWorking: null, errorMsg: detail };
-      stats[key].broken++;
-      stats[key].errorMsg = detail;
       if (ts > stats[key].lastSeen) stats[key].lastSeen = ts;
     }
   }

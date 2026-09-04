@@ -459,7 +459,9 @@ async function main() {
       if (!idM) continue;
       try {
         const r = await fetch(`https://www.amazon.jobs/en/search.json?base_query=${idM[1]}&result_limit=1`, {
-          headers: { 'User-Agent': 'Mozilla/5.0' },
+          // amazon.jobs serves zstd since 2026-08; undici's zstd decoder truncates,
+          // so pin accept-encoding to gzip/br.
+          headers: { 'User-Agent': 'Mozilla/5.0', 'accept-encoding': 'gzip, deflate, br' },
           signal: AbortSignal.timeout(15000),
         });
         const d = await r.json();

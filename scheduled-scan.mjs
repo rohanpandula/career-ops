@@ -279,7 +279,9 @@ async function fetchAmazonJobs(seen, candidates) {
   for (const q of AMAZON_QUERIES) {
     try {
       const url = `https://www.amazon.jobs/en/search.json?base_query=${encodeURIComponent(q.base_query)}&country%5B%5D=USA&result_limit=50&sort=recent`;
-      const resp = await fetch(url, { signal: AbortSignal.timeout(15000) });
+      // amazon.jobs started serving content-encoding: zstd (2026-08); undici's zstd
+      // decoder truncates the body at the first flush, so pin to gzip/br.
+      const resp = await fetch(url, { headers: { "accept-encoding": "gzip, deflate, br" }, signal: AbortSignal.timeout(15000) });
       if (!resp.ok) { log(`  Amazon (API): HTTP ${resp.status}`); continue; }
       const data = await resp.json();
       const jobs = data.jobs || [];
@@ -411,12 +413,20 @@ async function fetchWorkdayBoards(seen, candidates) {
       let freshCount = 0;
       // Workday hard-caps `limit` at 20, so page until exhausted (guard at 500).
       for (let offset = 0; offset < 500; offset += 20) {
-        const resp = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({ appliedFacets: {}, limit: 20, offset, searchText: "" }),
-          signal: AbortSignal.timeout(30000),
-        });
+        // Workday throws sporadic transient 503s (~1 in 50 runs) that clear
+        // within seconds; without a retry a single failed page zeroes the run.
+        let resp;
+        for (let attempt = 0; ; attempt++) {
+          resp = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({ appliedFacets: {}, limit: 20, offset, searchText: "" }),
+            signal: AbortSignal.timeout(30000),
+          });
+          if (resp.ok || resp.status < 500 || attempt >= 2) break;
+          log(`  RETRY ${company} (Workday): HTTP ${resp.status} at offset ${offset}, attempt ${attempt + 1}/3`);
+          await new Promise((r) => setTimeout(r, 5000 * (attempt + 1)));
+        }
         if (!resp.ok) { log(`  ERROR ${company} (Workday): HTTP ${resp.status}`); break; }
         const data = await resp.json();
         if (!Array.isArray(data.jobPostings)) {
